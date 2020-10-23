@@ -13,6 +13,12 @@ namespace Server.Controllers
         private readonly ILogger<MovieController> _logger;
         private readonly MoviesDB _context;
 
+        public MovieController(ILogger<MovieController> logger, MoviesDB context)
+        {
+            _logger = logger;
+            _context = context;
+        }
+
         [HttpGet]
         public IEnumerable<Movie> Get()
         {
