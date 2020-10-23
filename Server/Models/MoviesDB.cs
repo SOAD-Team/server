@@ -16,7 +16,7 @@ namespace Server.Models
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string connectionString = "Server=tcp:my-movie.database.windows.net,1433;Initial Catalog=my-movie-database;Persist Security Info=False;User ID=Abstractize;Password=Leirbag36011999;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
             optionsBuilder.UseSqlServer(connectionString);
         }
 

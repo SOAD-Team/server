@@ -26,6 +26,7 @@ namespace Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddEntityFrameworkSqlServer().AddDbContext<MoviesDB>();
+            services.AddScoped<MoviesDB>();
             services.AddControllers();
         }
 
