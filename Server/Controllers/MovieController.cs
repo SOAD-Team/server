@@ -22,7 +22,8 @@ namespace Server.Controllers
         [HttpGet]
         public IEnumerable<Movie> Get()
         {
-            return this._context.Movies.ToList<Movie>();
+            List<Movie> movies = this._context.Movies.ToList<Movie>();
+            return movies;
         }
     }
 }
