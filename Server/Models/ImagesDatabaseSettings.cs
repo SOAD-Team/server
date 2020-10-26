@@ -1,5 +1,4 @@
-﻿using System;
-namespace Server.Models
+﻿namespace Server.Models
 {
     public interface IImagesDatabaseSettings
     {

@@ -22,6 +22,7 @@ namespace Server.Controllers
         [HttpGet]
         public IEnumerable<Movie> Get()
         {
+            this._logger.Log(LogLevel.Information,"API is Working & Connecting to DB");
             List<Movie> movies = this._context.Movie.ToList<Movie>();
             return movies;
         }
