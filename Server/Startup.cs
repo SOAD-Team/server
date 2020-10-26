@@ -4,11 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Server.Models;
 
 namespace Server
@@ -27,6 +26,15 @@ namespace Server
         {
             services.AddDbContext<MoviesDB>();
             services.AddScoped<MoviesDB>();
+
+            services.Configure<ImagesDatabaseSettings>(
+                Configuration.GetSection(nameof(ImagesDatabaseSettings)));
+
+            services.AddSingleton<IImagesDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<ImagesDatabaseSettings>>().Value);
+
+            services.AddSingleton<ImagesDB>();
+
             services.AddControllers();
         }
 
