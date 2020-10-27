@@ -7,8 +7,8 @@ namespace Server.Models
 {
     public partial class MovieDataGenre
     {
-        public int? IdMovieData { get; set; }
-        public int? IdGenre { get; set; }
+        public int IdMovieData { get; set; }
+        public int IdGenre { get; set; }
 
         [ForeignKey(nameof(IdGenre))]
         public virtual Genre IdGenreNavigation { get; set; }

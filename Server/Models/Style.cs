@@ -14,6 +14,7 @@ namespace Server.Models
 
         [Key]
         public int IdStyle { get; set; }
+        [Required]
         [StringLength(15)]
         public string Name { get; set; }
 

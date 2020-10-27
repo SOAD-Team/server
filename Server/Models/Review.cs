@@ -9,8 +9,8 @@ namespace Server.Models
     {
         [Key]
         public int IdReview { get; set; }
-        public int? IdMovie { get; set; }
-        public byte? Score { get; set; }
+        public int IdMovie { get; set; }
+        public byte Score { get; set; }
         [Column(TypeName = "text")]
         public string Comment { get; set; }
 

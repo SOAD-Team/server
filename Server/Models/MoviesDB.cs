@@ -39,9 +39,7 @@ namespace Server.Models
             modelBuilder.Entity<Genre>(entity =>
             {
                 entity.HasKey(e => e.IdGenre)
-                    .HasName("PK__Genre__E7B673981C02E624");
-
-                entity.Property(e => e.IdGenre).ValueGeneratedNever();
+                    .HasName("PK__Genre__E7B67398E1392B01");
 
                 entity.Property(e => e.Name).IsUnicode(false);
             });
@@ -49,9 +47,7 @@ namespace Server.Models
             modelBuilder.Entity<Language>(entity =>
             {
                 entity.HasKey(e => e.IdLanguage)
-                    .HasName("PK__Language__1656D9174576F698");
-
-                entity.Property(e => e.IdLanguage).ValueGeneratedNever();
+                    .HasName("PK__Language__1656D9172A948841");
 
                 entity.Property(e => e.Name).IsUnicode(false);
             });
@@ -59,36 +55,35 @@ namespace Server.Models
             modelBuilder.Entity<Movie>(entity =>
             {
                 entity.HasKey(e => e.IdMovie)
-                    .HasName("PK__Movie__DC0DD0EDC5291B5A");
-
-                entity.Property(e => e.IdMovie).ValueGeneratedNever();
+                    .HasName("PK__Movie__DC0DD0EDDD951EF4");
 
                 entity.HasOne(d => d.IdUserNavigation)
                     .WithMany(p => p.Movie)
                     .HasForeignKey(d => d.IdUser)
-                    .HasConstraintName("FK__Movie__IdUser__5F7E2DAC");
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Movie__IdUser__7D0E9093");
             });
 
             modelBuilder.Entity<MovieData>(entity =>
             {
                 entity.HasKey(e => e.IdMovieData)
-                    .HasName("PK__MovieDat__F8C19D024B051A4D");
+                    .HasName("PK__MovieDat__F8C19D02681336E7");
 
-                entity.Property(e => e.IdMovieData).ValueGeneratedNever();
-
-                entity.Property(e => e.Name).IsUnicode(false);
+                entity.Property(e => e.Title).IsUnicode(false);
 
                 entity.Property(e => e.Year).IsUnicode(false);
 
                 entity.HasOne(d => d.IdMovieNavigation)
                     .WithMany(p => p.MovieData)
                     .HasForeignKey(d => d.IdMovie)
-                    .HasConstraintName("FK__MovieData__IdMov__65370702");
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__MovieData__IdMov__02C769E9");
 
                 entity.HasOne(d => d.IdStyleNavigation)
                     .WithMany(p => p.MovieData)
                     .HasForeignKey(d => d.IdStyle)
-                    .HasConstraintName("FK__MovieData__IdSty__662B2B3B");
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__MovieData__IdSty__03BB8E22");
             });
 
             modelBuilder.Entity<MovieDataGenre>(entity =>
@@ -98,12 +93,14 @@ namespace Server.Models
                 entity.HasOne(d => d.IdGenreNavigation)
                     .WithMany()
                     .HasForeignKey(d => d.IdGenre)
-                    .HasConstraintName("FK__MovieData__IdGen__6BE40491");
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__MovieData__IdGen__09746778");
 
                 entity.HasOne(d => d.IdMovieDataNavigation)
                     .WithMany()
                     .HasForeignKey(d => d.IdMovieData)
-                    .HasConstraintName("FK__MovieData__IdMov__6AEFE058");
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__MovieData__IdMov__0880433F");
             });
 
             modelBuilder.Entity<MovieDataLanguage>(entity =>
@@ -113,33 +110,32 @@ namespace Server.Models
                 entity.HasOne(d => d.IdLanguageNavigation)
                     .WithMany()
                     .HasForeignKey(d => d.IdLanguage)
-                    .HasConstraintName("FK__MovieData__IdLan__690797E6");
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__MovieData__IdLan__0697FACD");
 
                 entity.HasOne(d => d.IdMovieDataNavigation)
                     .WithMany()
                     .HasForeignKey(d => d.IdMovieData)
-                    .HasConstraintName("FK__MovieData__IdMov__681373AD");
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__MovieData__IdMov__05A3D694");
             });
 
             modelBuilder.Entity<Review>(entity =>
             {
                 entity.HasKey(e => e.IdReview)
-                    .HasName("PK__Review__BB56047D494F0583");
-
-                entity.Property(e => e.IdReview).ValueGeneratedNever();
+                    .HasName("PK__Review__BB56047D2757F48F");
 
                 entity.HasOne(d => d.IdMovieNavigation)
                     .WithMany(p => p.Review)
                     .HasForeignKey(d => d.IdMovie)
-                    .HasConstraintName("FK__Review__IdMovie__625A9A57");
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Review__IdMovie__7FEAFD3E");
             });
 
             modelBuilder.Entity<Style>(entity =>
             {
                 entity.HasKey(e => e.IdStyle)
-                    .HasName("PK__Style__3B87D2549FE5FA5A");
-
-                entity.Property(e => e.IdStyle).ValueGeneratedNever();
+                    .HasName("PK__Style__3B87D2547B5CECA2");
 
                 entity.Property(e => e.Name).IsUnicode(false);
             });
@@ -147,9 +143,7 @@ namespace Server.Models
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(e => e.IdUser)
-                    .HasName("PK__User__B7C9263830B55887");
-
-                entity.Property(e => e.IdUser).ValueGeneratedNever();
+                    .HasName("PK__User__B7C92638FB0CCBD9");
 
                 entity.Property(e => e.Email).IsUnicode(false);
 

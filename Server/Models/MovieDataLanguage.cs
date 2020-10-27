@@ -7,8 +7,8 @@ namespace Server.Models
 {
     public partial class MovieDataLanguage
     {
-        public int? IdMovieData { get; set; }
-        public int? IdLanguage { get; set; }
+        public int IdMovieData { get; set; }
+        public int IdLanguage { get; set; }
 
         [ForeignKey(nameof(IdLanguage))]
         public virtual Language IdLanguageNavigation { get; set; }

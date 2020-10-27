@@ -9,6 +9,7 @@ namespace Server.Models
     {
         [Key]
         public int IdGenre { get; set; }
+        [Required]
         [StringLength(15)]
         public string Name { get; set; }
     }

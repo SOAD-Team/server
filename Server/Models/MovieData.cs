@@ -9,17 +9,20 @@ namespace Server.Models
     {
         [Key]
         public int IdMovieData { get; set; }
-        public int? IdMovie { get; set; }
+        public int IdMovie { get; set; }
         [Column(TypeName = "datetime")]
-        public DateTime? RegisterDate { get; set; }
+        public DateTime RegisterDate { get; set; }
+        [Required]
         [StringLength(50)]
-        public string Name { get; set; }
+        public string Title { get; set; }
+        [Required]
         [StringLength(4)]
         public string Year { get; set; }
-        public bool? PlatFav { get; set; }
+        public bool PlatFav { get; set; }
+        [Required]
         [Column(TypeName = "text")]
         public string ImageMongoId { get; set; }
-        public int? IdStyle { get; set; }
+        public int IdStyle { get; set; }
         public byte? MetaScore { get; set; }
         [Column("IMDB")]
         public byte? Imdb { get; set; }

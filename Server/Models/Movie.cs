@@ -15,7 +15,7 @@ namespace Server.Models
 
         [Key]
         public int IdMovie { get; set; }
-        public int? IdUser { get; set; }
+        public int IdUser { get; set; }
 
         [ForeignKey(nameof(IdUser))]
         [InverseProperty(nameof(User.Movie))]

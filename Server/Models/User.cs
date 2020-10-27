@@ -14,8 +14,10 @@ namespace Server.Models
 
         [Key]
         public int IdUser { get; set; }
+        [Required]
         [StringLength(89)]
         public string Email { get; set; }
+        [Required]
         [StringLength(30)]
         public string Password { get; set; }
 
