@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Models
@@ -11,5 +13,9 @@ namespace Server.Models
         public byte? Score { get; set; }
         [Column(TypeName = "text")]
         public string Comment { get; set; }
+
+        [ForeignKey(nameof(IdMovie))]
+        [InverseProperty(nameof(Movie.Review))]
+        public virtual Movie IdMovieNavigation { get; set; }
     }
 }
