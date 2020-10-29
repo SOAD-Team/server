@@ -20,7 +20,7 @@ namespace Server.Models
         [Required]
         [StringLength(30)]
         public string Password { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
         [Required]
         [StringLength(30)]
         public string Name { get; set; }

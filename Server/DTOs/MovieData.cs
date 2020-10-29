@@ -7,6 +7,7 @@ namespace Server.DTOs
 {
     public class MovieData
     {
+        public int idUser { get; set; }
         public int? IdMovieData { get; set; }
         public int? IdMovie { get; set; }
         public DateTime RegisterDate { get; set; }
@@ -20,10 +21,11 @@ namespace Server.DTOs
         public byte? MetaScore { get; set; }
         public byte? Imdb { get; set; }
 
-        public Models.MovieData MapToModel(string idImage)
+        public Models.MovieData MapToModel(int idMovie,string idImage)
         {
             Models.MovieData data = new Models.MovieData
             {
+                IdMovie = idMovie,
                 RegisterDate = this.RegisterDate,
                 Title = this.Name,
                 Year = this.Year,

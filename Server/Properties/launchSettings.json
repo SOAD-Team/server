@@ -24,7 +24,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DB_CONNECTION_STRING": "Server=tcp:my-movie.database.windows.net,1433;Initial Catalog=my-movie-database;Persist Security Info=False;User ID=Abstractize;Password=Leirbag36011999;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
-        "MONGODB_CONNECTION_STRING": "mongodb://abstractize:n7NSN9zQYSTZ09B0zDldhozTbgBjS8T8NVsN96Iu0FOaryx4FBZmUlJ2D0lI9YON94N9mRqU2JWu7Z4opSoHbQ==@abstractize.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@abstractize@"
+        "MONGODB_CONNECTION_STRING": "mongodb://abstractize:n7NSN9zQYSTZ09B0zDldhozTbgBjS8T8NVsN96Iu0FOaryx4FBZmUlJ2D0lI9YON94N9mRqU2JWu7Z4opSoHbQ==@abstractize.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@abstractize@&retrywrites=false"
       }
     }
   }

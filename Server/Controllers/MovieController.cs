@@ -25,15 +25,22 @@ namespace Server.Controllers
         [HttpPost]
         public DTOs.MovieData CreateMovie(DTOs.MovieData movieData)
         {
-            Console.WriteLine(movieData);
-            // string imageId = _mongoContext.Create(movieData.Image.MapToImage()).Id;
+            string imageId = _mongoContext.Create(movieData.Image.MapToImage()).Id;
+            Movie movie = new Movie(movieData.idUser);
+            _context.Movie.Add(movie);
+            _context.SaveChanges();
+            int movieId = movie.IdMovie;
+            MovieData data = movieData.MapToModel(movieId,imageId);
+            _context.MovieData.Add(data);
+            _context.SaveChanges();
+
+            Console.WriteLine(data);
             return null;
         }
 
         [HttpGet]
         public IEnumerable<Movie> Get()
         {
-            this._logger.Log(LogLevel.Information,"API is Working & Connecting to DB");
             List<Movie> movies = this._context.Movie.ToList<Movie>();
             return movies;
         }
