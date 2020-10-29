@@ -11,7 +11,7 @@ namespace Server.DTOs
         public int? IdMovie { get; set; }
         public DateTime RegisterDate { get; set; }
         public string Name { get; set; }
-        public string Year { get; set; }
+        public int Year { get; set; }
         public Models.Genre[] Genres { get; set; }
         public Models.Language[] Languages { get; set; }
         public bool PlatFav { get; set; }

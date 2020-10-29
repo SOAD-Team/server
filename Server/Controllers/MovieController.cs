@@ -37,5 +37,23 @@ namespace Server.Controllers
             List<Movie> movies = this._context.Movie.ToList<Movie>();
             return movies;
         }
+
+        [HttpGet("genres")]
+        public IEnumerable<Genre> GetGenres()
+        {
+            return this._context.Genre.ToList<Genre>(); ;
+        }
+
+        [HttpGet("languages")]
+        public IEnumerable<Language> GetLanguages()
+        {
+            return this._context.Language.ToList<Language>(); ;
+        }
+
+        [HttpGet("styles")]
+        public IEnumerable<Style> GetStyles()
+        {
+            return this._context.Style.ToList<Style>(); ;
+        }
     }
 }
