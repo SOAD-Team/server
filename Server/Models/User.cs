@@ -20,7 +20,13 @@ namespace Server.Models
         [Required]
         [StringLength(30)]
         public string Password { get; set; }
-        public bool? IsActive { get; set; }
+        public bool IsActive { get; set; }
+        [Required]
+        [StringLength(30)]
+        public string Name { get; set; }
+        [Required]
+        [StringLength(40)]
+        public string LastName { get; set; }
 
         [InverseProperty("IdUserNavigation")]
         public virtual ICollection<Movie> Movie { get; set; }
