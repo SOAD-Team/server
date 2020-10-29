@@ -15,9 +15,7 @@ namespace Server.Models
         [Required]
         [StringLength(50)]
         public string Title { get; set; }
-        [Required]
-        [StringLength(4)]
-        public string Year { get; set; }
+        public int Year { get; set; }
         public bool PlatFav { get; set; }
         [Required]
         [Column(TypeName = "text")]
