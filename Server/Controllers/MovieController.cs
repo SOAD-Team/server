@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Server.Models;
 using System.Linq;
+using System;
 
 namespace Server.Controllers
 {
@@ -12,11 +13,21 @@ namespace Server.Controllers
     {
         private readonly ILogger<MovieController> _logger;
         private readonly MoviesDB _context;
+        private readonly ImagesDB _mongoContext;
 
-        public MovieController(ILogger<MovieController> logger, MoviesDB context)
+        public MovieController(ILogger<MovieController> logger, MoviesDB context, ImagesDB mongoContext)
         {
             _logger = logger;
             _context = context;
+            _mongoContext = mongoContext;
+        }
+
+        [HttpPost]
+        public DTOs.MovieData CreateMovie(DTOs.MovieData movieData)
+        {
+            Console.WriteLine(movieData);
+            // string imageId = _mongoContext.Create(movieData.Image.MapToImage()).Id;
+            return null;
         }
 
         [HttpGet]

@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System.Drawing;
+using System;
 
 namespace Server.Models
 {
@@ -9,6 +9,6 @@ namespace Server.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
-        public Bitmap ObjectImage { get; set; }
+        public Object ObjectImage { get; set; }
     }
 }
