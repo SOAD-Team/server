@@ -36,6 +36,8 @@ namespace Server.Controllers
             _context.MovieData.Add(data);
             _context.SaveChanges();
 
+
+            _logger.Log(LogLevel.Information, "Adding Genres");
             foreach (Genre genre in movieData.Genres)
             {
                 if (genre.IdGenre.Equals(null))
@@ -46,6 +48,7 @@ namespace Server.Controllers
                 }
                 _context.MovieDataGenre.Add(new MovieDataGenre(data.IdMovieData, genre.IdGenre));
             }
+            _logger.Log(LogLevel.Information, "Adding Languages");
             foreach (Language language in movieData.Languages)
             {
                 if (language.IdLanguage.Equals(null))
@@ -62,7 +65,7 @@ namespace Server.Controllers
             List<Genre> genres = new List<Genre>();
             qGenres.ForEach(g => genres.Add(new Genre(g.IdGenre, g.Name)) );
             List<Language> languages = new List<Language>();
-            var qLanguages = _context.Language.Join(_context.MovieDataGenre, g => g.IdLanguage, mdg => mdg.IdGenre, (g, mdg) => new { g.IdLanguage, g.Name, mdg.IdMovieData }).Where(g => g.IdMovieData == data.IdMovieData).ToList();
+            var qLanguages = _context.Language.Join(_context.MovieDataLanguage, g => g.IdLanguage, mdg => mdg.IdLanguage, (g, mdg) => new { g.IdLanguage, g.Name, mdg.IdMovieData }).Where(g => g.IdMovieData == data.IdMovieData).ToList();
             qLanguages.ForEach(g => languages.Add(new Language(g.IdLanguage, g.Name)));
             Style[] styles = _context.Style.Where(s => s.IdStyle == data.IdStyle).ToArray<Style>();
 
