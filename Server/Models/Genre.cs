@@ -12,6 +12,19 @@ namespace Server.Models
             MovieDataGenre = new HashSet<MovieDataGenre>();
         }
 
+        public Genre(string name)
+        {
+            MovieDataGenre = new HashSet<MovieDataGenre>();
+            Name = name;
+        }
+
+        public Genre(int idGenre, string name)
+        {
+            MovieDataGenre = new HashSet<MovieDataGenre>();
+            IdGenre = idGenre;
+            Name = name;
+        }
+
         [Key]
         public int IdGenre { get; set; }
         [Required]

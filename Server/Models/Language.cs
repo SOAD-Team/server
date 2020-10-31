@@ -11,7 +11,17 @@ namespace Server.Models
         {
             MovieDataLanguage = new HashSet<MovieDataLanguage>();
         }
-
+        public Language(string name)
+        {
+            MovieDataLanguage = new HashSet<MovieDataLanguage>();
+            Name = name;
+        }
+        public Language(int idLanguage, string name)
+        {
+            MovieDataLanguage = new HashSet<MovieDataLanguage>();
+            IdLanguage = idLanguage;
+            Name = name;
+        }
         [Key]
         public int IdLanguage { get; set; }
         [Required]

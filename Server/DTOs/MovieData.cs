@@ -7,7 +7,7 @@ namespace Server.DTOs
 {
     public class MovieData
     {
-        public int idUser { get; set; }
+        public int IdUser { get; set; }
         public int? IdMovieData { get; set; }
         public int? IdMovie { get; set; }
         public DateTime RegisterDate { get; set; }
@@ -32,7 +32,8 @@ namespace Server.DTOs
                 PlatFav = this.PlatFav,
                 ImageMongoId = idImage,
                 MetaScore = this.MetaScore,
-                Imdb = this.Imdb
+                Imdb = this.Imdb,
+                IdStyle = this.Styles[0].IdStyle
             };
             return data;
         }
