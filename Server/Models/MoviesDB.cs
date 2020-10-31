@@ -86,36 +86,38 @@ namespace Server.Models
 
             modelBuilder.Entity<MovieDataGenre>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.IdMovieDataGenre)
+                    .HasName("PK__tmp_ms_x__A19A4473AD79554F");
 
                 entity.HasOne(d => d.IdGenreNavigation)
-                    .WithMany()
+                    .WithMany(p => p.MovieDataGenre)
                     .HasForeignKey(d => d.IdGenre)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__MovieData__IdGen__6CA31EA0");
+                    .HasConstraintName("FK__MovieData__IdGen__7BE56230");
 
                 entity.HasOne(d => d.IdMovieDataNavigation)
-                    .WithMany()
+                    .WithMany(p => p.MovieDataGenre)
                     .HasForeignKey(d => d.IdMovieData)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__MovieData__IdMov__6BAEFA67");
+                    .HasConstraintName("FK__MovieData__IdMov__7AF13DF7");
             });
 
             modelBuilder.Entity<MovieDataLanguage>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.IdMovieDataLanguage)
+                    .HasName("PK__tmp_ms_x__6386009C43EC3D5E");
 
                 entity.HasOne(d => d.IdLanguageNavigation)
-                    .WithMany()
+                    .WithMany(p => p.MovieDataLanguage)
                     .HasForeignKey(d => d.IdLanguage)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__MovieData__IdLan__69C6B1F5");
+                    .HasConstraintName("FK__MovieData__IdLan__7FB5F314");
 
                 entity.HasOne(d => d.IdMovieDataNavigation)
-                    .WithMany()
+                    .WithMany(p => p.MovieDataLanguage)
                     .HasForeignKey(d => d.IdMovieData)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__MovieData__IdMov__68D28DBC");
+                    .HasConstraintName("FK__MovieData__IdMov__7EC1CEDB");
             });
 
             modelBuilder.Entity<Review>(entity =>

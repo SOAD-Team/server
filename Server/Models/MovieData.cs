@@ -7,6 +7,12 @@ namespace Server.Models
 {
     public partial class MovieData
     {
+        public MovieData()
+        {
+            MovieDataGenre = new HashSet<MovieDataGenre>();
+            MovieDataLanguage = new HashSet<MovieDataLanguage>();
+        }
+
         [Key]
         public int IdMovieData { get; set; }
         public int IdMovie { get; set; }
@@ -31,5 +37,9 @@ namespace Server.Models
         [ForeignKey(nameof(IdStyle))]
         [InverseProperty(nameof(Style.MovieData))]
         public virtual Style IdStyleNavigation { get; set; }
+        [InverseProperty("IdMovieDataNavigation")]
+        public virtual ICollection<MovieDataGenre> MovieDataGenre { get; set; }
+        [InverseProperty("IdMovieDataNavigation")]
+        public virtual ICollection<MovieDataLanguage> MovieDataLanguage { get; set; }
     }
 }
