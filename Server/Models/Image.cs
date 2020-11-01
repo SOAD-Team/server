@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System;
+using Newtonsoft.Json;
 
 namespace Server.Models
 {
@@ -9,14 +9,25 @@ namespace Server.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
-        public Object ObjectImage { get; set; }
+        public byte[] ObjectImage { get; set; }
+
+        public Image(byte[] objectImage)
+        {
+            this.ObjectImage = objectImage;
+        }
+
+        public Image(string id, byte[] objectImage)
+        {
+            this.Id = id;
+            this.ObjectImage = objectImage;
+        }
 
         public DTOs.Image MapToPresentationModel()
         {
             return new DTOs.Image
             {
                 Id = this.Id,
-                ObjectImage = this.ObjectImage,
+                ObjectImage = null,
                 Url = ""
             };
             

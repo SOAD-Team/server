@@ -3,7 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Server.Models;
 using System.Linq;
-using System;
+using System.Text.Json;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Server.Controllers
 {
@@ -15,27 +19,42 @@ namespace Server.Controllers
         private readonly MoviesDB _context;
         private readonly ImagesDB _mongoContext;
 
-        public MovieController(ILogger<MovieController> logger, MoviesDB context, ImagesDB mongoContext)
+        public MovieController(ILogger<MovieController> logger, MoviesDB context, ImagesDB mongoContext, IWebHostEnvironment env)
         {
             _logger = logger;
             _context = context;
             _mongoContext = mongoContext;
         }
 
+        [HttpPost("image")]
+        public async Task<DTOs.Image> CreateImage([FromForm] IFormFile file)
+        {
+            byte[] fileBytes;
+
+            using (var stream = new MemoryStream())
+            {
+                await stream.CopyToAsync(stream);
+                fileBytes = stream.ToArray();
+            }
+
+            _logger.Log(LogLevel.Information,"IMAGE: " + JsonSerializer.Serialize(file));
+            Image data = new Image(fileBytes);
+            data = _mongoContext.Create(data);
+
+            return data.MapToPresentationModel();
+        }
+
         [HttpPost]
         public DTOs.MovieData CreateMovie(DTOs.MovieData movieData)
         {
-            Image image = movieData.Image.MapToImage();
-            string imageId = _mongoContext.Create(image).Id;
             Movie movie = new Movie(movieData.IdUser);
             _context.Movie.Add(movie);
             _context.SaveChanges();
             int movieId = movie.IdMovie;
             _logger.Log(LogLevel.Information, "MovieId: " + movieId.ToString());
-            MovieData data = movieData.MapToModel(movieId, imageId);
+            MovieData data = movieData.MapToModel(movieId, movieData.Image.Id);
             _context.MovieData.Add(data);
             _context.SaveChanges();
-
 
             _logger.Log(LogLevel.Information, "Adding Genres");
             foreach (Genre genre in movieData.Genres)
@@ -69,7 +88,7 @@ namespace Server.Controllers
             qLanguages.ForEach(g => languages.Add(new Language(g.IdLanguage, g.Name)));
             Style[] styles = _context.Style.Where(s => s.IdStyle == data.IdStyle).ToArray<Style>();
 
-            return data.MapToPresentationModel(movie.IdUser, genres.ToArray(), languages.ToArray(), image, styles);
+            return data.MapToPresentationModel(movie.IdUser, genres.ToArray(), languages.ToArray(), _mongoContext, styles);
         }
 
         [HttpGet]
