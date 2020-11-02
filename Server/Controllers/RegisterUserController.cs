@@ -44,8 +44,10 @@ namespace Server.Controllers
         [HttpPost]
         public Models.User Post(Models.User user)
         {
-            //_context.User.Add(user);
-            //_context.SaveChanges();
+            User last = _context.User.ToList().Last();
+            _context.User.Add(user);
+            _context.SaveChanges();
+            Console.WriteLine(last.IdUser);
             return user;
         }
 
