@@ -38,6 +38,7 @@ namespace Server
                 sp.GetRequiredService<IOptions<ImagesDatabaseSettings>>().Value);
 
             services.AddSingleton<ImagesDB>();
+            services.AddSingleton<IImagesDB>(sp => sp.GetRequiredService<ImagesDB>());
 
             services.AddControllers();
 

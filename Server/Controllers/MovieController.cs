@@ -22,13 +22,13 @@ namespace Server.Controllers
         }
 
         [HttpPost("image")]
-        public async Task<DTOs.Image> CreateImage([FromForm] IFormFile file)
+        public async Task<DTOs.Image> CreateImage([FromForm] IFormFile image)
         {
             byte[] fileBytes;
 
             using (var stream = new MemoryStream())
             {
-                await file.CopyToAsync(stream);
+                await image.CopyToAsync(stream);
                 fileBytes = stream.ToArray();
             }
 
