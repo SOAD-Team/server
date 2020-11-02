@@ -7,7 +7,6 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
 
 namespace Server.Controllers
 {
@@ -19,7 +18,7 @@ namespace Server.Controllers
         private readonly MoviesDB _context;
         private readonly ImagesDB _mongoContext;
 
-        public MovieController(ILogger<MovieController> logger, MoviesDB context, ImagesDB mongoContext, IWebHostEnvironment env)
+        public MovieController(ILogger<MovieController> logger, MoviesDB context, ImagesDB mongoContext)
         {
             _logger = logger;
             _context = context;
@@ -92,7 +91,7 @@ namespace Server.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Movie> Get()
+        public IEnumerable<Movie> GetMovies()
         {
             List<Movie> movies = this._context.Movie.ToList<Movie>();
             return movies;
@@ -101,19 +100,19 @@ namespace Server.Controllers
         [HttpGet("genres")]
         public IEnumerable<Genre> GetGenres()
         {
-            return this._context.Genre.ToList<Genre>(); ;
+            return this._context.Genre.ToList<Genre>();
         }
 
         [HttpGet("languages")]
         public IEnumerable<Language> GetLanguages()
         {
-            return this._context.Language.ToList<Language>(); ;
+            return this._context.Language.ToList<Language>();
         }
 
         [HttpGet("styles")]
         public IEnumerable<Style> GetStyles()
         {
-            return this._context.Style.ToList<Style>(); ;
+            return this._context.Style.ToList<Style>();
         }
     }
 }

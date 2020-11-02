@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using Newtonsoft.Json;
 using Server.Models;
 
 namespace Server.DTOs
@@ -7,11 +6,10 @@ namespace Server.DTOs
     public class Image
     {
         public string Id { get; set; }
-        [JsonProperty]
         public FileModel ObjectImage { get; set; }
         public string Url { get; set; }
 
-        public Models.Image MapToImage() 
+        public Models.Image MapToImage()
         {
             byte[] fileBytes;
             using (var memoryStream = new MemoryStream())
@@ -25,5 +23,7 @@ namespace Server.DTOs
                 fileBytes
             );
         }
+
+        public static Image Empty {get => new Image();}
     }
 }

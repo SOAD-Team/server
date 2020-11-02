@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Server.DTOs
 {
     public class MovieData
     {
+        public static MovieData Empty { get; set; }
         public int IdUser { get; set; }
         public int? IdMovieData { get; set; }
         public int? IdMovie { get; set; }
