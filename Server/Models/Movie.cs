@@ -32,5 +32,7 @@ namespace Server.Models
         public virtual ICollection<MovieData> MovieData { get; set; }
         [InverseProperty("IdMovieNavigation")]
         public virtual ICollection<Review> Review { get; set; }
+
+        public static Movie Empty { get => new Movie(); }
     }
 }

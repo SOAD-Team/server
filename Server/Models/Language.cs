@@ -30,5 +30,15 @@ namespace Server.Models
 
         [InverseProperty("IdLanguageNavigation")]
         public virtual ICollection<MovieDataLanguage> MovieDataLanguage { get; set; }
+
+        public static Language Empty { get => empty(); }
+
+        private static Language empty()
+        {
+            Language value = new Language();
+            const string name = "";
+            value.Name = name;
+            return value;
+        }
     }
 }

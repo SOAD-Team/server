@@ -33,5 +33,15 @@ namespace Server.Models
 
         [InverseProperty("IdGenreNavigation")]
         public virtual ICollection<MovieDataGenre> MovieDataGenre { get; set; }
+
+        public static Genre Empty { get => empty(); }
+
+        private static Genre empty()
+        {
+            Genre value = new Genre();
+            const string name = "";
+            value.Name = name;
+            return value;
+        }
     }
 }

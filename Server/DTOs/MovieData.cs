@@ -4,7 +4,24 @@ namespace Server.DTOs
 {
     public class MovieData
     {
-        public static MovieData Empty { get; set; }
+        public static MovieData Empty { get => empty(); }
+
+        private static MovieData empty()
+        {
+            MovieData data = new MovieData();
+            data.IdUser = 0;
+            data.RegisterDate = new DateTime();
+            data.Name = "";
+            data.Year = 0;
+            data.Genres = new Models.Genre[0];
+            data.Languages = new Models.Language[0];
+            data.PlatFav = false;
+            data.Styles = new Models.Style[1]{ Models.Style.Empty };
+            data.Image = Image.Empty;
+
+            return data;
+        }
+
         public int IdUser { get; set; }
         public int? IdMovieData { get; set; }
         public int? IdMovie { get; set; }

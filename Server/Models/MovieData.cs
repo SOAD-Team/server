@@ -42,7 +42,7 @@ namespace Server.Models
         [InverseProperty("IdMovieDataNavigation")]
         public virtual ICollection<MovieDataLanguage> MovieDataLanguage { get; set; }
 
-        public DTOs.MovieData MapToPresentationModel(int idUser, Genre[] genres, Language[] languages, ImagesDB imagesContext, Style[] styles)
+        public DTOs.MovieData MapToPresentationModel(int idUser, Genre[] genres, Language[] languages, IImagesDB imagesContext, Style[] styles)
         {
 
             return new DTOs.MovieData

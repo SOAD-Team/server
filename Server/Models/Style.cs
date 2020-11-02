@@ -20,5 +20,15 @@ namespace Server.Models
 
         [InverseProperty("IdStyleNavigation")]
         public virtual ICollection<MovieData> MovieData { get; set; }
+
+        public static Style Empty { get => empty(); }
+
+        private static Style empty()
+        {
+            Style value = new Style();
+            const string name = "";
+            value.Name = name;
+            return value;
+        }
     }
 }

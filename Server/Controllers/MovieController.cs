@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Server.Models;
 using System.Linq;
-using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Threading.Tasks;
@@ -14,13 +12,11 @@ namespace Server.Controllers
     [Route("[controller]")]
     public class MovieController : ControllerBase
     {
-        private readonly ILogger<MovieController> _logger;
         private readonly MoviesDB _context;
-        private readonly ImagesDB _mongoContext;
+        private readonly IImagesDB _mongoContext;
 
-        public MovieController(ILogger<MovieController> logger, MoviesDB context, ImagesDB mongoContext)
+        public MovieController(MoviesDB context, IImagesDB mongoContext)
         {
-            _logger = logger;
             _context = context;
             _mongoContext = mongoContext;
         }
@@ -32,11 +28,10 @@ namespace Server.Controllers
 
             using (var stream = new MemoryStream())
             {
-                await stream.CopyToAsync(stream);
+                await file.CopyToAsync(stream);
                 fileBytes = stream.ToArray();
             }
 
-            _logger.Log(LogLevel.Information,"IMAGE: " + JsonSerializer.Serialize(file));
             Image data = new Image(fileBytes);
             data = _mongoContext.Create(data);
 
@@ -50,30 +45,25 @@ namespace Server.Controllers
             _context.Movie.Add(movie);
             _context.SaveChanges();
             int movieId = movie.IdMovie;
-            _logger.Log(LogLevel.Information, "MovieId: " + movieId.ToString());
             MovieData data = movieData.MapToModel(movieId, movieData.Image.Id);
             _context.MovieData.Add(data);
             _context.SaveChanges();
 
-            _logger.Log(LogLevel.Information, "Adding Genres");
             foreach (Genre genre in movieData.Genres)
             {
                 if (genre.IdGenre.Equals(null))
                 {
                     _context.Genre.Add(new Genre(genre.Name));
                     _context.SaveChanges();
-                    _logger.Log(LogLevel.Information, genre.IdGenre.ToString());
                 }
                 _context.MovieDataGenre.Add(new MovieDataGenre(data.IdMovieData, genre.IdGenre));
             }
-            _logger.Log(LogLevel.Information, "Adding Languages");
             foreach (Language language in movieData.Languages)
             {
                 if (language.IdLanguage.Equals(null))
                 {
                     _context.Language.Add(new Language(language.Name));
                     _context.SaveChanges();
-                    _logger.Log(LogLevel.Information, language.IdLanguage.ToString());
                 }
                 _context.MovieDataLanguage.Add(new MovieDataLanguage(data.IdMovieData, language.IdLanguage));
             }

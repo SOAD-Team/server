@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Server.Models
 {
-    public class ImagesDB
+    public class ImagesDB : IImagesDB
     {
         private readonly IMongoCollection<Image> _Images;
 

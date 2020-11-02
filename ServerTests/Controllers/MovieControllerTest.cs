@@ -1,14 +1,14 @@
 ﻿using NUnit.Framework;
-using Server.Controllers;
-using Microsoft.Extensions.Logging;
 using Server.Models;
-using System;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using System.IO;
 using System.Threading.Tasks;
 using NUnit.Framework.Internal;
+using System;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Server.Controllers.Tests
 {
@@ -17,45 +17,53 @@ namespace Server.Controllers.Tests
     {
 
         private MovieController controller;
+        private MoviesDB context;
     
         [SetUp]
         public void Setup()
         {
-            var services = new ServiceCollection();
-            services.AddTransient<Logger>();
-            services.AddTransient<ImagesDB>();
-            services.AddTransient<MoviesDB>();
-            services.AddTransient<MovieController>();
-
-            var serviceProvider = services.BuildServiceProvider();
-
-            controller = serviceProvider.GetService<MovieController>();
+            var options = new DbContextOptionsBuilder<MoviesDB>()
+            .UseInMemoryDatabase(databaseName: "Movies Test").Options;
+            context = new MoviesDB(options);
+            Mock<IImagesDB> mongoContextStub = new Mock<IImagesDB>(MockBehavior.Loose);
+            mongoContextStub.Setup(_ => _.Create(It.IsAny<Image>())).Returns<Image>(im => im);
+            mongoContextStub.Setup(_ => _.Get(It.IsAny<string>())).Returns(Image.Empty);
+            controller = new MovieController(context, mongoContextStub.Object);
+            
         }
         [Test()]
-        public void GetTest()
+        public void GetMoviesTest()
         {
+            context.Movie.Add(Movie.Empty);
+            context.SaveChanges();
             Assert.IsNotEmpty(controller.GetMovies());
         }
 
         [Test()]
         public void GetGenresTest()
         {
+            context.Genre.Add(Genre.Empty);
+            context.SaveChanges();
             Assert.IsNotEmpty(controller.GetGenres());
         }
 
         [Test()]
         public void GetLanguagesTest()
         {
+            context.Language.Add(Language.Empty);
+            context.SaveChanges();
             Assert.IsNotEmpty(controller.GetLanguages());
         }
 
         [Test()]
         public void GetStylesTest()
         {
+            context.Style.Add(Style.Empty);
+            context.SaveChanges();
             Assert.IsNotEmpty(controller.GetStyles());
         }
         [Test()]
-        public async Task CreateImageTestAsync()
+        public void CreateImageTest()
         {
             //Arrange
             var fileMock = new Mock<IFormFile>();
@@ -74,18 +82,17 @@ namespace Server.Controllers.Tests
 
             var file = fileMock.Object;
 
-            var result = await controller.CreateImage(file);
+            var result = controller.CreateImage(file);
 
             //Assert
             Assert.IsInstanceOf(typeof(Task<DTOs.Image>), result);
         }
 
         [Test()]
-        public void CreateMovieTestAsync()
+        public void CreateMovieTest()
         {
-            Mock<DTOs.MovieData> mock = new Mock<DTOs.MovieData>(DTOs.MovieData.Empty);
-            var result = controller.CreateMovie(mock.Object);
-            Assert.IsInstanceOf(typeof(Task<DTOs.MovieData>), result);
+            var result = controller.CreateMovie(DTOs.MovieData.Empty);
+            Assert.IsInstanceOf(typeof(DTOs.MovieData), result);
         }
     }
 }
