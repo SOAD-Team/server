@@ -5,10 +5,7 @@ using Moq;
 using System.IO;
 using System.Threading.Tasks;
 using NUnit.Framework.Internal;
-using System;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace Server.Controllers.Tests
 {
@@ -92,6 +89,16 @@ namespace Server.Controllers.Tests
         public void CreateMovieTest()
         {
             var result = controller.CreateMovie(DTOs.MovieData.Empty);
+            Assert.IsInstanceOf(typeof(DTOs.MovieData), result);
+        }
+
+        [Test()]
+        public void CreateMovieNotEmptyTest()
+        {
+            var data = DTOs.MovieData.Empty;
+            data.Languages = new Language[2]{ Language.Empty, Language.Empty };
+            data.Genres = new Genre[2] { Genre.Empty, Genre.Empty };
+            var result = controller.CreateMovie(data);
             Assert.IsInstanceOf(typeof(DTOs.MovieData), result);
         }
     }
