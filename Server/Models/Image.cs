@@ -1,6 +1,5 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System.Drawing;
 
 namespace Server.Models
 {
@@ -9,6 +8,30 @@ namespace Server.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
-        public Bitmap ObjectImage { get; set; }
+        public byte[] ObjectImage { get; set; }
+
+        public Image(byte[] objectImage)
+        {
+            this.ObjectImage = objectImage;
+        }
+
+        public Image(string id, byte[] objectImage)
+        {
+            this.Id = id;
+            this.ObjectImage = objectImage;
+        }
+
+        public DTOs.Image MapToPresentationModel()
+        {
+            return new DTOs.Image
+            {
+                Id = this.Id,
+                ObjectImage = null,
+                Url = ""
+            };
+
+        }
+
+        public static Image Empty { get => new Image(new byte[0]); }
     }
 }

@@ -11,7 +11,17 @@ namespace Server.Models
         {
             MovieDataLanguage = new HashSet<MovieDataLanguage>();
         }
-
+        public Language(string name)
+        {
+            MovieDataLanguage = new HashSet<MovieDataLanguage>();
+            Name = name;
+        }
+        public Language(int idLanguage, string name)
+        {
+            MovieDataLanguage = new HashSet<MovieDataLanguage>();
+            IdLanguage = idLanguage;
+            Name = name;
+        }
         [Key]
         public int IdLanguage { get; set; }
         [Required]
@@ -20,5 +30,15 @@ namespace Server.Models
 
         [InverseProperty("IdLanguageNavigation")]
         public virtual ICollection<MovieDataLanguage> MovieDataLanguage { get; set; }
+
+        public static Language Empty { get => empty(); }
+
+        private static Language empty()
+        {
+            Language value = new Language();
+            const string name = "";
+            value.Name = name;
+            return value;
+        }
     }
 }

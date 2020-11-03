@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Models
 {
     public partial class MovieDataGenre
     {
+        public MovieDataGenre(int idMovieData, int idGenre)
+        {
+            IdMovieData = idMovieData;
+            IdGenre = idGenre;
+        }
         [Key]
         public int IdMovieDataGenre { get; set; }
         public int IdMovieData { get; set; }

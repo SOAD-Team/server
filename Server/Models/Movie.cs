@@ -13,10 +13,17 @@ namespace Server.Models
             Review = new HashSet<Review>();
         }
 
+        public Movie(int idUser)
+        {
+            this.IdUser = idUser;
+            MovieData = new HashSet<MovieData>();
+            Review = new HashSet<Review>();
+        }
+
         [Key]
         public int IdMovie { get; set; }
         public int IdUser { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
         [ForeignKey(nameof(IdUser))]
         [InverseProperty(nameof(User.Movie))]
@@ -25,5 +32,7 @@ namespace Server.Models
         public virtual ICollection<MovieData> MovieData { get; set; }
         [InverseProperty("IdMovieNavigation")]
         public virtual ICollection<Review> Review { get; set; }
+
+        public static Movie Empty { get => new Movie(); }
     }
 }

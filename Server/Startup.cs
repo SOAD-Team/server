@@ -19,6 +19,15 @@ namespace Server
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                  "CorsPolicy",
+                  builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
+
             services.AddDbContext<MoviesDB>();
             services.AddScoped<MoviesDB>();
 
@@ -29,8 +38,12 @@ namespace Server
                 sp.GetRequiredService<IOptions<ImagesDatabaseSettings>>().Value);
 
             services.AddSingleton<ImagesDB>();
+            services.AddSingleton<IImagesDB>(sp => sp.GetRequiredService<ImagesDB>());
 
             services.AddControllers();
+
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -45,6 +58,8 @@ namespace Server
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints =>
             {
