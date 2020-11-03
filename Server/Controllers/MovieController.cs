@@ -5,6 +5,9 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Threading.Tasks;
+using Server.Helpers;
+using Microsoft.EntityFrameworkCore.Internal;
+using Server.Structs;
 
 namespace Server.Controllers
 {
@@ -78,6 +81,18 @@ namespace Server.Controllers
             Style[] styles = _context.Style.Where(s => s.IdStyle == data.IdStyle).ToArray<Style>();
 
             return data.MapToPresentationModel(movie.IdUser, genres.ToArray(), languages.ToArray(), _mongoContext, styles);
+        }
+        [HttpGet("{id}")]
+        public async Task<IEnumerable<DTOs.MovieData>> GetMovieDataByUserId(int id)
+        {
+            Movie[] userMovies = _context.Movie.Where(m => m.IdUser == id).ToArray();
+            MovieData[] userDatas = _context.MovieData.Where(md =>  MovieControllerHelper.FilterMovieData(md,userMovies)).ToArray();
+            Image[] images = _mongoContext.Get().Where(im => MovieControllerHelper.FilterImages(im, userDatas)).ToArray();
+
+            Data[] completeData = MovieControllerHelper.CreateData(userDatas, _context);
+
+
+            return MovieControllerHelper.CreateMovieDatas(userMovies,completeData,images);
         }
 
         [HttpGet]

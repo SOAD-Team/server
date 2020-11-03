@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Server.Models;
+using System;
 
 namespace Server.DTOs
 {
@@ -35,6 +36,26 @@ namespace Server.DTOs
         public Models.Style[] Styles { get; set; }
         public byte? MetaScore { get; set; }
         public byte? Imdb { get; set; }
+
+        public MovieData()
+        {
+
+        }
+
+        public MovieData(Movie movie, Models.MovieData data, Genre[] genres, Language[] languages, Style[] styles, Models.Image image)
+        {
+            this.IdMovie = movie.IdMovie;
+            this.IdUser = movie.IdUser;
+            this.IdMovieData = data.IdMovieData;
+            this.RegisterDate = data.RegisterDate;
+            this.Name = data.Title;
+            this.Year = data.Year;
+            this.Genres = genres;
+            this.Languages = languages;
+            this.PlatFav = data.PlatFav;
+            this.Styles = styles;
+            this.Image = image.MapToPresentationModel();
+        }
 
         public Models.MovieData MapToModel(int idMovie,string idImage)
         {

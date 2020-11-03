@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Server.Controllers;
+using NUnit.Framework;
 using Server.Models;
 using Microsoft.AspNetCore.Http;
 using Moq;
@@ -6,6 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using NUnit.Framework.Internal;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Server.Controllers.Tests
 {
@@ -15,7 +17,7 @@ namespace Server.Controllers.Tests
 
         private MovieController controller;
         private MoviesDB context;
-    
+
         [SetUp]
         public void Setup()
         {
@@ -26,7 +28,7 @@ namespace Server.Controllers.Tests
             mongoContextStub.Setup(_ => _.Create(It.IsAny<Image>())).Returns<Image>(im => im);
             mongoContextStub.Setup(_ => _.Get(It.IsAny<string>())).Returns(Image.Empty);
             controller = new MovieController(context, mongoContextStub.Object);
-            
+
         }
         [Test()]
         public void GetMoviesTest()
@@ -96,10 +98,16 @@ namespace Server.Controllers.Tests
         public void CreateMovieNotEmptyTest()
         {
             var data = DTOs.MovieData.Empty;
-            data.Languages = new Language[2]{ Language.Empty, Language.Empty };
+            data.Languages = new Language[2] { Language.Empty, Language.Empty };
             data.Genres = new Genre[2] { Genre.Empty, Genre.Empty };
             var result = controller.CreateMovie(data);
             Assert.IsInstanceOf(typeof(DTOs.MovieData), result);
+        }
+
+        [Test()]
+        public void GetMovieDataByUserIdTest()
+        {
+            throw new NotImplementedException();
         }
     }
 }
