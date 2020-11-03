@@ -26,41 +26,30 @@ namespace Server.Controllers
             _mongoContext = mongoContext;
         }
 
-        // GET: api/<RegisterUserController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<RegisterUserController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
         // POST api/<RegisterUserController>
         [HttpPost]
-        public Models.User Post(Models.User user)
+        public int RegisterUser(DTOs.User user)
         {
+            int status_code = 0;
             User last = _context.User.ToList().Last();
-            _context.User.Add(user);
-            _context.SaveChanges();
-            Console.WriteLine(last.IdUser);
-            return user;
-        }
+            try
+            {
+                User temp = new User();
+                temp.LastName = user.LastName;
+                temp.Name = user.Name;
+                temp.Email = user.Email;
+                temp.Password = user.Password;
+                temp.IsActive = true;
+                _context.User.Add(temp);
+                _context.SaveChanges();
+                status_code = 1;
 
-        // PUT api/<RegisterUserController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<RegisterUserController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            }
+            catch (Exception)
+            {
+                status_code = 0;
+            }
+            return status_code;
         }
     }
 }
