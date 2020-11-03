@@ -7,9 +7,18 @@ namespace Server.Models
 {
     public partial class User
     {
+        public static User Empty { get => new User("", "", "", ""); }
         public User()
         {
             Movie = new HashSet<Movie>();
+        }
+
+        public User(string email, string password, string name, string lastName)
+        {
+            Email = email;
+            Password = password;
+            Name = name;
+            LastName = lastName;
         }
 
         [Key]

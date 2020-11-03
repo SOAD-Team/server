@@ -1,4 +1,4 @@
-﻿using Server.Controllers;
+﻿using System.Linq;
 using NUnit.Framework;
 using Server.Models;
 using Microsoft.AspNetCore.Http;
@@ -107,7 +107,22 @@ namespace Server.Controllers.Tests
         [Test()]
         public void GetMovieDataByUserIdTest()
         {
-            throw new NotImplementedException();
+            context.Language.Add(Language.Empty);
+            context.Style.Add(Style.Empty);
+            context.Genre.Add(Genre.Empty);
+            User user = context.User.Add(User.Empty).Entity;
+            var data = DTOs.MovieData.Empty;
+            data.IdUser = user.IdUser;
+            context.SaveChanges();
+
+            var movie = controller.CreateMovie(data);
+            var results = controller.GetMovieDataByUserId(user.IdUser).ToArray();
+            foreach(var result in results)
+            {
+                if (result.IdMovieData == movie.IdMovieData)
+                    Assert.Pass();
+            }
+            Assert.Fail();
         }
     }
 }
