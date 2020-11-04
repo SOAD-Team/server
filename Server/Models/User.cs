@@ -12,6 +12,14 @@ namespace Server.Models
             Movie = new HashSet<Movie>();
         }
 
+        public User(string email, string password, string name, string lastName)
+        {
+            Email = email;
+            Password = password;
+            Name = name;
+            LastName = lastName;
+        }
+
         [Key]
         public int IdUser { get; set; }
         [Required]
