@@ -13,9 +13,12 @@
             data.LastName = "";
             data.Email = "";
             data.Name = "";
+            data.Password = "";
 
             return data;
         }
+
+        
 
         public int IdUser { get; set; }
         public string Email { get; set; }

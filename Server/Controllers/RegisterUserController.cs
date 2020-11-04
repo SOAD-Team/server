@@ -28,12 +28,7 @@ namespace Server.Controllers
             var user1 =  _context.User.Where(usr => usr.Email == user.Email).Select(usr => usr.Email).FirstOrDefault();
             if(user1 == null)
             {
-                User temp = new User();
-                temp.LastName = user.LastName;
-                temp.Name = user.Name;
-                temp.Email = user.Email;
-                temp.Password = user.Password;
-                temp.IsActive = true;
+                User temp = new User(user.Email, user.Password, user.Name, user.LastName);
                 _context.User.Add(temp);
                 _context.SaveChanges();
                 statusCode = 1;
