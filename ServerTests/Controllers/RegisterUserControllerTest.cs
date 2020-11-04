@@ -1,13 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using Server.Controllers;
 using Server.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ServerTests.Controllers
 {
@@ -29,8 +24,20 @@ namespace ServerTests.Controllers
         public void RegisterUserTestAsync()
         {
             var data = Server.DTOs.User.Empty;
+            data.Email = "pruebaemail1@gmail.com";
             var result = controller.RegisterUser(data);
             Assert.AreEqual(result, 1);
+        }
+
+
+        [Test()]
+        public void FailRegisterUserTestAsync()
+        {
+            var data = Server.DTOs.User.Empty;
+            data.Email = "pruebaemail@gmail.com";
+            var result = controller.RegisterUser(data);
+            result = controller.RegisterUser(data);
+            Assert.AreEqual(result, 0);
         }
     }
 }

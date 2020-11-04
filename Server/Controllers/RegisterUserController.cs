@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Server.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -26,8 +24,10 @@ namespace Server.Controllers
         [HttpPost]
         public int RegisterUser(DTOs.User user)
         {
-            int status_code = 0;
-            try
+            int statusCode = 0;
+
+            var user1 =  _context.User.Where(usr => usr.Email == user.Email).Select(usr => usr.Email).FirstOrDefault();
+            if(user1 == null)
             {
                 User temp = new User();
                 temp.LastName = user.LastName;
@@ -37,14 +37,15 @@ namespace Server.Controllers
                 temp.IsActive = true;
                 _context.User.Add(temp);
                 _context.SaveChanges();
-                status_code = 1;
-
+                statusCode = 1;
             }
-            catch (Exception)
+            else
             {
-                status_code = 0;
+                statusCode = 0;
             }
-            return status_code;
+
+            return statusCode;
+
         }
     }
 }
