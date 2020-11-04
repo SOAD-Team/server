@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
@@ -14,26 +15,21 @@ namespace ServerTests.Controllers
     class RegisterUserControllerTest
     {
         private RegisterUserController controller;
+        private MoviesDB context;
 
         [SetUp]
         public void Setup()
         {
-            var services = new ServiceCollection();
-            services.AddTransient<Logger>();
-            services.AddTransient<ImagesDB>();
-            services.AddTransient<MoviesDB>();
-            services.AddTransient<RegisterUserController>();
-
-            var serviceProvider = services.BuildServiceProvider();
-
-            controller = serviceProvider.GetService<RegisterUserController>();
+            var options = new DbContextOptionsBuilder<MoviesDB>().UseInMemoryDatabase(databaseName: "Movies Test").Options;
+            context = new MoviesDB(options);
+            controller = new RegisterUserController(context);
         }
 
         [Test()]
         public void RegisterUserTestAsync()
         {
-            Mock<Server.DTOs.User> mock = new Mock<Server.DTOs.User>(Server.DTOs.MovieData.Empty);
-            var result = controller.RegisterUser(mock.Object);
+            var data = Server.DTOs.User.Empty;
+            var result = controller.RegisterUser(data);
             Assert.AreEqual(result, 1);
         }
     }

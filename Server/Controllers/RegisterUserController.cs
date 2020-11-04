@@ -15,15 +15,11 @@ namespace Server.Controllers
     public class RegisterUserController : ControllerBase
     {
 
-        private readonly ILogger<MovieController> _logger;
         private readonly MoviesDB _context;
-        private readonly ImagesDB _mongoContext;
 
-        public RegisterUserController(ILogger<MovieController> logger, MoviesDB context, ImagesDB mongoContext)
+        public RegisterUserController(MoviesDB context)
         {
-            _logger = logger;
             _context = context;
-            _mongoContext = mongoContext;
         }
 
         // POST api/<RegisterUserController>
@@ -31,7 +27,6 @@ namespace Server.Controllers
         public int RegisterUser(DTOs.User user)
         {
             int status_code = 0;
-            User last = _context.User.ToList().Last();
             try
             {
                 User temp = new User();

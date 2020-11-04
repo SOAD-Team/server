@@ -7,7 +7,21 @@ namespace Server.DTOs
 {
     public class User
     {
-        public static User Empty { get; set; }
+        public static User Empty { get => empty(); }
+
+        private static User empty()
+        {
+            User data = new User();
+            data.IdUser = 0;
+            data.Email = "";
+            data.IsActive = true;
+            data.LastName = "";
+            data.Email = "";
+            data.Name = "";
+
+            return data;
+        }
+
         public int IdUser { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
