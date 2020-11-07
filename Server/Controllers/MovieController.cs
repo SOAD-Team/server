@@ -115,6 +115,14 @@ namespace Server.Controllers
             return movies;
         }
 
+        [HttpGet("moviedata")]
+        public IEnumerable<MovieData> GetMovieData()
+        {
+            List<MovieData> movies = this._context.MovieData.ToList<MovieData>();
+
+            return movies;
+        }
+
         [HttpGet("genres")]
         public IEnumerable<Genre> GetGenres()
         {
