@@ -30,6 +30,8 @@ namespace Server.Models
         public byte? MetaScore { get; set; }
         [Column("IMDB")]
         public byte? Imdb { get; set; }
+        [StringLength(30)]
+        public string Director { get; set; }
 
         [ForeignKey(nameof(IdMovie))]
         [InverseProperty(nameof(Movie.MovieData))]
@@ -59,7 +61,8 @@ namespace Server.Models
                 Image = imagesContext.Get(this.ImageMongoId).MapToPresentationModel(),
                 Styles = styles,
                 MetaScore = this.MetaScore,
-                Imdb = this.Imdb
+                Imdb = this.Imdb,
+                Director = this.Director
             };
         }
     }

@@ -19,6 +19,7 @@ namespace Server.DTOs
             data.PlatFav = false;
             data.Styles = new Models.Style[1]{ Models.Style.Empty };
             data.Image = Image.Empty;
+            data.Director = "";
 
             return data;
         }
@@ -36,6 +37,7 @@ namespace Server.DTOs
         public Models.Style[] Styles { get; set; }
         public byte? MetaScore { get; set; }
         public byte? Imdb { get; set; }
+        public string Director { get; set; }
 
         public MovieData()
         {
@@ -69,7 +71,8 @@ namespace Server.DTOs
                 ImageMongoId = idImage,
                 MetaScore = this.MetaScore,
                 Imdb = this.Imdb,
-                IdStyle = this.Styles[0].IdStyle
+                IdStyle = this.Styles[0].IdStyle,
+                Director = this.Director
             };
             return data;
         }
