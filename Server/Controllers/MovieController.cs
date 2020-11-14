@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Threading.Tasks;
 using Server.Helpers;
-using Microsoft.EntityFrameworkCore.Internal;
 using Server.Structs;
 
 namespace Server.Controllers

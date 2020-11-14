@@ -1,11 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Internal;
-using Server.Models;
+﻿using Server.Models;
 using Server.Structs;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Server.Helpers
 {
@@ -21,7 +17,7 @@ namespace Server.Helpers
                 Language[] languages = _context.Language.Join(_context.MovieDataLanguage, g => g.IdLanguage, mdg => mdg.IdLanguage, (g, mdg) => chooseLanguage(g, mdg, data.IdMovieData)).ToArray();
                 var styleJoin = _context.MovieData.Join(_context.Style, md => md.IdStyle, s => s.IdStyle, (md, s) => new { s, md.IdMovieData }).Where(md => md.IdMovieData == data.IdMovieData).ToArray();
                 Style[] styles = new Style[styleJoin.Length];
-                for (int j = 0; j < 0; j++)
+                for (int j = 0; j < styleJoin.Length; j++)
                     styles[i] = styleJoin[i].s;
 
                 temp[i] = new Data(data, genres, languages, styles);
