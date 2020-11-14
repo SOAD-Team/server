@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -68,6 +68,8 @@ namespace Server.Models
             {
                 entity.HasKey(e => e.IdMovieData)
                     .HasName("PK__MovieDat__F8C19D024604FF2B");
+
+                entity.Property(e => e.Director).IsUnicode(false);
 
                 entity.Property(e => e.Title).IsUnicode(false);
 
