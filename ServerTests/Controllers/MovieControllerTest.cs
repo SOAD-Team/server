@@ -130,5 +130,12 @@ namespace Server.Controllers.Tests
 
             Assert.IsTrue(found);
         }
+
+        [Test()]
+        public void GetMovieDataTest()
+        {
+            var movies = controller.GetMovieData();
+            Assert.IsInstanceOf(typeof(IEnumerable<MovieData>), movies);
+        }
     }
 }
