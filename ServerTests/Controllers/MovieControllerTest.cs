@@ -7,7 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using NUnit.Framework.Internal;
 using Microsoft.EntityFrameworkCore;
-using System;
+using System.Collections.Generic;
 
 namespace Server.Controllers.Tests
 {
@@ -27,6 +27,9 @@ namespace Server.Controllers.Tests
             Mock<IImagesDB> mongoContextStub = new Mock<IImagesDB>(MockBehavior.Loose);
             mongoContextStub.Setup(_ => _.Create(It.IsAny<Image>())).Returns<Image>(im => im);
             mongoContextStub.Setup(_ => _.Get(It.IsAny<string>())).Returns(Image.Empty);
+            var imgList = new List<Image>();
+            imgList.Add(Image.Empty);
+            mongoContextStub.Setup(_ => _.Get()).Returns(imgList);
             controller = new MovieController(context, mongoContextStub.Object);
 
         }
@@ -117,12 +120,15 @@ namespace Server.Controllers.Tests
 
             var movie = controller.CreateMovie(data);
             var results = controller.GetMovieDataByUserId(user.IdUser).ToArray();
+            bool found = false;
+
             foreach(var result in results)
             {
                 if (result.IdMovieData == movie.IdMovieData)
-                    Assert.Pass();
+                    found = true;
             }
-            Assert.Fail();
+
+            Assert.IsTrue(found);
         }
     }
 }

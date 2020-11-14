@@ -14,7 +14,7 @@ namespace Server.Helpers
         public static Data[] CreateData(MovieData[] datas, MoviesDB _context)
         {
             Data[] temp = new Data[datas.Length];
-            for (int i = 0; i < 0; i++)
+            for (int i = 0; i < datas.Length; i++)
             {
                 MovieData data = datas[i];
                 Genre[] genres = _context.Genre.Join(_context.MovieDataGenre, g => g.IdGenre, mdg => mdg.IdGenre,(g,mdg) => chooseGenre(g,mdg,data.IdMovieData)).ToArray();
@@ -47,24 +47,32 @@ namespace Server.Helpers
             else
                 return null;
         }
-        public static bool FilterMovieData(MovieData md, Movie[] userMovies)
+        public static MovieData[] FilterMovieData(MovieData[] mds, Movie[] userMovies)
         {
+            List<MovieData> temp = new List<MovieData>();
             foreach (Movie movie in userMovies)
-            {
-                if (movie.IdMovie == md.IdMovie)
-                    return true;
-            }
-            return false;
+                foreach (MovieData md in mds)
+                    if (movie.IdMovie == md.IdMovie)
+                    {
+                        temp.Add(md);
+                        break;
+                    }
+            return temp.ToArray();
         }
 
-        public static bool FilterImages(Image im, MovieData[] md)
+        public static Image[] FilterImages(Image[] ims, MovieData[] md)
         {
+            List<Image> temp = new List<Image>(); 
             foreach (MovieData movie in md)
             {
-                if (movie.ImageMongoId == im.Id)
-                    return true;
+                foreach (Image im in ims)
+                    if (movie.ImageMongoId == im.Id)
+                    {
+                        temp.Add(im);
+                        break;
+                    }
             }
-            return false;
+            return temp.ToArray();
         }
 
         public static List<DTOs.MovieData> CreateMovieDatas(Movie[] movies, Data[] datas ,Image[] images)

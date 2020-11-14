@@ -10,12 +10,12 @@ namespace Server.DTOs
         private static MovieData empty()
         {
             MovieData data = new MovieData();
-            data.IdUser = 0;
+            data.IdUser = User.Empty.IdUser;
             data.RegisterDate = new DateTime();
             data.Name = "";
             data.Year = 0;
-            data.Genres = new Models.Genre[0];
-            data.Languages = new Models.Language[0];
+            data.Genres = new Models.Genre[1] {Genre.Empty};
+            data.Languages = new Models.Language[1] {Language.Empty};
             data.PlatFav = false;
             data.Styles = new Models.Style[1]{ Models.Style.Empty };
             data.Image = Image.Empty;

@@ -86,11 +86,12 @@ namespace Server.Controllers
         public IEnumerable<DTOs.MovieData> GetMovieDataByUserId(int id)
         {
             Movie[] userMovies = _context.Movie.Where(m => m.IdUser == id).ToArray();
-            MovieData[] userDatas = _context.MovieData.Where(md => MovieControllerHelper.FilterMovieData(md,userMovies)).ToArray();
-            Image[] images = _mongoContext.Get().Where(im => MovieControllerHelper.FilterImages(im, userDatas)).ToArray();
+            MovieData[] userDatas = _context.MovieData.ToArray();
+            userDatas = MovieControllerHelper.FilterMovieData(userDatas, userMovies);
+            Image[] images = _mongoContext.Get().ToArray();
+            images = MovieControllerHelper.FilterImages(images, userDatas);
 
             Data[] completeData = MovieControllerHelper.CreateData(userDatas, _context);
-
 
             return MovieControllerHelper.CreateMovieDatas(userMovies,completeData,images);
         }
