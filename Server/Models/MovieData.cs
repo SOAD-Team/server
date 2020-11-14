@@ -61,7 +61,8 @@ namespace Server.Models
                 Image = imagesContext.Get(this.ImageMongoId).MapToPresentationModel(),
                 Styles = styles,
                 MetaScore = this.MetaScore,
-                Imdb = this.Imdb
+                Imdb = this.Imdb,
+                Director = this.Director
             };
         }
     }
