@@ -82,7 +82,7 @@ namespace Server.Controllers
 
             return data.MapToPresentationModel(movie.IdUser, genres.ToArray(), languages.ToArray(), _mongoContext, styles);
         }
-        [HttpGet("{id}")]
+        [HttpGet("user/{id}")]
         public IEnumerable<DTOs.MovieData> GetMovieDataByUserId(int id)
         {
             Movie[] userMovies = _context.Movie.Where(m => m.IdUser == id).ToArray();
@@ -94,6 +94,18 @@ namespace Server.Controllers
             Data[] completeData = MovieControllerHelper.CreateData(userDatas, _context);
 
             return MovieControllerHelper.CreateMovieDatas(userMovies,completeData,images);
+        }
+
+        [HttpGet("score/{id}")]
+        public int GetMovieScore(int id)
+        {
+            return 0;
+        }
+
+        [HttpGet("popularity/{id}")]
+        public int GetMoviePopularity(int id)
+        {
+            return 0;
         }
 
         [HttpGet]

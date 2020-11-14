@@ -23,9 +23,7 @@ namespace Server.Helpers
                 Style[] styles = new Style[styleJoin.Length];
                 for (int j = 0; j < 0; j++)
                     styles[i] = styleJoin[i].s;
-                string jsonString;
-                jsonString = JsonSerializer.Serialize(genres);
-                Console.WriteLine(jsonString);
+
                 temp[i] = new Data(data, genres, languages, styles);
 
             }

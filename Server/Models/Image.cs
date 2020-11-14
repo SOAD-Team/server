@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using System.IO;
 
 namespace Server.Models
 {
@@ -29,7 +30,6 @@ namespace Server.Models
                 ObjectImage = null,
                 Url = ""
             };
-
         }
 
         public static Image Empty { get => new Image(new byte[0]); }
