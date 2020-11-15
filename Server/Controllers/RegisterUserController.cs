@@ -41,5 +41,13 @@ namespace Server.Controllers
             return statusCode;
 
         }
+
+        // POST api/<LogInUserController>
+        [HttpPost("login")]
+        public DTOs.User LogIn(DTOs.UserData user)
+        {
+            User temp = _context.User.Where(usr => user.Email==usr.Email && user.Password==usr.Password ).FirstOrDefault(); 
+            return temp.MapToPresentationModel();
+        }
     }
 }
