@@ -5,6 +5,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Threading.Tasks;
+using Server.Helpers;
+using Server.Structs;
 
 namespace Server.Controllers
 {
@@ -79,11 +81,44 @@ namespace Server.Controllers
 
             return data.MapToPresentationModel(movie.IdUser, genres.ToArray(), languages.ToArray(), _mongoContext, styles);
         }
+        [HttpGet("user/{id}")]
+        public IEnumerable<DTOs.MovieData> GetMovieDataByUserId(int id)
+        {
+            Movie[] userMovies = _context.Movie.Where(m => m.IdUser == id).ToArray();
+            MovieData[] userDatas = _context.MovieData.ToArray();
+            userDatas = MovieControllerHelper.FilterMovieData(userDatas, userMovies);
+            Image[] images = _mongoContext.Get().ToArray();
+            images = MovieControllerHelper.FilterImages(images, userDatas);
+
+            Data[] completeData = MovieControllerHelper.CreateData(userDatas, _context);
+
+            return MovieControllerHelper.CreateMovieDatas(userMovies,completeData,images);
+        }
+
+        [HttpGet("score/{id}")]
+        public int GetMovieScore(int id)
+        {
+            return 0;
+        }
+
+        [HttpGet("popularity/{id}")]
+        public int GetMoviePopularity(int id)
+        {
+            return 0;
+        }
 
         [HttpGet]
         public IEnumerable<Movie> GetMovies()
         {
             List<Movie> movies = this._context.Movie.ToList<Movie>();
+            return movies;
+        }
+
+        [HttpGet("moviedata")]
+        public IEnumerable<MovieData> GetMovieData()
+        {
+            List<MovieData> movies = this._context.MovieData.ToList<MovieData>();
+
             return movies;
         }
 

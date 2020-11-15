@@ -7,6 +7,7 @@ namespace Server.Models
 {
     public partial class User
     {
+        public static User Empty { get => new User("", "", "", ""); }
         public User()
         {
             Movie = new HashSet<Movie>();

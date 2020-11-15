@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Linq;
+using NUnit.Framework;
 using Server.Models;
 using Microsoft.AspNetCore.Http;
 using Moq;
@@ -6,6 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using NUnit.Framework.Internal;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace Server.Controllers.Tests
 {
@@ -15,7 +17,7 @@ namespace Server.Controllers.Tests
 
         private MovieController controller;
         private MoviesDB context;
-    
+
         [SetUp]
         public void Setup()
         {
@@ -25,8 +27,11 @@ namespace Server.Controllers.Tests
             Mock<IImagesDB> mongoContextStub = new Mock<IImagesDB>(MockBehavior.Loose);
             mongoContextStub.Setup(_ => _.Create(It.IsAny<Image>())).Returns<Image>(im => im);
             mongoContextStub.Setup(_ => _.Get(It.IsAny<string>())).Returns(Image.Empty);
+            var imgList = new List<Image>();
+            imgList.Add(Image.Empty);
+            mongoContextStub.Setup(_ => _.Get()).Returns(imgList);
             controller = new MovieController(context, mongoContextStub.Object);
-            
+
         }
         [Test()]
         public void GetMoviesTest()
@@ -96,10 +101,41 @@ namespace Server.Controllers.Tests
         public void CreateMovieNotEmptyTest()
         {
             var data = DTOs.MovieData.Empty;
-            data.Languages = new Language[2]{ Language.Empty, Language.Empty };
+            data.Languages = new Language[2] { Language.Empty, Language.Empty };
             data.Genres = new Genre[2] { Genre.Empty, Genre.Empty };
             var result = controller.CreateMovie(data);
             Assert.IsInstanceOf(typeof(DTOs.MovieData), result);
+        }
+
+        [Test()]
+        public void GetMovieDataByUserIdTest()
+        {
+            context.Language.Add(Language.Empty);
+            context.Style.Add(Style.Empty);
+            context.Genre.Add(Genre.Empty);
+            User user = context.User.Add(User.Empty).Entity;
+            var data = DTOs.MovieData.Empty;
+            data.IdUser = user.IdUser;
+            context.SaveChanges();
+
+            var movie = controller.CreateMovie(data);
+            var results = controller.GetMovieDataByUserId(user.IdUser).ToArray();
+            bool found = false;
+
+            foreach(var result in results)
+            {
+                if (result.IdMovieData == movie.IdMovieData)
+                    found = true;
+            }
+
+            Assert.IsTrue(found);
+        }
+
+        [Test()]
+        public void GetMovieDataTest()
+        {
+            var movies = controller.GetMovieData();
+            Assert.IsInstanceOf(typeof(IEnumerable<MovieData>), movies);
         }
     }
 }
