@@ -139,5 +139,12 @@ namespace Server.Controllers
         {
             return this._context.Style.ToList<Style>();
         }
+
+        [HttpGet("movieimages/{id}")]
+        public IActionResult GetMovieImages(string id)
+        {
+            byte[] images = _mongoContext.Get(id).ObjectImage;
+            return File(images, "image/jpeg");
+        }
     }
 }
