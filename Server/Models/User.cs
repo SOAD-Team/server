@@ -7,6 +7,19 @@ namespace Server.Models
 {
     public partial class User
     {
+
+        public DTOs.User MapToPresentationModel(){
+            DTOs.User  temp= new DTOs.User();
+            temp.IdUser = this.IdUser;
+            temp.Email = this.Email;
+            temp.IsActive = this.IsActive;
+            temp.LastName = this.LastName;
+            temp.Name = this.Name;
+            temp.Password = this.Password;
+
+            return temp;
+        }
+
         public static User Empty { get => new User("", "", "", ""); }
         public User()
         {
