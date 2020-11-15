@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using NUnit.Framework.Internal;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Server.Controllers.Tests
 {
@@ -136,6 +137,20 @@ namespace Server.Controllers.Tests
         {
             var movies = controller.GetMovieData();
             Assert.IsInstanceOf(typeof(IEnumerable<MovieData>), movies);
+        }
+
+        [Test()]
+        public void GetMovieImageTest()
+        {
+            var image = controller.GetMovieImages("mock");
+            Assert.IsInstanceOf(typeof(IActionResult), image);
+        }
+
+        [Test()]
+        public void GetMovieByIdTest()
+        {
+            var movie = controller.GetMovieById(1);
+            Assert.IsInstanceOf(typeof(MovieData), movie);
         }
     }
 }
