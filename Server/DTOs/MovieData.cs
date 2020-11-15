@@ -52,6 +52,9 @@ namespace Server.DTOs
             this.RegisterDate = data.RegisterDate;
             this.Name = data.Title;
             this.Year = data.Year;
+            this.Director = data.Director;
+            this.Imdb = data.Imdb;
+            this.MetaScore = data.MetaScore;
             this.Genres = genres;
             this.Languages = languages;
             this.PlatFav = data.PlatFav;
