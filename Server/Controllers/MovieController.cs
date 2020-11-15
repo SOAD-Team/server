@@ -148,31 +148,17 @@ namespace Server.Controllers
         }
 
         [HttpGet("moviebyid/{id}")]
-        public MovieData GetMovieById(int id)
+        public DTOs.MovieData GetMovieById(int id)
         {
-            var movies = _context.MovieData.Find(id);
+            Movie[] userMovies = _context.Movie.Where(m => m.IdMovie == id).ToArray();
+            MovieData[] userDatas = _context.MovieData.ToArray();
+            userDatas = MovieControllerHelper.FilterMovieData(userDatas, userMovies);
+            Image[] images = _mongoContext.Get().ToArray();
+            images = MovieControllerHelper.FilterImages(images, userDatas);
 
-            var languages = _context.MovieDataLanguage.ToList<MovieDataLanguage>();
+            Data[] completeData = MovieControllerHelper.CreateData(userDatas, _context);
 
-            var genres = _context.MovieDataGenre.ToList<MovieDataGenre>();
-
-            foreach(var lang in languages)
-            {
-                if(lang.IdMovieData == movies.IdMovieData)
-                {
-                    movies.MovieDataLanguage.Add(lang);
-                }
-            }
-
-            foreach (var genre in genres)
-            {
-                if (genre.IdMovieData == movies.IdMovieData)
-                {
-                    movies.MovieDataGenre.Add(genre);
-                }
-            }
-
-            return movies;
+            return MovieControllerHelper.CreateMovieDatas(userMovies, completeData, images).Last();
         }
 
     }
