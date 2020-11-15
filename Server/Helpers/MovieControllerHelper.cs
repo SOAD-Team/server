@@ -18,7 +18,7 @@ namespace Server.Helpers
                 var styleJoin = _context.MovieData.Join(_context.Style, md => md.IdStyle, s => s.IdStyle, (md, s) => new { s, md.IdMovieData }).Where(md => md.IdMovieData == data.IdMovieData).ToArray();
                 Style[] styles = new Style[styleJoin.Length];
                 for (int j = 0; j < styleJoin.Length; j++)
-                    styles[i] = styleJoin[i].s;
+                    styles[j] = styleJoin[j].s;
 
                 temp[i] = new Data(data, genres, languages, styles);
 

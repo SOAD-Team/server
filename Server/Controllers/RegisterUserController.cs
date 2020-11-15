@@ -46,8 +46,11 @@ namespace Server.Controllers
         [HttpPost("login")]
         public DTOs.User LogIn(DTOs.UserData user)
         {
-            User temp = _context.User.Where(usr => user.Email==usr.Email && user.Password==usr.Password ).FirstOrDefault(); 
-            return temp.MapToPresentationModel();
+            User temp = _context.User.Where(usr => user.Email==usr.Email && user.Password==usr.Password ).FirstOrDefault();
+            if (temp != null)
+                return temp.MapToPresentationModel();
+            else
+                return null;
         }
     }
 }
