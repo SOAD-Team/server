@@ -39,5 +39,16 @@ namespace ServerTests.Controllers
             result = controller.RegisterUser(data);
             Assert.AreEqual(result, 0);
         }
+
+        [Test()]
+        public void LogInTest()
+        {
+            var user = new Server.DTOs.UserData();
+            user.Email = "pruebaemail@gmail.com";
+            user.Password = "";
+            var result = controller.LogIn(user);
+            Assert.IsInstanceOf(typeof(Server.DTOs.User), result);
+
+        }
     }
 }
