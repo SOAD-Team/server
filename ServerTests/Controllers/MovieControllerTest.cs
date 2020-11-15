@@ -150,7 +150,7 @@ namespace Server.Controllers.Tests
         public void GetMovieByIdTest()
         {
             var movie = controller.GetMovieById(1);
-            Assert.IsInstanceOf(typeof(MovieData), movie);
+            Assert.IsInstanceOf(typeof(DTOs.MovieData), movie);
         }
     }
 }
