@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Threading.Tasks;
 using Server.Helpers;
-using Microsoft.EntityFrameworkCore.Internal;
 using Server.Structs;
 
 namespace Server.Controllers
@@ -115,6 +114,14 @@ namespace Server.Controllers
             return movies;
         }
 
+        [HttpGet("moviedata")]
+        public IEnumerable<MovieData> GetMovieData()
+        {
+            List<MovieData> movies = this._context.MovieData.ToList<MovieData>();
+
+            return movies;
+        }
+
         [HttpGet("genres")]
         public IEnumerable<Genre> GetGenres()
         {
@@ -132,5 +139,41 @@ namespace Server.Controllers
         {
             return this._context.Style.ToList<Style>();
         }
+
+        [HttpGet("movieimages/{id}")]
+        public IActionResult GetMovieImages(string id)
+        {
+            byte[] images = _mongoContext.Get(id).ObjectImage;
+            return File(images, "image/jpeg");
+        }
+
+        [HttpGet("moviebyid/{id}")]
+        public MovieData GetMovieById(int id)
+        {
+            var movies = _context.MovieData.Find(id);
+
+            var languages = _context.MovieDataLanguage.ToList<MovieDataLanguage>();
+
+            var genres = _context.MovieDataGenre.ToList<MovieDataGenre>();
+
+            foreach(var lang in languages)
+            {
+                if(lang.IdMovieData == movies.IdMovieData)
+                {
+                    movies.MovieDataLanguage.Add(lang);
+                }
+            }
+
+            foreach (var genre in genres)
+            {
+                if (genre.IdMovieData == movies.IdMovieData)
+                {
+                    movies.MovieDataGenre.Add(genre);
+                }
+            }
+
+            return movies;
+        }
+
     }
 }

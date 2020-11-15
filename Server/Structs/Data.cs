@@ -1,5 +1,4 @@
 ﻿using Server.Models;
-using System;
 
 namespace Server.Structs
 {
