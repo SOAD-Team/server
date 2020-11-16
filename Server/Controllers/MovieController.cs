@@ -68,13 +68,13 @@ namespace Server.Controllers
         [HttpGet("score/{id}")]
         public int GetMovieScore(int id)
         {
-            return 0;
+            return id;
         }
 
         [HttpGet("popularity/{id}")]
         public int GetMoviePopularity(int id)
         {
-            return 0;
+            return id;
         }
 
         [HttpGet]
@@ -124,11 +124,16 @@ namespace Server.Controllers
         {
             Movie userMovies = _context.Movie.Where(m => m.IdMovie == id).FirstOrDefault();
             MovieData[] userDatas = _context.MovieData.ToArray();
+            userDatas = MovieControllerHelper.FilterMovieDataByMovie(userDatas, id).ToArray();
+            userDatas = MovieControllerHelper.GetMostRecentData(userDatas, _context).ToArray();
+
             Image[] images = _mongoContext.Get().ToArray();
             images = MovieControllerHelper.FilterImages(images, userDatas);
 
             Data[] completeData = MovieControllerHelper.CreateData(userDatas, _context);
 
+            foreach (var mdata in completeData)
+                System.Console.WriteLine(mdata.MData.Title);
 
             DTOs.MovieData data = MovieControllerHelper.CreateMovieDatas(completeData, images, userMovies.IdUser).Last();
 

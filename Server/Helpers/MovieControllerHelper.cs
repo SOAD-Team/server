@@ -92,7 +92,19 @@ namespace Server.Helpers
             return filtred;
         }
 
-        public static List<MovieData> GetMostRecentData(List<MovieData> movies, MoviesDB _context)
+        public static List<MovieData> FilterMovieDataByMovie(IEnumerable<MovieData> movies, int idMovie)
+        {
+            List<MovieData> filtred = new List<MovieData>();
+            foreach (MovieData movie in movies)
+            {
+                if (movie.IdMovie == idMovie)
+                    filtred.Add(movie);
+            }
+
+            return filtred;
+        }
+
+        public static List<MovieData> GetMostRecentData(IEnumerable<MovieData> movies, MoviesDB _context)
         {
             List<MovieData> filtred = new List<MovieData>();
 
