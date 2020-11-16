@@ -53,15 +53,14 @@ namespace Server.Helpers
             return temp.ToArray();
         }
 
-        public static List<DTOs.MovieData> CreateMovieDatas(Movie[] movies, Data[] datas, Image[] images)
+        public static List<DTOs.MovieData> CreateMovieDatas(Data[] datas, Image[] images, int idUser)
         {
             List<DTOs.MovieData> temp = new List<DTOs.MovieData>();
-            foreach (Movie movie in movies)
+            foreach (Data data in datas)
             {
-                Data data = MovieControllerHelper.findMostRecentData(movie.IdMovie, datas);
                 Image image = MovieControllerHelper.getImage(data.MData.ImageMongoId, images);
 
-                temp.Add(new DTOs.MovieData(movie, data.MData, data.Genres, data.Languages, data.Styles, image));
+                temp.Add(new DTOs.MovieData(data.MData.IdMovie, idUser, data.MData, data.Genres, data.Languages, data.Styles, image));
             }
             return temp;
         }
@@ -97,6 +96,41 @@ namespace Server.Helpers
                 }   
             }
             return temp;
+        }
+
+        public static List<MovieData> FilterMovieData(List<MovieData> movies, MoviesDB _context)
+        {
+            List<MovieData> filtred = new List<MovieData>();
+
+            foreach (var movie in movies)
+            {
+                List<MovieData> temp = _context.MovieData.Where(m => m.IdMovie == movie.IdMovie).ToList();
+
+                MovieData add = null;
+                foreach (var tempMovie in temp)
+                {
+                    if (add == null)
+                    {
+                        add = tempMovie;
+                    }
+                    else
+                    {
+                        if (add.RegisterDate < tempMovie.RegisterDate)
+                        {
+                            add = tempMovie;
+                        }
+                    }
+                }
+
+                if (filtred.Find(m => m.IdMovieData == add.IdMovieData) == null)
+                {
+                    filtred.Add(add);
+                }
+
+                add = null;
+            }
+
+            return filtred;
         }
     }
 }

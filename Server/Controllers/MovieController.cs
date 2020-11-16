@@ -85,17 +85,14 @@ namespace Server.Controllers
         public IEnumerable<DTOs.MovieData> GetMovieDataByUserId(int id)
         {
             Movie[] userMovies = _context.Movie.Where(m => m.IdUser == id).ToArray();
-            System.Console.WriteLine(userMovies.Length);
-            MovieData[] userDatas = _context.MovieData.ToArray();
-            System.Console.WriteLine(userDatas.Length);
-            foreach (var u in userDatas)
-                System.Console.WriteLine(u.Title);
+            List<MovieData> userDatas = _context.MovieData.ToList();
+            userDatas =  MovieControllerHelper.FilterMovieData(userDatas, _context);
             Image[] images = _mongoContext.Get().ToArray();
-            images = MovieControllerHelper.FilterImages(images, userDatas);
+            images = MovieControllerHelper.FilterImages(images, userDatas.ToArray());
 
-            Data[] completeData = MovieControllerHelper.CreateData(userDatas, _context);
+            Data[] completeData = MovieControllerHelper.CreateData(userDatas.ToArray(), _context);
 
-            return MovieControllerHelper.CreateMovieDatas(userMovies,completeData,images);
+            return MovieControllerHelper.CreateMovieDatas(completeData,images, id);
         }
 
         [HttpGet("score/{id}")]
@@ -122,35 +119,7 @@ namespace Server.Controllers
         {
             List<MovieData> movies = this._context.MovieData.ToList<MovieData>();
 
-            List<MovieData> filtred = new List<MovieData>();
-
-            foreach (var movie in movies)
-            {
-                List<MovieData> temp = this._context.MovieData.Where(m => m.IdMovie == movie.IdMovie).ToList();
-
-                MovieData add = null;
-                foreach (var tempMovie in temp)
-                {
-                    if(add == null)
-                    {
-                        add = tempMovie;
-                    }
-                    else
-                    {
-                        if(add.RegisterDate < tempMovie.RegisterDate)
-                        {
-                            add = tempMovie;
-                        }
-                    }
-                }
-
-                if(filtred.Find(m => m.IdMovieData == add.IdMovieData) == null)
-                {
-                    filtred.Add(add);
-                }
-
-                add = null;
-            }
+            List<MovieData> filtred = MovieControllerHelper.FilterMovieData(movies, this._context);
 
             return filtred;
         }
@@ -183,7 +152,7 @@ namespace Server.Controllers
         [HttpGet("moviebyid/{id}")]
         public DTOs.MovieData GetMovieById(int id)
         {
-            Movie[] userMovies = _context.Movie.Where(m => m.IdMovie == id).ToArray();
+            Movie userMovies = _context.Movie.Where(m => m.IdMovie == id).FirstOrDefault();
             MovieData[] userDatas = _context.MovieData.ToArray();
             Image[] images = _mongoContext.Get().ToArray();
             images = MovieControllerHelper.FilterImages(images, userDatas);
@@ -191,7 +160,7 @@ namespace Server.Controllers
             Data[] completeData = MovieControllerHelper.CreateData(userDatas, _context);
 
 
-            DTOs.MovieData data = MovieControllerHelper.CreateMovieDatas(userMovies, completeData, images).Last();
+            DTOs.MovieData data = MovieControllerHelper.CreateMovieDatas(completeData, images, userMovies.IdUser).Last();
 
             return data;
         }

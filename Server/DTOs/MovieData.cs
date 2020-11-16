@@ -44,10 +44,10 @@ namespace Server.DTOs
 
         }
 
-        public MovieData(Movie movie, Models.MovieData data, Genre[] genres, Language[] languages, Style[] styles, Models.Image image)
+        public MovieData(int idMovie, int idUser, Models.MovieData data, Genre[] genres, Language[] languages, Style[] styles, Models.Image image)
         {
-            this.IdMovie = movie.IdMovie;
-            this.IdUser = movie.IdUser;
+            this.IdMovie = idMovie;
+            this.IdUser = idUser;
             this.IdMovieData = data.IdMovieData;
             this.RegisterDate = data.RegisterDate;
             this.Name = data.Title;
