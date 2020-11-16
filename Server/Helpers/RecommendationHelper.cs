@@ -19,7 +19,7 @@ namespace Server.Helpers
             MovieData movie = MovieControllerHelper.GetMostRecentData(movies, _context).FirstOrDefault();
             int userId = _context.Movie.Where(val => val.IdMovie == idMovie).FirstOrDefault().IdUser;
 
-            int score = RecommendationHelper.getReccomendationScore(points, idMovie);
+            int score = RecommendationHelper.getRecommendationScore(points, movie);
 
             Data completeData = MovieControllerHelper.CreateData(new MovieData[1]{ movie }, _context)[0];
 
@@ -33,9 +33,21 @@ namespace Server.Helpers
 
             return new DTOs.Recommendation(movieData, score);
         }
-        private static int getReccomendationScore(DTOs.UserPoints points, int idMovie)
+        private static int getRecommendationScore(DTOs.UserPoints points, MovieData movie, MoviesDB _context)
         {
-            return 100;
+            int imdb = movie.Imdb.Value;
+            int ms = movie.MetaScore.Value;
+            int com = RecommendationHelper.GetMovieCommunityScore(movie.IdMovie, _context);
+            int platFav = 0;
+            int pop = RecommendationHelper.GetMoviePopularity(movie.IdMovie, _context);
+
+            if (movie.PlatFav)
+                platFav = 100;
+
+            int score = (imdb * points.Imdb / 100) * (ms * points.MetaScore / 100) * (com * points.Community / 100) * (platFav * points.PlatFav / 100)
+                * (pop * points.Popularity / 100);
+
+            return score;
         }
 
         public static int GetMovieCommunityScore(int idMovie, MoviesDB _context)
