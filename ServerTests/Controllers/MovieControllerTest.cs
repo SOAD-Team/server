@@ -170,7 +170,7 @@ namespace Server.Controllers.Tests
         public void GetMovieScoreTest()
         {   
             int val = 1;
-            Assert.AreEqual(controller.GetMovieScore(val), val);
+            Assert.AreEqual(controller.GetMovieCommunityScore(val), val);
         }
 
         [Test()]
