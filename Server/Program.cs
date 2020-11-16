@@ -16,7 +16,7 @@ namespace Server
                 {
                     webBuilder.UseStartup<Startup>().UseKestrel(options =>
                     {
-                        options.Limits.MaxRequestBodySize = null; // or a given limit
+                        options.Limits.MaxRequestBodySize = null;
                     });
                 });
     }
