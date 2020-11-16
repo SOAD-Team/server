@@ -85,17 +85,14 @@ namespace Server.Controllers
         public IEnumerable<DTOs.MovieData> GetMovieDataByUserId(int id)
         {
             Movie[] userMovies = _context.Movie.Where(m => m.IdUser == id).ToArray();
-            System.Console.WriteLine(userMovies.Length);
-            MovieData[] userDatas = _context.MovieData.ToArray();
-            System.Console.WriteLine(userDatas.Length);
-            foreach (var u in userDatas)
-                System.Console.WriteLine(u.Title);
+            List<MovieData> userDatas = _context.MovieData.ToList();
+            userDatas =  MovieControllerHelper.FilterMovieData(userDatas, _context);
             Image[] images = _mongoContext.Get().ToArray();
-            images = MovieControllerHelper.FilterImages(images, userDatas);
+            images = MovieControllerHelper.FilterImages(images, userDatas.ToArray());
 
-            Data[] completeData = MovieControllerHelper.CreateData(userDatas, _context);
+            Data[] completeData = MovieControllerHelper.CreateData(userDatas.ToArray(), _context);
 
-            return MovieControllerHelper.CreateMovieDatas(userMovies,completeData,images);
+            return MovieControllerHelper.CreateMovieDatas(completeData,images, id);
         }
 
         [HttpGet("score/{id}")]
@@ -122,7 +119,9 @@ namespace Server.Controllers
         {
             List<MovieData> movies = this._context.MovieData.ToList<MovieData>();
 
-            return movies;
+            List<MovieData> filtred = MovieControllerHelper.FilterMovieData(movies, this._context);
+
+            return filtred;
         }
 
         [HttpGet("genres")]
@@ -153,7 +152,7 @@ namespace Server.Controllers
         [HttpGet("moviebyid/{id}")]
         public DTOs.MovieData GetMovieById(int id)
         {
-            Movie[] userMovies = _context.Movie.Where(m => m.IdMovie == id).ToArray();
+            Movie userMovies = _context.Movie.Where(m => m.IdMovie == id).FirstOrDefault();
             MovieData[] userDatas = _context.MovieData.ToArray();
             Image[] images = _mongoContext.Get().ToArray();
             images = MovieControllerHelper.FilterImages(images, userDatas);
@@ -161,7 +160,7 @@ namespace Server.Controllers
             Data[] completeData = MovieControllerHelper.CreateData(userDatas, _context);
 
 
-            DTOs.MovieData data = MovieControllerHelper.CreateMovieDatas(userMovies, completeData, images).Last();
+            DTOs.MovieData data = MovieControllerHelper.CreateMovieDatas(completeData, images, userMovies.IdUser).Last();
 
             return data;
         }
