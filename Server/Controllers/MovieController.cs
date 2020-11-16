@@ -85,8 +85,11 @@ namespace Server.Controllers
         public IEnumerable<DTOs.MovieData> GetMovieDataByUserId(int id)
         {
             Movie[] userMovies = _context.Movie.Where(m => m.IdUser == id).ToArray();
+            System.Console.WriteLine(userMovies.Length);
             MovieData[] userDatas = _context.MovieData.ToArray();
-            userDatas = MovieControllerHelper.FilterMovieData(userDatas, userMovies);
+            System.Console.WriteLine(userDatas.Length);
+            foreach (var u in userDatas)
+                System.Console.WriteLine(u.Title);
             Image[] images = _mongoContext.Get().ToArray();
             images = MovieControllerHelper.FilterImages(images, userDatas);
 
@@ -152,14 +155,55 @@ namespace Server.Controllers
         {
             Movie[] userMovies = _context.Movie.Where(m => m.IdMovie == id).ToArray();
             MovieData[] userDatas = _context.MovieData.ToArray();
-            userDatas = MovieControllerHelper.FilterMovieData(userDatas, userMovies);
             Image[] images = _mongoContext.Get().ToArray();
             images = MovieControllerHelper.FilterImages(images, userDatas);
 
             Data[] completeData = MovieControllerHelper.CreateData(userDatas, _context);
 
-            return MovieControllerHelper.CreateMovieDatas(userMovies, completeData, images).Last();
+
+            DTOs.MovieData data = MovieControllerHelper.CreateMovieDatas(userMovies, completeData, images).Last();
+
+            return data;
         }
 
+        [HttpPost("update")]
+        public DTOs.MovieData UpdateMovie(DTOs.MovieData movieData)
+        {
+            int movieId = movieData.IdMovie.Value;
+            Movie movie = _context.Movie.Find(movieId);
+            MovieData data = movieData.MapToModel(movieId, movieData.Image.Id);
+            _context.MovieData.Add(data);
+            _context.SaveChanges();
+
+            foreach (Genre genre in movieData.Genres)
+            {
+                if (genre.IdGenre.Equals(null))
+                {
+                    _context.Genre.Add(new Genre(genre.Name));
+                    _context.SaveChanges();
+                }
+                _context.MovieDataGenre.Add(new MovieDataGenre(data.IdMovieData, genre.IdGenre));
+            }
+            foreach (Language language in movieData.Languages)
+            {
+                if (language.IdLanguage.Equals(null))
+                {
+                    _context.Language.Add(new Language(language.Name));
+                    _context.SaveChanges();
+                }
+                _context.MovieDataLanguage.Add(new MovieDataLanguage(data.IdMovieData, language.IdLanguage));
+            }
+
+            _context.SaveChanges();
+            var qGenres = _context.Genre.Join(_context.MovieDataGenre, g => g.IdGenre, mdg => mdg.IdGenre, (g, mdg) => new { g.IdGenre, g.Name, mdg.IdMovieData }).Where(g => g.IdMovieData == data.IdMovieData).ToList();
+            List<Genre> genres = new List<Genre>();
+            qGenres.ForEach(g => genres.Add(new Genre(g.IdGenre, g.Name)));
+            List<Language> languages = new List<Language>();
+            var qLanguages = _context.Language.Join(_context.MovieDataLanguage, g => g.IdLanguage, mdg => mdg.IdLanguage, (g, mdg) => new { g.IdLanguage, g.Name, mdg.IdMovieData }).Where(g => g.IdMovieData == data.IdMovieData).ToList();
+            qLanguages.ForEach(g => languages.Add(new Language(g.IdLanguage, g.Name)));
+            Style[] styles = _context.Style.Where(s => s.IdStyle == data.IdStyle).ToArray<Style>();
+
+            return data.MapToPresentationModel(movie.IdUser, genres.ToArray(), languages.ToArray(), _mongoContext, styles);
+        }
     }
 }

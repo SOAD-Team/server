@@ -13,8 +13,20 @@ namespace Server.Helpers
             for (int i = 0; i < datas.Length; i++)
             {
                 MovieData data = datas[i];
-                Genre[] genres = _context.Genre.Join(_context.MovieDataGenre, g => g.IdGenre, mdg => mdg.IdGenre,(g,mdg) => chooseGenre(g,mdg,data.IdMovieData)).ToArray();
-                Language[] languages = _context.Language.Join(_context.MovieDataLanguage, g => g.IdLanguage, mdg => mdg.IdLanguage, (g, mdg) => chooseLanguage(g, mdg, data.IdMovieData)).ToArray();
+                var genresInfo = _context.Genre.Join(_context.MovieDataGenre, g => g.IdGenre, mdg => mdg.IdGenre, (g, mdg) => new { g, mdg }).Where(val => val.mdg.IdMovieData == data.IdMovieData).ToArray();
+                var genresList = new List<Genre>();
+                foreach (var genre in genresInfo)
+                {
+                    genresList.Add(genre.g);
+                }
+                var languagesInfo = _context.Language.Join(_context.MovieDataLanguage, g => g.IdLanguage, mdg => mdg.IdLanguage, (g, mdg) => new { g, mdg }).Where(val => val.mdg.IdMovieData == data.IdMovieData).ToArray();
+                var languagesList = new List<Language>();
+                foreach (var genre in languagesInfo)
+                {
+                    languagesList.Add(genre.g);
+                }
+                Genre[] genres = genresList.ToArray();
+                Language[] languages = languagesList.ToArray();
                 var styleJoin = _context.MovieData.Join(_context.Style, md => md.IdStyle, s => s.IdStyle, (md, s) => new { s, md.IdMovieData }).Where(md => md.IdMovieData == data.IdMovieData).ToArray();
                 Style[] styles = new Style[styleJoin.Length];
                 for (int j = 0; j < styleJoin.Length; j++)
@@ -24,34 +36,6 @@ namespace Server.Helpers
 
             }
             return temp;
-        }
-
-        private static Genre chooseGenre(Genre g, MovieDataGenre mdg, int idMD)
-        {
-            if (mdg.IdMovieData == idMD)
-                return g;
-            else
-                return null;
-        }
-
-        private static Language chooseLanguage(Language g, MovieDataLanguage mdg, int idMD)
-        {
-            if (mdg.IdMovieData == idMD)
-                return g;
-            else
-                return null;
-        }
-        public static MovieData[] FilterMovieData(MovieData[] mds, Movie[] userMovies)
-        {
-            List<MovieData> temp = new List<MovieData>();
-            foreach (Movie movie in userMovies)
-                foreach (MovieData md in mds)
-                    if (movie.IdMovie == md.IdMovie)
-                    {
-                        temp.Add(md);
-                        break;
-                    }
-            return temp.ToArray();
         }
 
         public static Image[] FilterImages(Image[] ims, MovieData[] md)
@@ -69,7 +53,7 @@ namespace Server.Helpers
             return temp.ToArray();
         }
 
-        public static List<DTOs.MovieData> CreateMovieDatas(Movie[] movies, Data[] datas ,Image[] images)
+        public static List<DTOs.MovieData> CreateMovieDatas(Movie[] movies, Data[] datas, Image[] images)
         {
             List<DTOs.MovieData> temp = new List<DTOs.MovieData>();
             foreach (Movie movie in movies)
@@ -100,8 +84,17 @@ namespace Server.Helpers
             foreach(Data data in datas)
             {
                 if (data.MData.IdMovie == idMovie)
-                    if (temp.MData == null || data.MData.RegisterDate > temp.MData.RegisterDate)
+                {
+
+                    if (temp.MData == null)
                         temp = data;
+
+                    if (System.DateTime.Compare(data.MData.RegisterDate, temp.MData.RegisterDate) > 0)
+                    {
+                        System.Console.WriteLine(System.DateTime.Compare(data.MData.RegisterDate, temp.MData.RegisterDate));
+                        temp = data;
+                    }
+                }   
             }
             return temp;
         }
