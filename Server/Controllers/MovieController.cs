@@ -92,7 +92,7 @@ namespace Server.Controllers
 
             Data[] completeData = MovieControllerHelper.CreateData(userDatas.ToArray(), _context);
 
-            return MovieControllerHelper.CreateMovieDatas(completeData,images, id);
+            return MovieControllerHelper.CreateMovieDatas(completeData, images, id);
         }
 
         [HttpGet("score/{id}")]

@@ -17,12 +17,14 @@ namespace Server.Helpers
                 var genresList = new List<Genre>();
                 foreach (var genre in genresInfo)
                 {
+                    genre.g.MovieDataGenre = null;
                     genresList.Add(genre.g);
                 }
                 var languagesInfo = _context.Language.Join(_context.MovieDataLanguage, g => g.IdLanguage, mdg => mdg.IdLanguage, (g, mdg) => new { g, mdg }).Where(val => val.mdg.IdMovieData == data.IdMovieData).ToArray();
                 var languagesList = new List<Language>();
                 foreach (var genre in languagesInfo)
                 {
+                    genre.g.MovieDataLanguage = null;
                     languagesList.Add(genre.g);
                 }
                 Genre[] genres = genresList.ToArray();
@@ -74,27 +76,6 @@ namespace Server.Helpers
                     temp = image;
                     break;
                 }
-            return temp;
-        }
-
-        private static Data findMostRecentData(int idMovie, Data[] datas)
-        {
-            Data temp = Data.NullData;
-            foreach(Data data in datas)
-            {
-                if (data.MData.IdMovie == idMovie)
-                {
-
-                    if (temp.MData == null)
-                        temp = data;
-
-                    if (System.DateTime.Compare(data.MData.RegisterDate, temp.MData.RegisterDate) > 0)
-                    {
-                        System.Console.WriteLine(System.DateTime.Compare(data.MData.RegisterDate, temp.MData.RegisterDate));
-                        temp = data;
-                    }
-                }   
-            }
             return temp;
         }
 
