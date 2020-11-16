@@ -122,7 +122,37 @@ namespace Server.Controllers
         {
             List<MovieData> movies = this._context.MovieData.ToList<MovieData>();
 
-            return movies;
+            List<MovieData> filtred = new List<MovieData>();
+
+            foreach (var movie in movies)
+            {
+                List<MovieData> temp = this._context.MovieData.Where(m => m.IdMovie == movie.IdMovie).ToList();
+
+                MovieData add = null;
+                foreach (var tempMovie in temp)
+                {
+                    if(add == null)
+                    {
+                        add = tempMovie;
+                    }
+                    else
+                    {
+                        if(add.RegisterDate < tempMovie.RegisterDate)
+                        {
+                            add = tempMovie;
+                        }
+                    }
+                }
+
+                if(filtred.Find(m => m.IdMovieData == add.IdMovieData) == null)
+                {
+                    filtred.Add(add);
+                }
+
+                add = null;
+            }
+
+            return filtred;
         }
 
         [HttpGet("genres")]
