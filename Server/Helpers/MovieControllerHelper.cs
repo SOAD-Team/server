@@ -13,8 +13,22 @@ namespace Server.Helpers
             for (int i = 0; i < datas.Length; i++)
             {
                 MovieData data = datas[i];
-                Genre[] genres = _context.Genre.Join(_context.MovieDataGenre, g => g.IdGenre, mdg => mdg.IdGenre,(g,mdg) => chooseGenre(g,mdg,data.IdMovieData)).ToArray();
-                Language[] languages = _context.Language.Join(_context.MovieDataLanguage, g => g.IdLanguage, mdg => mdg.IdLanguage, (g, mdg) => chooseLanguage(g, mdg, data.IdMovieData)).ToArray();
+                var genresInfo = _context.Genre.Join(_context.MovieDataGenre, g => g.IdGenre, mdg => mdg.IdGenre, (g, mdg) => new { g, mdg }).Where(val => val.mdg.IdMovieData == data.IdMovieData).ToArray();
+                var genresList = new List<Genre>();
+                foreach (var genre in genresInfo)
+                {
+                    genre.g.MovieDataGenre = null;
+                    genresList.Add(genre.g);
+                }
+                var languagesInfo = _context.Language.Join(_context.MovieDataLanguage, g => g.IdLanguage, mdg => mdg.IdLanguage, (g, mdg) => new { g, mdg }).Where(val => val.mdg.IdMovieData == data.IdMovieData).ToArray();
+                var languagesList = new List<Language>();
+                foreach (var genre in languagesInfo)
+                {
+                    genre.g.MovieDataLanguage = null;
+                    languagesList.Add(genre.g);
+                }
+                Genre[] genres = genresList.ToArray();
+                Language[] languages = languagesList.ToArray();
                 var styleJoin = _context.MovieData.Join(_context.Style, md => md.IdStyle, s => s.IdStyle, (md, s) => new { s, md.IdMovieData }).Where(md => md.IdMovieData == data.IdMovieData).ToArray();
                 Style[] styles = new Style[styleJoin.Length];
                 for (int j = 0; j < styleJoin.Length; j++)
@@ -24,34 +38,6 @@ namespace Server.Helpers
 
             }
             return temp;
-        }
-
-        private static Genre chooseGenre(Genre g, MovieDataGenre mdg, int idMD)
-        {
-            if (mdg.IdMovieData == idMD)
-                return g;
-            else
-                return null;
-        }
-
-        private static Language chooseLanguage(Language g, MovieDataLanguage mdg, int idMD)
-        {
-            if (mdg.IdMovieData == idMD)
-                return g;
-            else
-                return null;
-        }
-        public static MovieData[] FilterMovieData(MovieData[] mds, Movie[] userMovies)
-        {
-            List<MovieData> temp = new List<MovieData>();
-            foreach (Movie movie in userMovies)
-                foreach (MovieData md in mds)
-                    if (movie.IdMovie == md.IdMovie)
-                    {
-                        temp.Add(md);
-                        break;
-                    }
-            return temp.ToArray();
         }
 
         public static Image[] FilterImages(Image[] ims, MovieData[] md)
@@ -69,15 +55,14 @@ namespace Server.Helpers
             return temp.ToArray();
         }
 
-        public static List<DTOs.MovieData> CreateMovieDatas(Movie[] movies, Data[] datas ,Image[] images)
+        public static List<DTOs.MovieData> CreateMovieDatas(Data[] datas, Image[] images, int idUser)
         {
             List<DTOs.MovieData> temp = new List<DTOs.MovieData>();
-            foreach (Movie movie in movies)
+            foreach (Data data in datas)
             {
-                Data data = MovieControllerHelper.findMostRecentData(movie.IdMovie, datas);
                 Image image = MovieControllerHelper.getImage(data.MData.ImageMongoId, images);
 
-                temp.Add(new DTOs.MovieData(movie, data.MData, data.Genres, data.Languages, data.Styles, image));
+                temp.Add(new DTOs.MovieData(data.MData.IdMovie, idUser, data.MData, data.Genres, data.Languages, data.Styles, image));
             }
             return temp;
         }
@@ -94,16 +79,102 @@ namespace Server.Helpers
             return temp;
         }
 
-        private static Data findMostRecentData(int idMovie, Data[] datas)
+        public static List<MovieData> FilterMovieDataByUser(List<MovieData> movies, MoviesDB _context, int idUser)
         {
-            Data temp = Data.NullData;
-            foreach(Data data in datas)
+            List<MovieData> filtred = new List<MovieData>();
+            foreach (MovieData movie in movies)
             {
-                if (data.MData.IdMovie == idMovie)
-                    if (temp.MData == null || data.MData.RegisterDate > temp.MData.RegisterDate)
-                        temp = data;
+                int movieUserId = _context.Movie.Where(val => val.IdMovie == movie.IdMovie).FirstOrDefault().IdUser;
+                if (movieUserId == idUser)
+                    filtred.Add(movie);
             }
-            return temp;
+                
+            return filtred;
+        }
+
+        public static List<MovieData> FilterMovieDataByMovie(IEnumerable<MovieData> movies, int idMovie)
+        {
+            List<MovieData> filtred = new List<MovieData>();
+            foreach (MovieData movie in movies)
+            {
+                if (movie.IdMovie == idMovie)
+                    filtred.Add(movie);
+            }
+
+            return filtred;
+        }
+
+        public static List<MovieData> GetMostRecentData(IEnumerable<MovieData> movies, MoviesDB _context)
+        {
+            List<MovieData> filtred = new List<MovieData>();
+
+            foreach (var movie in movies)
+            {
+                List<MovieData> temp = _context.MovieData.Where(m => m.IdMovie == movie.IdMovie).ToList();
+
+                MovieData add = null;
+                foreach (var tempMovie in temp)
+                {
+                    if (add == null)
+                    {
+                        add = tempMovie;
+                    }
+                    else
+                    {
+                        if (add.RegisterDate < tempMovie.RegisterDate)
+                        {
+                            add = tempMovie;
+                        }
+                    }
+                }
+
+                if (filtred.Find(m => m.IdMovieData == add.IdMovieData) == null)
+                {
+                    filtred.Add(add);
+                }
+
+                add = null;
+            }
+
+            return filtred;
+        }
+
+        public static DTOs.MovieData CreateMovieDataOnDb(MoviesDB _context, int movieId, DTOs.MovieData movieData, IImagesDB _mongoContext)
+        {
+            Movie movie = _context.Movie.Find(movieId);
+            MovieData data = movieData.MapToModel(movieId, movieData.Image.Id);
+            _context.MovieData.Add(data);
+            _context.SaveChanges();
+
+            foreach (Genre genre in movieData.Genres)
+            {
+                if (genre.IdGenre.Equals(null))
+                {
+                    _context.Genre.Add(new Genre(genre.Name));
+                    _context.SaveChanges();
+                }
+                _context.MovieDataGenre.Add(new MovieDataGenre(data.IdMovieData, genre.IdGenre));
+            }
+            foreach (Language language in movieData.Languages)
+            {
+                if (language.IdLanguage.Equals(null))
+                {
+                    _context.Language.Add(new Language(language.Name));
+                    _context.SaveChanges();
+                }
+                _context.MovieDataLanguage.Add(new MovieDataLanguage(data.IdMovieData, language.IdLanguage));
+            }
+
+            _context.SaveChanges();
+            var qGenres = _context.Genre.Join(_context.MovieDataGenre, g => g.IdGenre, mdg => mdg.IdGenre, (g, mdg) => new { g.IdGenre, g.Name, mdg.IdMovieData }).Where(g => g.IdMovieData == data.IdMovieData).ToList();
+            List<Genre> genres = new List<Genre>();
+            qGenres.ForEach(g => genres.Add(new Genre(g.IdGenre, g.Name)));
+            List<Language> languages = new List<Language>();
+            var qLanguages = _context.Language.Join(_context.MovieDataLanguage, g => g.IdLanguage, mdg => mdg.IdLanguage, (g, mdg) => new { g.IdLanguage, g.Name, mdg.IdMovieData }).Where(g => g.IdMovieData == data.IdMovieData).ToList();
+            qLanguages.ForEach(g => languages.Add(new Language(g.IdLanguage, g.Name)));
+            Style[] styles = _context.Style.Where(s => s.IdStyle == data.IdStyle).ToArray<Style>();
+
+            return data.MapToPresentationModel(movie.IdUser, genres.ToArray(), languages.ToArray(), _mongoContext, styles);
         }
     }
 }

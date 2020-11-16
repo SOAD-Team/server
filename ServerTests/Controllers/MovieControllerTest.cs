@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using Server.Controllers;
+using System.Linq;
 using NUnit.Framework;
 using Server.Models;
 using Microsoft.AspNetCore.Http;
@@ -123,7 +124,7 @@ namespace Server.Controllers.Tests
             var results = controller.GetMovieDataByUserId(user.IdUser).ToArray();
             bool found = false;
 
-            foreach(var result in results)
+            foreach (var result in results)
             {
                 if (result.IdMovieData == movie.IdMovieData)
                     found = true;
@@ -151,6 +152,32 @@ namespace Server.Controllers.Tests
         {
             var movie = controller.GetMovieById(1);
             Assert.IsInstanceOf(typeof(DTOs.MovieData), movie);
+        }
+
+        [Test()]
+        public void UpdateMovieTest()
+        {
+            var data = DTOs.MovieData.Empty;
+            data.IdMovie = 1;
+            data.Languages = new Language[2] { Language.Empty, Language.Empty };
+            data.Genres = new Genre[2] { Genre.Empty, Genre.Empty };
+
+            var updatedMovie = controller.UpdateMovie(data);
+            Assert.IsInstanceOf(typeof(DTOs.MovieData), updatedMovie);
+        }
+
+        [Test()]
+        public void GetMovieScoreTest()
+        {   
+            int val = 1;
+            Assert.AreEqual(controller.GetMovieScore(val), val);
+        }
+
+        [Test()]
+        public void GetMoviePopularityTest()
+        {
+            int val = 1;
+            Assert.AreEqual(controller.GetMoviePopularity(val), val);
         }
     }
 }
