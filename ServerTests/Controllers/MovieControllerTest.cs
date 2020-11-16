@@ -152,5 +152,17 @@ namespace Server.Controllers.Tests
             var movie = controller.GetMovieById(1);
             Assert.IsInstanceOf(typeof(DTOs.MovieData), movie);
         }
+
+        [Test()]
+        public void UpdateMovieTest()
+        {
+            var data = DTOs.MovieData.Empty;
+            data.IdMovie = 1;
+            data.Languages = new Language[2] { Language.Empty, Language.Empty };
+            data.Genres = new Genre[2] { Genre.Empty, Genre.Empty };
+
+            var updatedMovie = controller.UpdateMovie(data);
+            Assert.IsInstanceOf(typeof(DTOs.MovieData), updatedMovie);
+        }
     }
 }
