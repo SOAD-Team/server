@@ -19,7 +19,7 @@ namespace Server.Helpers
             MovieData movie = MovieControllerHelper.GetMostRecentData(movies, _context).FirstOrDefault();
             int userId = _context.Movie.Where(val => val.IdMovie == idMovie).FirstOrDefault().IdUser;
 
-            int score = RecommendationHelper.getRecommendationScore(points, movie);
+            int score = RecommendationHelper.getRecommendationScore(points, movie, _context);
 
             Data completeData = MovieControllerHelper.CreateData(new MovieData[1]{ movie }, _context)[0];
 
