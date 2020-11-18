@@ -27,8 +27,13 @@ namespace Server.Controllers
             List<DTOs.Recommendation> recommendations = new List<DTOs.Recommendation>();
             foreach (Movie movie in movies)
             {
-                var temp = RecommendationHelper.GetRecommendationData(value, movie.IdMovie, _context, _mongoContext);
-                recommendations.Add(temp);
+                DTOs.Recommendation temp = RecommendationHelper.GetRecommendationData(value, movie.IdMovie, _context, _mongoContext);
+                foreach(Genre genre in temp.Movie.Genres)
+                    if(genre.IdGenre == value.Genre.IdGenre)
+                    {
+                        recommendations.Add(temp);
+                        break;
+                    }
             }
 
             return RecommendationHelper.FilterRecommendations(recommendations.ToArray());

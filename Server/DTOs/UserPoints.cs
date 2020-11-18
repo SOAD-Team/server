@@ -12,6 +12,7 @@ namespace Server.DTOs
         public int Community{get; set;}
         public int PlatFav{get; set;}
         public int Popularity { get; set; }
+        public Models.Genre Genre { get; set; }
 
         public static UserPoints Empty { get =>
                 new UserPoints
@@ -20,7 +21,8 @@ namespace Server.DTOs
                     MetaScore = 0,
                     Community = 0,
                     PlatFav = 0,
-                    Popularity = 0
+                    Popularity = 0,
+                    Genre = Models.Genre.Empty
                 };
         }
     }
