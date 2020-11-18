@@ -35,8 +35,8 @@ namespace Server.Helpers
         }
         private static int getRecommendationScore(DTOs.UserPoints points, MovieData movie, MoviesDB _context)
         {
-            int imdb = movie.Imdb.Value;
-            int ms = movie.MetaScore.Value;
+            int imdb = movie.Imdb.GetValueOrDefault();
+            int ms = movie.MetaScore.GetValueOrDefault();
             int com = RecommendationHelper.GetMovieCommunityScore(movie.IdMovie, _context);
             int platFav = 0;
             int pop = RecommendationHelper.GetMoviePopularity(movie.IdMovie, _context);
