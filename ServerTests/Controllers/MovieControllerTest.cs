@@ -10,6 +10,7 @@ using NUnit.Framework.Internal;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Server.Helpers;
 
 namespace Server.Controllers.Tests
 {
@@ -168,16 +169,34 @@ namespace Server.Controllers.Tests
 
         [Test()]
         public void GetMovieScoreTest()
-        {   
-            int val = 1;
-            Assert.AreEqual(controller.GetMovieScore(val), val);
+        {
+            var movie = DTOs.MovieData.Empty;
+            movie = controller.CreateMovie(movie);
+
+            int score = 0;
+            Review[] reviews = context.Review.Where(val => val.IdMovie == movie.IdMovie.Value).ToArray();
+
+            if (reviews.Length == 0)
+                score = 10;
+            else
+            {
+                foreach (Review review in reviews)
+                    score += review.Score;
+                score /= reviews.Length;
+            }
+
+            Assert.AreEqual(controller.GetMovieCommunityScore(movie.IdMovie.Value), score);
         }
 
         [Test()]
         public void GetMoviePopularityTest()
         {
-            int val = 1;
-            Assert.AreEqual(controller.GetMoviePopularity(val), val);
+            var movie = DTOs.MovieData.Empty;
+            movie = controller.CreateMovie(movie);
+
+            int score = 0;
+
+            Assert.AreEqual(controller.GetMoviePopularity(movie.IdMovie.Value), score);
         }
     }
 }

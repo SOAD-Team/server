@@ -66,15 +66,15 @@ namespace Server.Controllers
         }
 
         [HttpGet("score/{id}")]
-        public int GetMovieScore(int id)
+        public int GetMovieCommunityScore(int id)
         {
-            return id;
+            return RecommendationHelper.GetMovieCommunityScore(id, _context);
         }
 
         [HttpGet("popularity/{id}")]
         public int GetMoviePopularity(int id)
         {
-            return id;
+            return RecommendationHelper.GetMoviePopularity(id, _context);
         }
 
         [HttpGet]
