@@ -146,5 +146,15 @@ namespace Server.Controllers
             int movieId = movieData.IdMovie.Value;
             return MovieControllerHelper.CreateMovieDataOnDb(_context, movieId, movieData, _mongoContext);
         }
+
+
+        [HttpPost]
+        public Review CreateReview(Review review)
+        {
+            _context.Review.Add(review);
+            _context.SaveChanges();
+            return review;
+
+        }
     }
 }
