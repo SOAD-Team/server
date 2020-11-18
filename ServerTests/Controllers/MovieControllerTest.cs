@@ -198,5 +198,28 @@ namespace Server.Controllers.Tests
 
             Assert.AreEqual(controller.GetMoviePopularity(movie.IdMovie.Value), score);
         }
+
+        [Test()]
+        public void CreateReviewTest()
+        {
+            var review = new Review();
+
+            review.Comment = "Prueba";
+
+            review.IdMovie = 1;
+
+            var result = controller.CreateReview(review);
+
+            Assert.IsInstanceOf(typeof(Review), result);
+        }
+
+
+        [Test()]
+        public void GetReviewsTest()
+        {
+            var reviews = controller.GetReview(1);
+
+            Assert.IsInstanceOf(typeof(List<Review>), reviews);
+        }
     }
 }

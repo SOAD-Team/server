@@ -148,13 +148,25 @@ namespace Server.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost("review")]
         public Review CreateReview(Review review)
         {
-            _context.Review.Add(review);
+            Review insert = new Review();
+            insert.IdMovie = review.IdMovie;
+            insert.Score = review.Score;
+            insert.Comment = review.Comment;
+            _context.Review.Add(insert);
             _context.SaveChanges();
             return review;
 
+        }
+
+        [HttpGet("review/{id}")]
+        public IEnumerable<Review> GetReview(int id)
+        {
+            List<Review> reviews = _context.Review.Where(r => r.IdMovie == id).ToList();
+
+            return reviews;
         }
     }
 }
