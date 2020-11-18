@@ -12,5 +12,16 @@ namespace Server.DTOs
         public int Community{get; set;}
         public int PlatFav{get; set;}
         public int Popularity { get; set; }
+
+        public static UserPoints Empty { get =>
+                new UserPoints
+                {
+                    Imdb = 0,
+                    MetaScore = 0,
+                    Community = 0,
+                    PlatFav = 0,
+                    Popularity = 0
+                };
+        }
     }
 }
