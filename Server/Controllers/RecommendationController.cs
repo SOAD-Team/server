@@ -28,12 +28,13 @@ namespace Server.Controllers
             foreach (Movie movie in movies)
             {
                 DTOs.Recommendation temp = RecommendationHelper.GetRecommendationData(value, movie.IdMovie, _context, _mongoContext);
-                foreach(Genre genre in temp.Movie.Genres)
-                    if(genre.IdGenre == value.Genre.IdGenre)
-                    {
-                        recommendations.Add(temp);
-                        break;
-                    }
+                if (temp != null)
+                    foreach(Genre genre in temp.Movie.Genres)
+                        if(genre.IdGenre == value.Genre.IdGenre)
+                        {
+                            recommendations.Add(temp);
+                            break;
+                        }
             }
 
             return RecommendationHelper.FilterRecommendations(recommendations.ToArray());

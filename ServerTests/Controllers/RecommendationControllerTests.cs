@@ -28,7 +28,7 @@ namespace Server.Controllers.Tests
             controller = new RecommendationController(context, mongoContextStub.Object);
 
         }
-        [Test()]
+        [Test(), Order(25)]
         public void PostTest()
         {
             var userPoints = DTOs.UserPoints.Empty;
