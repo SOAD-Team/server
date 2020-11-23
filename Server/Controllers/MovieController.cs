@@ -26,6 +26,7 @@ namespace Server.Controllers
         [HttpPost("image")]
         public async Task<DTOs.Image> CreateImage([FromForm] IFormFile image)
         {
+            System.Console.WriteLine(image.Name);
             byte[] fileBytes;
 
             using (var stream = new MemoryStream())
