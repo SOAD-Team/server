@@ -16,32 +16,45 @@ namespace Server.Controllers
     public class MovieController : ControllerBase
     {
         private readonly MoviesDB _context;
-        private readonly IImagesDB _mongoContext;
         private readonly IMapper _mapper;
+        private readonly MovieRepository movieRepository;
+        private readonly MovieDataRepository movieDataRepository;
+        private readonly MovieDataGenreRepository genreRepository;
+        private readonly MovieDataLanguageRepository languageRepository;
 
-        public MovieController(MoviesDB context, IImagesDB mongoContext, IMapper mapper)
+        public MovieController(MoviesDB context, IMapper mapper, MovieRepository movieRepository, MovieDataRepository movieDataRepository, MovieDataGenreRepository genreRepository ,MovieDataLanguageRepository languageRepository)
         {
             _context = context;
-            _mongoContext = mongoContext;
             _mapper = mapper;
+            this.movieRepository = movieRepository;
+            this.movieDataRepository = movieDataRepository;
+            this.genreRepository = genreRepository;
+            this.languageRepository = languageRepository;
         }
         // Create
         [HttpPost]
         public async Task<IActionResult> CreateMovie(Resources.Movie movieData)
         {
             Movie movie = _mapper.Map<Movie>(movieData);
-            await _context.Movie.AddAsync(movie);
-            _context.SaveChanges();
-            int movieId = movie.IdMovie;
+            await movieRepository.Create(movie);
+            await movieRepository.CompleteAsync();
+            MovieData data = _mapper.Map<MovieData>(movieData);
+            data = await movieDataRepository.Create(data);
+            await movieDataRepository.CompleteAsync();
+            foreach (var genre in movieData.Genres)
+                await genreRepository.Create(new MovieDataGenre(data.IdMovieData, genre.Id));
+            foreach (var language in movieData.Languages)
+                await languageRepository.Create(new MovieDataLanguage(data.IdMovieData, language.Id));
+            await movieDataRepository.CompleteAsync();
 
-            return Ok(MovieControllerHelper.CreateMovieDataOnDb(_context, movieId, movieData, _mapper));
+            return Ok(_mapper.Map<Resources.Movie>(movieData));
 
         }
         // Get All
         [HttpGet]
         public async Task<IActionResult> GetAllMovies()
         {
-            var movies = new List<Models.MovieData>();
+            var movies = new List<MovieData>();
 
             await _context.MovieData
                 .Include(md => md.MovieDataLanguage)
@@ -64,7 +77,7 @@ namespace Server.Controllers
         [HttpGet("user/{id}")]
         public async Task<IActionResult> GetMovieByUserId(int id)
         {
-            var movies = new List<Models.MovieData>();
+            var movies = new List<MovieData>();
 
             await _context.MovieData
                 .Include(md => md.MovieDataLanguage)
@@ -97,8 +110,18 @@ namespace Server.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateMovie(Resources.Movie movieData)
         {
-            int movieId = movieData.IdMovie.Value;
-            return Ok(MovieControllerHelper.CreateMovieDataOnDb(_context, movieId, movieData, _mapper));
+            MovieData data = _mapper.Map<MovieData>(movieData);
+            data = await movieDataRepository.Create(data);
+            await movieDataRepository.CompleteAsync();
+            foreach (var genre in movieData.Genres)
+                await genreRepository.Create(new MovieDataGenre(data.IdMovieData, genre.Id));
+            foreach (var language in movieData.Languages)
+                await languageRepository.Create(new MovieDataLanguage(data.IdMovieData, language.Id));
+            await movieDataRepository.CompleteAsync();
+
+            await movieDataRepository.CompleteAsync();
+
+            return Ok(_mapper.Map<Resources.Movie>(movieData));
         }
 
     }

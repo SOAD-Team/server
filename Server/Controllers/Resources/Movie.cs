@@ -45,41 +45,5 @@ namespace Server.Resources
         {
 
         }
-
-        public Movie(int idMovie, int idUser, Models.MovieData data, KeyValuePair[] genres, KeyValuePair[] languages, KeyValuePair[] styles, Models.Image image)
-        {
-            this.IdMovie = idMovie;
-            this.IdUser = idUser;
-            this.IdMovieData = data.IdMovieData;
-            this.RegisterDate = data.RegisterDate;
-            this.Name = data.Title;
-            this.Year = data.Year;
-            this.Director = data.Director;
-            this.Imdb = data.Imdb;
-            this.MetaScore = data.MetaScore;
-            this.Genres = genres;
-            this.Languages = languages;
-            this.PlatFav = data.PlatFav;
-            this.Styles = styles;
-            this.Image = image.MapToPresentationModel();
-        }
-
-        public Models.MovieData MapToModel(int idMovie,string idImage)
-        {
-            Models.MovieData data = new Models.MovieData
-            {
-                IdMovie = idMovie,
-                RegisterDate = this.RegisterDate,
-                Title = this.Name,
-                Year = this.Year,
-                PlatFav = this.PlatFav,
-                ImageMongoId = idImage,
-                MetaScore = this.MetaScore,
-                Imdb = this.Imdb,
-                IdStyle = this.Styles[0].Id,
-                Director = this.Director
-            };
-            return data;
-        }
     }
 }

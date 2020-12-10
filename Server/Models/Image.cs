@@ -21,15 +21,6 @@ namespace Server.Models
             this.ObjectImage = objectImage;
         }
 
-        public Resources.Image MapToPresentationModel()
-        {
-            return new Resources.Image
-            {
-                Id = this.Id,
-                Url = ""
-            };
-        }
-
         public static Image Empty { get => new Image(new byte[0]); }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Server.Models;
 using Server.Persistence;
@@ -11,13 +12,13 @@ namespace Server.Controllers
     [ApiController]
     public class ImageController : ControllerBase
     {
-        private readonly MoviesDB _context;
         private readonly IImagesDB _mongoContext;
+        private readonly IMapper _mapper;
 
-        public ImageController(MoviesDB context, IImagesDB mongoContext)
+        public ImageController(IImagesDB mongoContext, IMapper mapper)
         {
-            _context = context;
             _mongoContext = mongoContext;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -35,7 +36,7 @@ namespace Server.Controllers
             Image data = new Image(fileBytes);
             data = _mongoContext.Create(data);
 
-            return Ok(data.MapToPresentationModel());
+            return Ok(_mapper.Map<Resources.Image>(data));
         }
 
         [HttpGet("{id}")]

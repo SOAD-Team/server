@@ -46,28 +46,6 @@ namespace Server.Models
         public virtual ICollection<MovieDataGenre> MovieDataGenre { get; set; }
         [InverseProperty("IdMovieDataNavigation")]
         public virtual ICollection<MovieDataLanguage> MovieDataLanguage { get; set; }
-
-        public Resources.Movie MapToPresentationModel(int idUser, Genre[] genres, Language[] languages, IImagesDB imagesContext, Style[] styles, IMapper mapper)
-        {
-
-            return new Resources.Movie
-            {
-                IdUser = idUser,
-                IdMovieData = this.IdMovieData,
-                IdMovie = this.IdMovie,
-                RegisterDate = this.RegisterDate,
-                Name = this.Title,
-                Year = this.Year,
-                Genres = mapper.Map<IEnumerable<Genre>,IEnumerable<Resources.KeyValuePair>>(genres).ToArray(),
-                Languages = mapper.Map<IEnumerable<Language>, IEnumerable<Resources.KeyValuePair>>(languages).ToArray(),
-                PlatFav = this.PlatFav,
-                Image = imagesContext.Get(this.ImageMongoId).MapToPresentationModel(),
-                Styles = mapper.Map<IEnumerable<Style>, IEnumerable<Resources.KeyValuePair>>(styles).ToArray(),
-                MetaScore = this.MetaScore,
-                Imdb = this.Imdb,
-                Director = this.Director
-            };
-        }
     }
 
     

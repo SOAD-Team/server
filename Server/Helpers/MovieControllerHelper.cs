@@ -9,93 +9,6 @@ namespace Server.Helpers
 {
     public static class MovieControllerHelper
     {
-        public static Data[] CreateData(MovieData[] datas, MoviesDB _context, IMapper mapper)
-        {
-            Data[] temp = new Data[datas.Length];
-            for (int i = 0; i < datas.Length; i++)
-            {
-                MovieData data = datas[i];
-                var genresInfo = _context.Genre.Join(_context.MovieDataGenre, g => g.IdGenre, mdg => mdg.IdGenre, (g, mdg) => new { g, mdg }).Where(val => val.mdg.IdMovieData == data.IdMovieData).ToArray();
-                var genresList = new List<Genre>();
-                foreach (var genre in genresInfo)
-                {
-                    genre.g.MovieDataGenre = null;
-                    genresList.Add(genre.g);
-                }
-                var languagesInfo = _context.Language.Join(_context.MovieDataLanguage, g => g.IdLanguage, mdg => mdg.IdLanguage, (g, mdg) => new { g, mdg }).Where(val => val.mdg.IdMovieData == data.IdMovieData).ToArray();
-                var languagesList = new List<Language>();
-                foreach (var genre in languagesInfo)
-                {
-                    genre.g.MovieDataLanguage = null;
-                    languagesList.Add(genre.g);
-                }
-                Genre[] genres = genresList.ToArray();
-                Language[] languages = languagesList.ToArray();
-                var styleJoin = _context.MovieData.Join(_context.Style, md => md.IdStyle, s => s.IdStyle, (md, s) => new { s, md.IdMovieData }).Where(md => md.IdMovieData == data.IdMovieData).ToArray();
-                Style[] styles = new Style[styleJoin.Length];
-                for (int j = 0; j < styleJoin.Length; j++)
-                    styles[j] = styleJoin[j].s;
-
-
-
-                temp[i] = new Data(data, mapper.Map<IEnumerable<Genre>, IEnumerable<Resources.KeyValuePair>>(genres).ToArray(), mapper.Map<IEnumerable<Language>, IEnumerable<Resources.KeyValuePair>>(languages).ToArray(), mapper.Map<IEnumerable<Style>, IEnumerable<Resources.KeyValuePair>>(styles).ToArray());
-
-            }
-            return temp;
-        }
-
-        public static Image[] FilterImages(Image[] ims, MovieData[] md)
-        {
-            List<Image> temp = new List<Image>(); 
-            foreach (MovieData movie in md)
-            {
-                foreach (Image im in ims)
-                    if (movie.ImageMongoId == im.Id)
-                    {
-                        temp.Add(im);
-                        break;
-                    }
-            }
-            return temp.ToArray();
-        }
-
-        public static List<Resources.Movie> CreateMovieDatas(Data[] datas, Image[] images, int idUser)
-        {
-            List<Resources.Movie> temp = new List<Resources.Movie>();
-            foreach (Data data in datas)
-            {
-                Image image = MovieControllerHelper.getImage(data.MData.ImageMongoId, images);
-
-                temp.Add(new Resources.Movie(data.MData.IdMovie, idUser, data.MData, data.Genres, data.Languages, data.Styles, image));
-            }
-            return temp;
-        }
-
-        private static Image getImage(string id, Image[] images)
-        {
-            Image temp = null;
-            foreach(Image image in images)
-                if(image.Id == id)
-                {
-                    temp = image;
-                    break;
-                }
-            return temp;
-        }
-
-
-        public static List<MovieData> FilterMovieDataByMovie(IEnumerable<MovieData> movies, int idMovie)
-        {
-            List<MovieData> filtred = new List<MovieData>();
-            foreach (MovieData movie in movies)
-            {
-                if (movie.IdMovie == idMovie)
-                    filtred.Add(movie);
-            }
-
-            return filtred;
-        }
-
         public static List<MovieData> GetMostRecentData(IEnumerable<MovieData> movies, MoviesDB _context)
         {
             List<MovieData> filtred = new List<MovieData>();
@@ -131,7 +44,7 @@ namespace Server.Helpers
             return filtred;
         }
 
-        public static Resources.Movie CreateMovieDataOnDb(MoviesDB _context, int movieId, Resources.Movie movieData, IMapper mapper)
+        public static Resources.Movie CreateMovieDataOnDb(MoviesDB _context, Resources.Movie movieData, IMapper mapper)
         {
             MovieData data = mapper.Map<MovieData>(movieData);
             _context.MovieData.Add(data);

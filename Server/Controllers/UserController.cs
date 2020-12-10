@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Server.Models;
 using Server.Persistence;
 
@@ -12,46 +15,39 @@ namespace Server.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-
         private readonly MoviesDB _context;
+        private readonly IMapper _mapper;
 
-        public UserController(MoviesDB context)
+        public UserController(MoviesDB context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        // POST api/<UserController>
-        [HttpPost]
-        public int RegisterUser(Resources.User user)
+        [HttpGet]
+        public async Task<IActionResult> RegisterUser(Resources.User user)
         {
-            int statusCode = 0;
 
-            var user1 =  _context.User.Where(usr => usr.Email == user.Email).Select(usr => usr.Email).FirstOrDefault();
+            var user1 =  await _context.User.Where(usr => usr.Email == user.Email).Select(usr => usr.Email).FirstOrDefaultAsync();
             if(user1 == null)
             {
                 User temp = new User(user.Email, user.Password, user.Name, user.LastName);
                 _context.User.Add(temp);
                 _context.SaveChanges();
-                statusCode = 1;
+                return Ok(_mapper.Map<Resources.User>(temp));
             }
-            else
-            {
-                statusCode = 0;
-            }
-
-            return statusCode;
+            return NotFound(user);
 
         }
 
-        // POST api/<LogInUserController>
-        [HttpPost("login")]
-        public Resources.User LogIn(Resources.User user)
+        [HttpPost]
+        public async Task<IActionResult> LogIn(Resources.User user)
         {
-            User temp = _context.User.Where(usr => user.Email==usr.Email && user.Password==usr.Password ).FirstOrDefault();
+            User temp = await _context.User.Where(usr => user.Email==usr.Email && user.Password==usr.Password ).FirstOrDefaultAsync();
             if (temp != null)
-                return temp.MapToPresentationModel();
+                return Ok(_mapper.Map<Resources.User>(temp));
             else
-                return null;
+                return NotFound(user);
         }
     }
 }

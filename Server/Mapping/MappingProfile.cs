@@ -14,6 +14,7 @@ namespace Server.Mapping
         {
             string host = Environment.GetEnvironmentVariable("URL");
             #region Domain to Resource
+            CreateMap<Models.User, Resources.User>();
             CreateMap<Models.Genre,Resources.KeyValuePair>()
                 .ForMember(g => g.Id, opt => opt.MapFrom(gr => gr.IdGenre))
                 .ForMember(g => g.Name, opt => opt.MapFrom(gr => gr.Name));
@@ -46,6 +47,31 @@ namespace Server.Mapping
             CreateMap<Resources.Movie, Models.Movie>()
                 .ForMember(m => m.IdMovie, opt => opt.MapFrom(m => m.IdMovie))
                 .ForMember(m => m.IdUser, opt => opt.MapFrom(m => m.IdUser));
+            CreateMap<Resources.Movie, Models.MovieData>().BeforeMap((movie, movieData) => {
+                foreach (Resources.KeyValuePair genre in movie.Genres)
+                {
+                    if (genre.Id.Equals(null))
+                    {
+                        context.Genre.Add(new Models.Genre(genre.Name));
+                        context.SaveChanges();
+                    }
+                }
+                foreach (Resources.KeyValuePair language in movie.Languages)
+                {
+                    if (language.Id.Equals(null))
+                    {
+                        context.Language.Add(new Models.Language(language.Name));
+                        context.SaveChanges();
+                    }
+                }
+            }).AfterMap((movie, movieData) => {
+                movieData.MovieDataGenre = new List<Models.MovieDataGenre>();
+                movieData.MovieDataLanguage = new List<Models.MovieDataLanguage>();
+                foreach (var genre in movie.Genres)
+                    movieData.MovieDataGenre.Add(new Models.MovieDataGenre(movie.IdMovieData.Value, genre.Id));
+                foreach (var language in movie.Languages)
+                    movieData.MovieDataLanguage.Add(new Models.MovieDataLanguage(movie.IdMovieData.Value, language.Id));
+            });
             CreateMap<Resources.Image, Models.Image>()
                 .ForMember(img => img.ObjectImage, opt => opt.Ignore());
             #endregion

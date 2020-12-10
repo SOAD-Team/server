@@ -9,14 +9,7 @@ namespace Server.Helpers
 {
     public static class RecommendationHelper
     {
-        public static Resources.Recommendation[] FilterRecommendations(Resources.Recommendation[] recommendations)
-        {
-            Resources.Recommendation[] values = recommendations.OrderByDescending(val => val.Score).Take(10).ToArray();
-            foreach (var value in values)
-                System.Console.WriteLine("Name: " + value.Movie.Name + ", Score: "+ value.Score.ToString());
-            return values;
-        }
-        public static Resources.Recommendation GetRecommendationData(Resources.UserPoints points, int idMovie, MoviesDB _context, IImagesDB _mongoContext, IMapper mapper)
+        public static Resources.Recommendation GetRecommendationData(Resources.UserPoints points, int idMovie, MoviesDB _context, IMapper mapper)
         {
             MovieData[] movies = _context.MovieData.Where(val => val.IdMovie == idMovie).ToArray();
             MovieData movie = MovieControllerHelper.GetMostRecentData(movies, _context).FirstOrDefault();
@@ -25,18 +18,9 @@ namespace Server.Helpers
                 return null;
             int score = RecommendationHelper.getRecommendationScore(points, movie, _context);
 
-            Data completeData = MovieControllerHelper.CreateData(new MovieData[1]{ movie }, _context, mapper)[0];
+            Resources.Movie data = mapper.Map<Resources.Movie>(movie);
 
-            Resources.Movie movieData = movie.MapToPresentationModel(
-                userId,
-                mapper.Map<IEnumerable<Resources.KeyValuePair>,IEnumerable<Genre>>(completeData.Genres).ToArray(),
-                mapper.Map<IEnumerable<Resources.KeyValuePair>, IEnumerable<Language>>(completeData.Languages).ToArray(),
-                _mongoContext,
-                mapper.Map<IEnumerable<Resources.KeyValuePair>, IEnumerable<Style>>(completeData.Styles).ToArray(),
-                mapper
-            );
-
-            return new Resources.Recommendation(movieData, score);
+            return new Resources.Recommendation { Movie = data, Score = score };
         }
         private static int getRecommendationScore(Resources.UserPoints points, MovieData movie, MoviesDB _context)
         {

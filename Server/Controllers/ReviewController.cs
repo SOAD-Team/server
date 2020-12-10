@@ -17,19 +17,21 @@ namespace Server.Controllers
         {
             _context = context;
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetReview(int id)
         {
             var reviews = await _context.Review.Where(r => r.IdMovie == id).ToListAsync();
             return Ok(reviews);
         }
+
         [HttpPost]
-        public Review CreateReview(Review review)
+        public async Task<IActionResult> CreateReview(Review review)
         {
             Review insert = new Review { IdMovie = review.IdMovie, Score = review.Score, Comment = review.Comment};
-            _context.Review.Add(insert);
+            await _context.Review.AddAsync(insert);
             _context.SaveChanges();
-            return review;
+            return Ok(review);
         }
 
     }
