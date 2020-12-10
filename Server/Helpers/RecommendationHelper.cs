@@ -1,6 +1,9 @@
 ﻿using Server.Models;
 using Server.Structs;
 using System.Linq;
+using Server.Persistence;
+using AutoMapper;
+using System.Collections.Generic;
 
 namespace Server.Helpers
 {
@@ -13,7 +16,7 @@ namespace Server.Helpers
                 System.Console.WriteLine("Name: " + value.Movie.Name + ", Score: "+ value.Score.ToString());
             return values;
         }
-        public static Resources.Recommendation GetRecommendationData(Resources.UserPoints points, int idMovie, MoviesDB _context, IImagesDB _mongoContext)
+        public static Resources.Recommendation GetRecommendationData(Resources.UserPoints points, int idMovie, MoviesDB _context, IImagesDB _mongoContext, IMapper mapper)
         {
             MovieData[] movies = _context.MovieData.Where(val => val.IdMovie == idMovie).ToArray();
             MovieData movie = MovieControllerHelper.GetMostRecentData(movies, _context).FirstOrDefault();
@@ -22,14 +25,15 @@ namespace Server.Helpers
                 return null;
             int score = RecommendationHelper.getRecommendationScore(points, movie, _context);
 
-            Data completeData = MovieControllerHelper.CreateData(new MovieData[1]{ movie }, _context)[0];
+            Data completeData = MovieControllerHelper.CreateData(new MovieData[1]{ movie }, _context, mapper)[0];
 
             Resources.Movie movieData = movie.MapToPresentationModel(
                 userId,
-                completeData.Genres,
-                completeData.Languages,
+                mapper.Map<IEnumerable<Resources.KeyValuePair>,IEnumerable<Genre>>(completeData.Genres).ToArray(),
+                mapper.Map<IEnumerable<Resources.KeyValuePair>, IEnumerable<Language>>(completeData.Languages).ToArray(),
                 _mongoContext,
-                completeData.Styles
+                mapper.Map<IEnumerable<Resources.KeyValuePair>, IEnumerable<Style>>(completeData.Styles).ToArray(),
+                mapper
             );
 
             return new Resources.Recommendation(movieData, score);

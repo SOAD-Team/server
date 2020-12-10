@@ -2,12 +2,14 @@
 using Server.Structs;
 using System.Collections.Generic;
 using System.Linq;
+using Server.Persistence;
+using AutoMapper;
 
 namespace Server.Helpers
 {
     public static class MovieControllerHelper
     {
-        public static Data[] CreateData(MovieData[] datas, MoviesDB _context)
+        public static Data[] CreateData(MovieData[] datas, MoviesDB _context, IMapper mapper)
         {
             Data[] temp = new Data[datas.Length];
             for (int i = 0; i < datas.Length; i++)
@@ -34,7 +36,9 @@ namespace Server.Helpers
                 for (int j = 0; j < styleJoin.Length; j++)
                     styles[j] = styleJoin[j].s;
 
-                temp[i] = new Data(data, genres, languages, styles);
+
+
+                temp[i] = new Data(data, mapper.Map<IEnumerable<Genre>, IEnumerable<Resources.KeyValuePair>>(genres).ToArray(), mapper.Map<IEnumerable<Language>, IEnumerable<Resources.KeyValuePair>>(languages).ToArray(), mapper.Map<IEnumerable<Style>, IEnumerable<Resources.KeyValuePair>>(styles).ToArray());
 
             }
             return temp;
@@ -139,30 +143,30 @@ namespace Server.Helpers
             return filtred;
         }
 
-        public static Resources.Movie CreateMovieDataOnDb(MoviesDB _context, int movieId, Resources.Movie movieData, IImagesDB _mongoContext)
+        public static Resources.Movie CreateMovieDataOnDb(MoviesDB _context, int movieId, Resources.Movie movieData, IImagesDB _mongoContext, IMapper mapper)
         {
             Movie movie = _context.Movie.Find(movieId);
             MovieData data = movieData.MapToModel(movieId, movieData.Image.Id);
             _context.MovieData.Add(data);
             _context.SaveChanges();
 
-            foreach (Genre genre in movieData.Genres)
+            foreach (Resources.KeyValuePair genre in movieData.Genres)
             {
-                if (genre.IdGenre.Equals(null))
+                if (genre.Id.Equals(null))
                 {
                     _context.Genre.Add(new Genre(genre.Name));
                     _context.SaveChanges();
                 }
-                _context.MovieDataGenre.Add(new MovieDataGenre(data.IdMovieData, genre.IdGenre));
+                _context.MovieDataGenre.Add(new MovieDataGenre(data.IdMovieData, genre.Id));
             }
-            foreach (Language language in movieData.Languages)
+            foreach (Resources.KeyValuePair language in movieData.Languages)
             {
-                if (language.IdLanguage.Equals(null))
+                if (language.Id.Equals(null))
                 {
                     _context.Language.Add(new Language(language.Name));
                     _context.SaveChanges();
                 }
-                _context.MovieDataLanguage.Add(new MovieDataLanguage(data.IdMovieData, language.IdLanguage));
+                _context.MovieDataLanguage.Add(new MovieDataLanguage(data.IdMovieData, language.Id));
             }
 
             _context.SaveChanges();
@@ -174,7 +178,7 @@ namespace Server.Helpers
             qLanguages.ForEach(g => languages.Add(new Language(g.IdLanguage, g.Name)));
             Style[] styles = _context.Style.Where(s => s.IdStyle == data.IdStyle).ToArray<Style>();
 
-            return data.MapToPresentationModel(movie.IdUser, genres.ToArray(), languages.ToArray(), _mongoContext, styles);
+            return data.MapToPresentationModel(movie.IdUser, genres.ToArray(), languages.ToArray(), _mongoContext, styles, mapper);
         }
     }
 }

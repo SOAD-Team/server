@@ -1,4 +1,7 @@
-﻿using Server.Models;
+﻿using AutoMapper;
+using Server.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Server.Structs
 {
@@ -6,11 +9,11 @@ namespace Server.Structs
     {
         public static Data NullData { get => new Data(null, null, null, null); }
         public MovieData MData { get; set; }
-        public Genre[] Genres { get; set; }
-        public Language[] Languages { get; set; }
-        public Style[] Styles { get; set; }
+        public Resources.KeyValuePair[] Genres { get; set; }
+        public Resources.KeyValuePair[] Languages { get; set; }
+        public Resources.KeyValuePair[] Styles { get; set; }
 
-        public Data(MovieData mData, Genre[] genres, Language[] languages, Style[] styles)
+        public Data(MovieData mData, Resources.KeyValuePair[] genres, Resources.KeyValuePair[] languages, Resources.KeyValuePair[] styles)
         {
             this.MData = mData;
             this.Genres = genres;

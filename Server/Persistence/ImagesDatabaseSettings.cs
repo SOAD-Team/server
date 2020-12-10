@@ -1,4 +1,4 @@
-﻿namespace Server.Models
+﻿namespace Server.Persistence
 {
     public class ImagesDatabaseSettings : IImagesDatabaseSettings
     {

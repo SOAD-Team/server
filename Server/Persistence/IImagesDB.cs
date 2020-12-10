@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using Server.Models;
 
-namespace Server.Models
-{
+namespace Server.Persistence 
+{ 
     public interface IImagesDB
     {
         public List<Image> Get();

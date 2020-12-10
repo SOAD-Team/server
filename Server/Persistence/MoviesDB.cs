@@ -1,8 +1,8 @@
 using System;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+using Server.Models;
 
-namespace Server.Models
+namespace Server.Persistence
 {
     public partial class MoviesDB : DbContext
     {

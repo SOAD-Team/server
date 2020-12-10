@@ -151,7 +151,7 @@ namespace Server.Controllers.Tests
         [Test()]
         public void GetMovieByIdTest()
         {
-            var movie = controller.GetMovieById(1);
+            var movie = controller.GetMovie(1);
             Assert.IsInstanceOf(typeof(Resources.Movie), movie);
         }
 

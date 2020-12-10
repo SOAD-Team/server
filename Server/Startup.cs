@@ -5,7 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Server.Models;
+using Server.Persistence;
+using AutoMapper;
 
 namespace Server
 {
@@ -41,6 +42,8 @@ namespace Server
 
             services.AddSingleton<ImagesDB>();
             services.AddSingleton<IImagesDB>(sp => sp.GetRequiredService<ImagesDB>());
+
+            services.AddAutoMapper(typeof(Startup));
 
             services.AddControllers();
 

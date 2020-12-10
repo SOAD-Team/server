@@ -14,10 +14,10 @@ namespace Server.Resources
             data.RegisterDate = new DateTime();
             data.Name = "";
             data.Year = 0;
-            data.Genres = new Models.Genre[1] {Genre.Empty};
-            data.Languages = new Models.Language[1] {Language.Empty};
+            data.Genres = new KeyValuePair[1] { KeyValuePair.Empty };
+            data.Languages = new KeyValuePair[1] { KeyValuePair.Empty };
             data.PlatFav = false;
-            data.Styles = new Models.Style[1]{ Models.Style.Empty };
+            data.Styles = new KeyValuePair[1]{ KeyValuePair.Empty };
             data.Image = Image.Empty;
             data.Director = "";
 
@@ -30,11 +30,11 @@ namespace Server.Resources
         public DateTime RegisterDate { get; set; }
         public string Name { get; set; }
         public int Year { get; set; }
-        public Models.Genre[] Genres { get; set; }
-        public Models.Language[] Languages { get; set; }
+        public KeyValuePair[] Genres { get; set; }
+        public KeyValuePair[] Languages { get; set; }
         public bool PlatFav { get; set; }
         public Image Image { get; set; }
-        public Models.Style[] Styles { get; set; }
+        public KeyValuePair[] Styles { get; set; }
         public byte? MetaScore { get; set; }
         public byte? Imdb { get; set; }
         public string Director { get; set; }
@@ -44,7 +44,7 @@ namespace Server.Resources
 
         }
 
-        public Movie(int idMovie, int idUser, Models.MovieData data, Genre[] genres, Language[] languages, Style[] styles, Models.Image image)
+        public Movie(int idMovie, int idUser, Models.MovieData data, KeyValuePair[] genres, KeyValuePair[] languages, KeyValuePair[] styles, Models.Image image)
         {
             this.IdMovie = idMovie;
             this.IdUser = idUser;
@@ -74,7 +74,7 @@ namespace Server.Resources
                 ImageMongoId = idImage,
                 MetaScore = this.MetaScore,
                 Imdb = this.Imdb,
-                IdStyle = this.Styles[0].IdStyle,
+                IdStyle = this.Styles[0].Id,
                 Director = this.Director
             };
             return data;

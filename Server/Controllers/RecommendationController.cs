@@ -3,6 +3,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Server.Models;
 using Server.Helpers;
+using Server.Persistence;
+using AutoMapper;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,11 +16,13 @@ namespace Server.Controllers
     {
         private readonly MoviesDB _context;
         private readonly IImagesDB _mongoContext;
+        private readonly IMapper _mapper;
 
-        public RecommendationController(MoviesDB context, IImagesDB mongoContext)
+        public RecommendationController(MoviesDB context, IImagesDB mongoContext, IMapper mapper)
         {
             _context = context;
             _mongoContext = mongoContext;
+            _mapper = mapper;
         }
         [HttpPost]
         public IEnumerable<Resources.Recommendation> Post([FromBody] Resources.UserPoints value)
@@ -27,10 +31,10 @@ namespace Server.Controllers
             List<Resources.Recommendation> recommendations = new List<Resources.Recommendation>();
             foreach (Movie movie in movies)
             {
-                Resources.Recommendation temp = RecommendationHelper.GetRecommendationData(value, movie.IdMovie, _context, _mongoContext);
+                Resources.Recommendation temp = RecommendationHelper.GetRecommendationData(value, movie.IdMovie, _context, _mongoContext, _mapper);
                 if (temp != null)
-                    foreach(Genre genre in temp.Movie.Genres)
-                        if(genre.IdGenre == value.Genre.IdGenre)
+                    foreach(Resources.KeyValuePair genre in temp.Movie.Genres)
+                        if(genre.Id == value.Genre.IdGenre)
                         {
                             recommendations.Add(temp);
                             break;

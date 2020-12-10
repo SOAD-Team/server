@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using Server.Controllers;
-using Server.Models;
+using Server.Persistence;
 
 namespace ServerTests.Controllers
 {

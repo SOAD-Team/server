@@ -1,8 +1,9 @@
 ﻿using System;
+using Server.Models;
 using MongoDB.Driver;
 using System.Collections.Generic;
 
-namespace Server.Models
+namespace Server.Persistence
 {
     public class ImagesDB : IImagesDB
     {

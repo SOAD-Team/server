@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using AutoMapper;
+using Server.Persistence;
 
 namespace Server.Models
 {
@@ -44,7 +47,7 @@ namespace Server.Models
         [InverseProperty("IdMovieDataNavigation")]
         public virtual ICollection<MovieDataLanguage> MovieDataLanguage { get; set; }
 
-        public Resources.Movie MapToPresentationModel(int idUser, Genre[] genres, Language[] languages, IImagesDB imagesContext, Style[] styles)
+        public Resources.Movie MapToPresentationModel(int idUser, Genre[] genres, Language[] languages, IImagesDB imagesContext, Style[] styles, IMapper mapper)
         {
 
             return new Resources.Movie
@@ -55,11 +58,11 @@ namespace Server.Models
                 RegisterDate = this.RegisterDate,
                 Name = this.Title,
                 Year = this.Year,
-                Genres = genres,
-                Languages = languages,
+                Genres = mapper.Map<IEnumerable<Genre>,IEnumerable<Resources.KeyValuePair>>(genres).ToArray(),
+                Languages = mapper.Map<IEnumerable<Language>, IEnumerable<Resources.KeyValuePair>>(languages).ToArray(),
                 PlatFav = this.PlatFav,
                 Image = imagesContext.Get(this.ImageMongoId).MapToPresentationModel(),
-                Styles = styles,
+                Styles = mapper.Map<IEnumerable<Style>, IEnumerable<Resources.KeyValuePair>>(styles).ToArray(),
                 MetaScore = this.MetaScore,
                 Imdb = this.Imdb,
                 Director = this.Director
