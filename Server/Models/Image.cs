@@ -26,7 +26,6 @@ namespace Server.Models
             return new Resources.Image
             {
                 Id = this.Id,
-                ObjectImage = null,
                 Url = ""
             };
         }

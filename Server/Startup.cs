@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Server.Persistence;
 using AutoMapper;
+using Server.Mapping;
 
 namespace Server
 {
@@ -42,6 +43,11 @@ namespace Server
 
             services.AddSingleton<ImagesDB>();
             services.AddSingleton<IImagesDB>(sp => sp.GetRequiredService<ImagesDB>());
+
+            services.AddScoped(provider => new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new MappingProfile(provider.GetService<IImagesDB>(), provider.GetService<MoviesDB>()));
+            }).CreateMapper());
 
             services.AddAutoMapper(typeof(Startup));
 

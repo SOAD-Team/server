@@ -35,36 +35,25 @@ namespace Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMovieDataByUserId(int id)
         {
-            var userDatas = await _context.MovieData
-                .Include(md => md.MovieDataLanguage)
-                .Include(md => md.MovieDataGenre)
-                .Join(_context.Movie,md => md.IdMovie, m => m.IdMovie,
-                (md, m) => new { md, m }).Where(v => v.m.IdUser == id)
-                .Select(val => val.md)
-                .ToListAsync();
-
             var movies = new List<Models.MovieData>();
 
-            foreach (var data in userDatas)
-            {
-                System.Console.WriteLine(data.Title);
-                var existingMovie = movies.Where(m => m.IdMovie == data.IdMovie).FirstOrDefault();
-                System.Console.WriteLine("Exists: " + (existingMovie != null));
-                if (existingMovie == null)
-                    movies.Add(data);
-                else 
-                    if (data.RegisterDate > existingMovie.RegisterDate)
+            await _context.MovieData
+                .Include(md => md.MovieDataLanguage)
+                .Include(md => md.MovieDataGenre)
+                .Join(_context.Movie, md => md.IdMovie, m => m.IdMovie,
+                (md, m) => new { md, m }).Where(v => v.m.IdUser == id)
+                .Select(val => val.md).ForEachAsync(data =>
+                {
+                    var existingMovie = movies.Where(m => m.IdMovie == data.IdMovie).FirstOrDefault();
+                    if (existingMovie == null)
+                        movies.Add(data);
+                    else
+                        if (data.RegisterDate > existingMovie.RegisterDate)
                         movies[movies.IndexOf(existingMovie)] = data;
-            }
-            // userDatas = MovieControllerHelper.GetMostRecentData(userDatas, _context);
-            // userDatas = MovieControllerHelper.FilterMovieDataByUser(userDatas, _context, id);
+                });
 
-            var images = _mongoContext.Get().ToArray();
-            images = MovieControllerHelper.FilterImages(images, movies.ToArray());
-
-            var completeData = MovieControllerHelper.CreateData(movies.ToArray(), _context, _mapper);
-
-            return Ok(MovieControllerHelper.CreateMovieDatas(completeData, images, id));
+            var resourceMovies = _mapper.Map<IEnumerable<Resources.Movie>>(movies);
+            return Ok(resourceMovies);
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Server.Resources
     public class Image
     {
         public string Id { get; set; }
-        public FileModel ObjectImage { get; set; }
+        // public FileModel ObjectImage { get; set; }
         public string Url { get; set; }
 
         public Models.Image MapToImage()
@@ -14,7 +14,7 @@ namespace Server.Resources
             byte[] fileBytes;
             using (var memoryStream = new MemoryStream())
             {
-                this.ObjectImage.FormFile.CopyToAsync(memoryStream);
+                // this.ObjectImage.FormFile.CopyToAsync(memoryStream);
                 fileBytes = memoryStream.ToArray();
             }
             return new Models.Image
