@@ -10,7 +10,7 @@ namespace Server.Controllers.Tests
     [TestFixture()]
     public class RecommendationControllerTests
     {
-        private UserPointsController controller;
+        private RecommendationController controller;
         private MoviesDB context;
 
         [SetUp]
@@ -25,7 +25,7 @@ namespace Server.Controllers.Tests
             var imgList = new List<Image>();
             imgList.Add(Image.Empty);
             mongoContextStub.Setup(_ => _.Get()).Returns(imgList);
-            controller = new UserPointsController(context, mongoContextStub.Object);
+            controller = new RecommendationController(context, mongoContextStub.Object);
 
         }
         [Test(), Order(25)]
