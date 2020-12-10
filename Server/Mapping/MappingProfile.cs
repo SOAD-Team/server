@@ -40,6 +40,9 @@ namespace Server.Mapping
             #endregion
 
             #region Resource to Domain
+            CreateMap<Resources.Movie, Models.Movie>()
+                .ForMember(m => m.IdMovie, opt => opt.MapFrom(m => m.IdMovie))
+                .ForMember(m => m.IdUser, opt => opt.MapFrom(m => m.IdUser));
             CreateMap<Resources.Image, Models.Image>()
                 .ForMember(img => img.ObjectImage, opt => opt.Ignore());
             #endregion

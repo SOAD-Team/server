@@ -6,6 +6,8 @@ using Server.Helpers;
 using Server.Structs;
 using Server.Persistence;
 using AutoMapper;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Server.Controllers
 {
@@ -25,22 +27,65 @@ namespace Server.Controllers
         }
         // Create
         [HttpPost]
-        public Resources.Movie CreateMovie(Resources.Movie movieData)
+        public async Task<IActionResult> CreateMovie(Resources.Movie movieData)
         {
-            Movie movie = new Movie(movieData.IdUser);
-            _context.Movie.Add(movie);
+            Movie movie = _mapper.Map<Movie>(movieData);
+            await _context.Movie.AddAsync(movie);
             _context.SaveChanges();
             int movieId = movie.IdMovie;
-            return MovieControllerHelper.CreateMovieDataOnDb(_context, movieId, movieData, _mongoContext, _mapper);
+
+            return Ok(MovieControllerHelper.CreateMovieDataOnDb(_context, movieId, movieData, _mapper));
 
         }
         // Get All
         [HttpGet]
-        public IEnumerable<Movie> GetMovies()
+        public async Task<IActionResult> GetAllMovies()
         {
-            List<Movie> movies = this._context.Movie.ToList<Movie>();
-            return movies;
+            var movies = new List<Models.MovieData>();
+
+            await _context.MovieData
+                .Include(md => md.MovieDataLanguage)
+                .Include(md => md.MovieDataGenre)
+                .Select(val => val).ForEachAsync(data =>
+                {
+                    var existingMovie = movies.Where(m => m.IdMovie == data.IdMovie).FirstOrDefault();
+                    if (existingMovie == null)
+                        movies.Add(data);
+                    else
+                        if (data.RegisterDate > existingMovie.RegisterDate)
+                        movies[movies.IndexOf(existingMovie)] = data;
+                });
+
+            var resourceMovies = _mapper.Map<IEnumerable<Resources.Movie>>(movies);
+
+            return Ok(resourceMovies);
         }
+
+        [HttpGet("user/{id}")]
+        public async Task<IActionResult> GetMovieByUserId(int id)
+        {
+            var movies = new List<Models.MovieData>();
+
+            await _context.MovieData
+                .Include(md => md.MovieDataLanguage)
+                .Include(md => md.MovieDataGenre)
+                .Join(_context.Movie, md => md.IdMovie, m => m.IdMovie,
+                (md, m) => new { md, m }).Where(v => v.m.IdUser == id)
+                .Select(val => val.md).ForEachAsync(data =>
+                {
+                    var existingMovie = movies.Where(m => m.IdMovie == data.IdMovie).FirstOrDefault();
+                    if (existingMovie == null)
+                        movies.Add(data);
+                    else
+                        if (data.RegisterDate > existingMovie.RegisterDate)
+                        movies[movies.IndexOf(existingMovie)] = data;
+                });
+
+            var resourceMovies = _mapper.Map<IEnumerable<Resources.Movie>>(movies);
+
+            return Ok(resourceMovies);
+        }
+
         // Get
         [HttpGet("{id}")]
         public Resources.Movie GetMovie(int id)

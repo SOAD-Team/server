@@ -83,18 +83,6 @@ namespace Server.Helpers
             return temp;
         }
 
-        public static List<MovieData> FilterMovieDataByUser(List<MovieData> movies, MoviesDB _context, int idUser)
-        {
-            List<MovieData> filtred = new List<MovieData>();
-            foreach (MovieData movie in movies)
-            {
-                int movieUserId = _context.Movie.Where(val => val.IdMovie == movie.IdMovie).FirstOrDefault().IdUser;
-                if (movieUserId == idUser)
-                    filtred.Add(movie);
-            }
-                
-            return filtred;
-        }
 
         public static List<MovieData> FilterMovieDataByMovie(IEnumerable<MovieData> movies, int idMovie)
         {
@@ -143,10 +131,10 @@ namespace Server.Helpers
             return filtred;
         }
 
-        public static Resources.Movie CreateMovieDataOnDb(MoviesDB _context, int movieId, Resources.Movie movieData, IImagesDB _mongoContext, IMapper mapper)
+        public static Resources.Movie CreateMovieDataOnDb(MoviesDB _context, int movieId, Resources.Movie movieData, IMapper mapper)
         {
             Movie movie = _context.Movie.Find(movieId);
-            MovieData data = movieData.MapToModel(movieId, movieData.Image.Id);
+            MovieData data = mapper.Map<MovieData>(movieData);
             _context.MovieData.Add(data);
             _context.SaveChanges();
 
@@ -170,15 +158,8 @@ namespace Server.Helpers
             }
 
             _context.SaveChanges();
-            var qGenres = _context.Genre.Join(_context.MovieDataGenre, g => g.IdGenre, mdg => mdg.IdGenre, (g, mdg) => new { g.IdGenre, g.Name, mdg.IdMovieData }).Where(g => g.IdMovieData == data.IdMovieData).ToList();
-            List<Genre> genres = new List<Genre>();
-            qGenres.ForEach(g => genres.Add(new Genre(g.IdGenre, g.Name)));
-            List<Language> languages = new List<Language>();
-            var qLanguages = _context.Language.Join(_context.MovieDataLanguage, g => g.IdLanguage, mdg => mdg.IdLanguage, (g, mdg) => new { g.IdLanguage, g.Name, mdg.IdMovieData }).Where(g => g.IdMovieData == data.IdMovieData).ToList();
-            qLanguages.ForEach(g => languages.Add(new Language(g.IdLanguage, g.Name)));
-            Style[] styles = _context.Style.Where(s => s.IdStyle == data.IdStyle).ToArray<Style>();
 
-            return data.MapToPresentationModel(movie.IdUser, genres.ToArray(), languages.ToArray(), _mongoContext, styles, mapper);
+            return mapper.Map<Resources.Movie>(data);
         }
     }
 }
