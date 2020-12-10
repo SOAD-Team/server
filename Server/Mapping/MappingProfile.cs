@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Server.Helpers;
 using Server.Persistence;
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,9 @@ namespace Server.Mapping
                         new Resources.KeyValuePair { Id = md.IdStyle, Name = context.Style
                             .Where(s => s.IdStyle == md.IdStyle).FirstOrDefault().Name } }))
                 .ForMember(m => m.Image, opt => opt.MapFrom(md => 
-                    new Resources.Image { Id = md.ImageMongoId, Url = $"{host}image/{md.ImageMongoId}" }));
+                    new Resources.Image { Id = md.ImageMongoId, Url = $"{host}image/{md.ImageMongoId}" }))
+                .ForMember(m => m.CommunityScore,opt => opt.MapFrom(md => RecommendationHelper.GetMovieCommunityScore(md.IdMovie,context)))
+                .ForMember(m => m.CommunityScore, opt => opt.MapFrom(md => RecommendationHelper.GetMoviePopularity(md.IdMovie, context)));
             #endregion
 
             #region Resource to Domain

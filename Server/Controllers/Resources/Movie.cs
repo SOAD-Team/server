@@ -38,6 +38,8 @@ namespace Server.Resources
         public byte? MetaScore { get; set; }
         public byte? Imdb { get; set; }
         public string Director { get; set; }
+        public int CommunityScore { get; set; }
+        public int Popularity { get; set; }
 
         public Movie()
         {

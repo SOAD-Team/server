@@ -133,7 +133,6 @@ namespace Server.Helpers
 
         public static Resources.Movie CreateMovieDataOnDb(MoviesDB _context, int movieId, Resources.Movie movieData, IMapper mapper)
         {
-            Movie movie = _context.Movie.Find(movieId);
             MovieData data = mapper.Map<MovieData>(movieData);
             _context.MovieData.Add(data);
             _context.SaveChanges();
