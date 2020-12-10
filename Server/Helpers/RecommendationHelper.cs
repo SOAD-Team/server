@@ -6,14 +6,14 @@ namespace Server.Helpers
 {
     public static class RecommendationHelper
     {
-        public static DTOs.Recommendation[] FilterRecommendations(DTOs.Recommendation[] recommendations)
+        public static Resources.Recommendation[] FilterRecommendations(Resources.Recommendation[] recommendations)
         {
-            DTOs.Recommendation[] values = recommendations.OrderByDescending(val => val.Score).Take(10).ToArray();
+            Resources.Recommendation[] values = recommendations.OrderByDescending(val => val.Score).Take(10).ToArray();
             foreach (var value in values)
                 System.Console.WriteLine("Name: " + value.Movie.Name + ", Score: "+ value.Score.ToString());
             return values;
         }
-        public static DTOs.Recommendation GetRecommendationData(DTOs.UserPoints points, int idMovie, MoviesDB _context, IImagesDB _mongoContext)
+        public static Resources.Recommendation GetRecommendationData(Resources.UserPoints points, int idMovie, MoviesDB _context, IImagesDB _mongoContext)
         {
             MovieData[] movies = _context.MovieData.Where(val => val.IdMovie == idMovie).ToArray();
             MovieData movie = MovieControllerHelper.GetMostRecentData(movies, _context).FirstOrDefault();
@@ -24,7 +24,7 @@ namespace Server.Helpers
 
             Data completeData = MovieControllerHelper.CreateData(new MovieData[1]{ movie }, _context)[0];
 
-            DTOs.MovieData movieData = movie.MapToPresentationModel(
+            Resources.Movie movieData = movie.MapToPresentationModel(
                 userId,
                 completeData.Genres,
                 completeData.Languages,
@@ -32,9 +32,9 @@ namespace Server.Helpers
                 completeData.Styles
             );
 
-            return new DTOs.Recommendation(movieData, score);
+            return new Resources.Recommendation(movieData, score);
         }
-        private static int getRecommendationScore(DTOs.UserPoints points, MovieData movie, MoviesDB _context)
+        private static int getRecommendationScore(Resources.UserPoints points, MovieData movie, MoviesDB _context)
         {
             int imdb = movie.Imdb.GetValueOrDefault();
             int ms = movie.MetaScore.GetValueOrDefault();

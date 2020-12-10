@@ -1,15 +1,15 @@
 ﻿using Server.Models;
 using System;
 
-namespace Server.DTOs
+namespace Server.Resources
 {
-    public class MovieData
+    public class Movie
     {
-        public static MovieData Empty { get => empty(); }
+        public static Movie Empty { get => empty(); }
 
-        private static MovieData empty()
+        private static Movie empty()
         {
-            MovieData data = new MovieData();
+            Movie data = new Movie();
             data.IdUser = User.Empty.IdUser;
             data.RegisterDate = new DateTime();
             data.Name = "";
@@ -39,12 +39,12 @@ namespace Server.DTOs
         public byte? Imdb { get; set; }
         public string Director { get; set; }
 
-        public MovieData()
+        public Movie()
         {
 
         }
 
-        public MovieData(int idMovie, int idUser, Models.MovieData data, Genre[] genres, Language[] languages, Style[] styles, Models.Image image)
+        public Movie(int idMovie, int idUser, Models.MovieData data, Genre[] genres, Language[] languages, Style[] styles, Models.Image image)
         {
             this.IdMovie = idMovie;
             this.IdUser = idUser;

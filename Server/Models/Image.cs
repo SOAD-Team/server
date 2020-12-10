@@ -21,9 +21,9 @@ namespace Server.Models
             this.ObjectImage = objectImage;
         }
 
-        public DTOs.Image MapToPresentationModel()
+        public Resources.Image MapToPresentationModel()
         {
-            return new DTOs.Image
+            return new Resources.Image
             {
                 Id = this.Id,
                 ObjectImage = null,

@@ -21,13 +21,13 @@ namespace Server.Controllers
             _mongoContext = mongoContext;
         }
         [HttpPost]
-        public IEnumerable<DTOs.Recommendation> Post([FromBody] DTOs.UserPoints value)
+        public IEnumerable<Resources.Recommendation> Post([FromBody] Resources.UserPoints value)
         {
             Movie[] movies = _context.Movie.ToArray();
-            List<DTOs.Recommendation> recommendations = new List<DTOs.Recommendation>();
+            List<Resources.Recommendation> recommendations = new List<Resources.Recommendation>();
             foreach (Movie movie in movies)
             {
-                DTOs.Recommendation temp = RecommendationHelper.GetRecommendationData(value, movie.IdMovie, _context, _mongoContext);
+                Resources.Recommendation temp = RecommendationHelper.GetRecommendationData(value, movie.IdMovie, _context, _mongoContext);
                 if (temp != null)
                     foreach(Genre genre in temp.Movie.Genres)
                         if(genre.IdGenre == value.Genre.IdGenre)

@@ -90,24 +90,24 @@ namespace Server.Controllers.Tests
             var result = controller.CreateImage(file);
 
             //Assert
-            Assert.IsInstanceOf(typeof(Task<DTOs.Image>), result);
+            Assert.IsInstanceOf(typeof(Task<Resources.Image>), result);
         }
 
         [Test()]
         public void CreateMovieTest()
         {
-            var result = controller.CreateMovie(DTOs.MovieData.Empty);
-            Assert.IsInstanceOf(typeof(DTOs.MovieData), result);
+            var result = controller.CreateMovie(Resources.Movie.Empty);
+            Assert.IsInstanceOf(typeof(Resources.Movie), result);
         }
 
         [Test()]
         public void CreateMovieNotEmptyTest()
         {
-            var data = DTOs.MovieData.Empty;
+            var data = Resources.Movie.Empty;
             data.Languages = new Language[2] { Language.Empty, Language.Empty };
             data.Genres = new Genre[2] { Genre.Empty, Genre.Empty };
             var result = controller.CreateMovie(data);
-            Assert.IsInstanceOf(typeof(DTOs.MovieData), result);
+            Assert.IsInstanceOf(typeof(Resources.Movie), result);
         }
 
         [Test()]
@@ -117,7 +117,7 @@ namespace Server.Controllers.Tests
             context.Style.Add(Style.Empty);
             context.Genre.Add(Genre.Empty);
             User user = context.User.Add(User.Empty).Entity;
-            var data = DTOs.MovieData.Empty;
+            var data = Resources.Movie.Empty;
             data.IdUser = user.IdUser;
             context.SaveChanges();
 
@@ -152,25 +152,25 @@ namespace Server.Controllers.Tests
         public void GetMovieByIdTest()
         {
             var movie = controller.GetMovieById(1);
-            Assert.IsInstanceOf(typeof(DTOs.MovieData), movie);
+            Assert.IsInstanceOf(typeof(Resources.Movie), movie);
         }
 
         [Test()]
         public void UpdateMovieTest()
         {
-            var data = DTOs.MovieData.Empty;
+            var data = Resources.Movie.Empty;
             data.IdMovie = 1;
             data.Languages = new Language[2] { Language.Empty, Language.Empty };
             data.Genres = new Genre[2] { Genre.Empty, Genre.Empty };
 
             var updatedMovie = controller.UpdateMovie(data);
-            Assert.IsInstanceOf(typeof(DTOs.MovieData), updatedMovie);
+            Assert.IsInstanceOf(typeof(Resources.Movie), updatedMovie);
         }
 
         [Test()]
         public void GetMovieScoreTest()
         {
-            var movie = DTOs.MovieData.Empty;
+            var movie = Resources.Movie.Empty;
             movie = controller.CreateMovie(movie);
 
             int score = 0;
@@ -191,7 +191,7 @@ namespace Server.Controllers.Tests
         [Test()]
         public void GetMoviePopularityTest()
         {
-            var movie = DTOs.MovieData.Empty;
+            var movie = Resources.Movie.Empty;
             movie = controller.CreateMovie(movie);
 
             int score = 0;

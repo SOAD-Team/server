@@ -5,7 +5,7 @@ using Server.Models;
 using System;
 using System.IO;
 
-namespace Server.DTOs.Tests
+namespace Server.Resources.Tests
 {
     [TestFixture()]
     public class ImageTests

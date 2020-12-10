@@ -9,19 +9,19 @@ namespace Server.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class RegisterUserController : ControllerBase
+    public class UserController : ControllerBase
     {
 
         private readonly MoviesDB _context;
 
-        public RegisterUserController(MoviesDB context)
+        public UserController(MoviesDB context)
         {
             _context = context;
         }
 
-        // POST api/<RegisterUserController>
+        // POST api/<UserController>
         [HttpPost]
-        public int RegisterUser(DTOs.User user)
+        public int RegisterUser(Resources.User user)
         {
             int statusCode = 0;
 
@@ -44,7 +44,7 @@ namespace Server.Controllers
 
         // POST api/<LogInUserController>
         [HttpPost("login")]
-        public DTOs.User LogIn(DTOs.UserData user)
+        public Resources.User LogIn(Resources.User user)
         {
             User temp = _context.User.Where(usr => user.Email==usr.Email && user.Password==usr.Password ).FirstOrDefault();
             if (temp != null)

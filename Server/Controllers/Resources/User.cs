@@ -1,4 +1,4 @@
-﻿namespace Server.DTOs
+﻿namespace Server.Resources
 {
     public class User
     {

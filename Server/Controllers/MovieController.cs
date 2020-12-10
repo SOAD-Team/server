@@ -24,7 +24,7 @@ namespace Server.Controllers
         }
 
         [HttpPost("image")]
-        public async Task<DTOs.Image> CreateImage([FromForm] IFormFile image)
+        public async Task<Resources.Image> CreateImage([FromForm] IFormFile image)
         {
             System.Console.WriteLine(image.Name);
             byte[] fileBytes;
@@ -42,7 +42,7 @@ namespace Server.Controllers
         }
 
         [HttpPost]
-        public DTOs.MovieData CreateMovie(DTOs.MovieData movieData)
+        public Resources.Movie CreateMovie(Resources.Movie movieData)
         {
             Movie movie = new Movie(movieData.IdUser);
             _context.Movie.Add(movie);
@@ -52,7 +52,7 @@ namespace Server.Controllers
 
         }
         [HttpGet("user/{id}")]
-        public IEnumerable<DTOs.MovieData> GetMovieDataByUserId(int id)
+        public IEnumerable<Resources.Movie> GetMovieDataByUserId(int id)
         {
             List<MovieData> userDatas = _context.MovieData.ToList();
             userDatas =  MovieControllerHelper.GetMostRecentData(userDatas, _context);
@@ -121,7 +121,7 @@ namespace Server.Controllers
         }
 
         [HttpGet("moviebyid/{id}")]
-        public DTOs.MovieData GetMovieById(int id)
+        public Resources.Movie GetMovieById(int id)
         {
             Movie userMovies = _context.Movie.Where(m => m.IdMovie == id).FirstOrDefault();
             MovieData[] userDatas = _context.MovieData.ToArray();
@@ -136,13 +136,13 @@ namespace Server.Controllers
             foreach (var mdata in completeData)
                 System.Console.WriteLine(mdata.MData.Title);
 
-            DTOs.MovieData data = MovieControllerHelper.CreateMovieDatas(completeData, images, userMovies.IdUser).Last();
+            Resources.Movie data = MovieControllerHelper.CreateMovieDatas(completeData, images, userMovies.IdUser).Last();
 
             return data;
         }
 
         [HttpPost("update")]
-        public DTOs.MovieData UpdateMovie(DTOs.MovieData movieData)
+        public Resources.Movie UpdateMovie(Resources.Movie movieData)
         {
             int movieId = movieData.IdMovie.Value;
             return MovieControllerHelper.CreateMovieDataOnDb(_context, movieId, movieData, _mongoContext);

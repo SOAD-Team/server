@@ -55,14 +55,14 @@ namespace Server.Helpers
             return temp.ToArray();
         }
 
-        public static List<DTOs.MovieData> CreateMovieDatas(Data[] datas, Image[] images, int idUser)
+        public static List<Resources.Movie> CreateMovieDatas(Data[] datas, Image[] images, int idUser)
         {
-            List<DTOs.MovieData> temp = new List<DTOs.MovieData>();
+            List<Resources.Movie> temp = new List<Resources.Movie>();
             foreach (Data data in datas)
             {
                 Image image = MovieControllerHelper.getImage(data.MData.ImageMongoId, images);
 
-                temp.Add(new DTOs.MovieData(data.MData.IdMovie, idUser, data.MData, data.Genres, data.Languages, data.Styles, image));
+                temp.Add(new Resources.Movie(data.MData.IdMovie, idUser, data.MData, data.Genres, data.Languages, data.Styles, image));
             }
             return temp;
         }
@@ -139,7 +139,7 @@ namespace Server.Helpers
             return filtred;
         }
 
-        public static DTOs.MovieData CreateMovieDataOnDb(MoviesDB _context, int movieId, DTOs.MovieData movieData, IImagesDB _mongoContext)
+        public static Resources.Movie CreateMovieDataOnDb(MoviesDB _context, int movieId, Resources.Movie movieData, IImagesDB _mongoContext)
         {
             Movie movie = _context.Movie.Find(movieId);
             MovieData data = movieData.MapToModel(movieId, movieData.Image.Id);

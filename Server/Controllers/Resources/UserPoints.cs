@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Server.DTOs
+namespace Server.Resources
 {
     public class UserPoints
     {
@@ -13,7 +13,6 @@ namespace Server.DTOs
         public int PlatFav{get; set;}
         public int Popularity { get; set; }
         public Models.Genre Genre { get; set; }
-
         public static UserPoints Empty { get =>
                 new UserPoints
                 {

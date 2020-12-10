@@ -10,7 +10,7 @@ namespace Server.Controllers.Tests
     [TestFixture()]
     public class RecommendationControllerTests
     {
-        private RecommendationController controller;
+        private UserPointsController controller;
         private MoviesDB context;
 
         [SetUp]
@@ -25,16 +25,16 @@ namespace Server.Controllers.Tests
             var imgList = new List<Image>();
             imgList.Add(Image.Empty);
             mongoContextStub.Setup(_ => _.Get()).Returns(imgList);
-            controller = new RecommendationController(context, mongoContextStub.Object);
+            controller = new UserPointsController(context, mongoContextStub.Object);
 
         }
         [Test(), Order(25)]
         public void PostTest()
         {
-            var userPoints = DTOs.UserPoints.Empty;
+            var userPoints = Resources.UserPoints.Empty;
             var movies = controller.Post(userPoints);
 
-            Assert.IsInstanceOf(typeof(IEnumerable<DTOs.Recommendation>),movies);
+            Assert.IsInstanceOf(typeof(IEnumerable<Resources.Recommendation>),movies);
         }
     }
 }
