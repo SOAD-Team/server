@@ -1,27 +1,28 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Server.Models;
 using Server.Persistence;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ReviewController : ControllerBase
     {
-        private readonly MoviesDB _context;
+        private readonly IMapper _mapper;
+        private readonly ReviewRepository reviewRepository;
 
-        public ReviewController(MoviesDB context)
+        public ReviewController(IMapper mapper, ReviewRepository reviewRepository)
         {
-            _context = context;
+            this._mapper = mapper;
+            this.reviewRepository = reviewRepository;
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetReview(int id)
         {
-            var reviews = await _context.Review.Where(r => r.IdMovie == id).ToListAsync();
+            var reviews = await reviewRepository.GetbyMovieId(id);
             return Ok(reviews);
         }
 
@@ -29,8 +30,8 @@ namespace Server.Controllers
         public async Task<IActionResult> CreateReview(Review review)
         {
             Review insert = new Review { IdMovie = review.IdMovie, Score = review.Score, Comment = review.Comment};
-            await _context.Review.AddAsync(insert);
-            _context.SaveChanges();
+            await reviewRepository.Create(insert);
+            await reviewRepository.CompleteAsync();
             return Ok(review);
         }
 

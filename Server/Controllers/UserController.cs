@@ -15,39 +15,46 @@ namespace Server.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly MoviesDB _context;
         private readonly IMapper _mapper;
+        private readonly UserRepository userRepository;
 
-        public UserController(MoviesDB context, IMapper mapper)
+        public UserController(IMapper mapper, UserRepository userRepository)
         {
-            _context = context;
-            _mapper = mapper;
+            this._mapper = mapper;
+            this.userRepository = userRepository;
         }
 
-        [HttpGet]
+        [HttpPut]
         public async Task<IActionResult> RegisterUser(Resources.User user)
         {
-
-            var user1 =  await _context.User.Where(usr => usr.Email == user.Email).Select(usr => usr.Email).FirstOrDefaultAsync();
+            var user1 = await userRepository.GetByEmail(user.Email);
             if(user1 == null)
             {
                 User temp = new User(user.Email, user.Password, user.Name, user.LastName);
-                _context.User.Add(temp);
-                _context.SaveChanges();
+                await userRepository.Create(temp);
+                await userRepository.CompleteAsync();
                 return Ok(_mapper.Map<Resources.User>(temp));
             }
             return NotFound(user);
-
         }
 
         [HttpPost]
         public async Task<IActionResult> LogIn(Resources.User user)
         {
-            User temp = await _context.User.Where(usr => user.Email==usr.Email && user.Password==usr.Password ).FirstOrDefaultAsync();
+            User temp = await userRepository.GetByEmail(user.Email);
             if (temp != null)
-                return Ok(_mapper.Map<Resources.User>(temp));
+                if (temp.Password.Equals(user.Password))
+                    return Ok(_mapper.Map<Resources.User>(temp));
+                else 
+                    return NotFound(user);
             else
                 return NotFound(user);
+        }
+
+        [HttpGet]
+        public string Get()
+        {
+            return "holis";
         }
     }
 }

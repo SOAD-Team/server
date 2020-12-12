@@ -35,6 +35,16 @@ namespace Server
             services.AddDbContext<MoviesDB>();
             services.AddScoped<MoviesDB>();
 
+            services.AddScoped<UserRepository>();
+
+            services.AddScoped<ReviewRepository>();
+
+            services.AddScoped<GenreRepository>();
+
+            services.AddScoped<LanguageRepository>();
+
+            services.AddScoped<StyleRepository>();
+
             services.Configure<ImagesDatabaseSettings>(
                 Configuration.GetSection(nameof(ImagesDatabaseSettings)));
 

@@ -9,17 +9,17 @@ namespace Server.Controllers
     [ApiController]
     public class GenreController : ControllerBase
     {
-        private readonly MoviesDB _context;
+        private readonly GenreRepository genreRepository;
 
-        public GenreController(MoviesDB context)
+        public GenreController(GenreRepository genreRepository)
         {
-            _context = context;
+            this.genreRepository = genreRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetGenres()
         {
-            var genres = await _context.Genre.ToListAsync();
+            var genres = await genreRepository.GetAll();
             return Ok(genres);
         }
     }
