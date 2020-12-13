@@ -59,7 +59,7 @@ namespace Server
 
             services.AddScoped(provider => new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new MappingProfile(provider.GetService<IImagesDB>(), provider.GetService<MoviesDB>()));
+                cfg.AddProfile(new MappingProfile(provider.GetService<IImagesDB>(), provider.GetService<GenreRepository>(), provider.GetService<LanguageRepository>(), provider.GetService<StyleRepository>(), provider.GetService<ReviewRepository>(), provider.GetService<MovieDataRepository>()));
             }).CreateMapper());
 
             services.AddAutoMapper(typeof(Startup));

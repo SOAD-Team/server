@@ -9,26 +9,26 @@ namespace Server.Helpers
 {
     public static class RecommendationHelper
     {
-        public static Resources.Recommendation GetRecommendationData(Resources.UserPoints points, int idMovie, MoviesDB _context, IMapper mapper)
+        public static Resources.Recommendation GetRecommendationData(Resources.UserPoints points, int idMovie, MovieDataRepository movieDataRepository, MovieRepository movieRepository, ReviewRepository reviewRepository, IMapper mapper)
         {
-            MovieData[] movies = _context.MovieData.Where(val => val.IdMovie == idMovie).ToArray();
-            MovieData movie = MovieControllerHelper.GetMostRecentData(movies, _context).FirstOrDefault();
-            int userId = _context.Movie.Where(val => val.IdMovie == idMovie).FirstOrDefault().IdUser;
+            MovieData movie = movieDataRepository.GetByMovieId(idMovie).Result;
+            //MovieData movie = MovieControllerHelper.GetMostRecentData(movies, _context).FirstOrDefault();
+            int userId = movieRepository.Get(idMovie).Result.IdUser;
             if (movie == null)
                 return null;
-            int score = RecommendationHelper.getRecommendationScore(points, movie, _context);
+            int score = RecommendationHelper.getRecommendationScore(points, movie, movieDataRepository, reviewRepository);
 
             Resources.Movie data = mapper.Map<Resources.Movie>(movie);
 
             return new Resources.Recommendation { Movie = data, Score = score };
         }
-        private static int getRecommendationScore(Resources.UserPoints points, MovieData movie, MoviesDB _context)
+        private static int getRecommendationScore(Resources.UserPoints points, MovieData movie, MovieDataRepository movieDataRepository, ReviewRepository reviewRepository)
         {
             int imdb = movie.Imdb.GetValueOrDefault();
             int ms = movie.MetaScore.GetValueOrDefault();
-            int com = RecommendationHelper.GetMovieCommunityScore(movie.IdMovie, _context);
+            int com = RecommendationHelper.GetMovieCommunityScore(movie.IdMovie, reviewRepository);
             int platFav = 0;
-            int pop = RecommendationHelper.GetMoviePopularity(movie.IdMovie, _context);
+            int pop = RecommendationHelper.GetMoviePopularity(movie.IdMovie, movieDataRepository, reviewRepository);
 
             if (movie.PlatFav)
                 platFav = 100;
@@ -39,10 +39,10 @@ namespace Server.Helpers
             return score;
         }
 
-        public static int GetMovieCommunityScore(int idMovie, MoviesDB _context)
+        public static int GetMovieCommunityScore(int idMovie, ReviewRepository reviewRepository)
         {
             int score = 0;
-            Review[] reviews = _context.Review.Where(val => val.IdMovie == idMovie).ToArray();
+            Review[] reviews = reviewRepository.GetbyMovieId(idMovie).Result.ToArray();
 
             if (reviews.Length == 0)
                 return 10;
@@ -52,29 +52,29 @@ namespace Server.Helpers
 
             return score/reviews.Length;
         }
-        public static int GetMoviePopularity(int idMovie, MoviesDB _context)
+        public static int GetMoviePopularity(int idMovie, MovieDataRepository movieDataRepository, ReviewRepository reviewRepository)
         {
             int score = 0;
 
-            if (RecommendationHelper.isFromThisYear(idMovie, _context))
+            if (RecommendationHelper.isFromThisYear(idMovie, movieDataRepository))
                 score += 20;
-            if (RecommendationHelper.isPlataformFavorite(idMovie, _context))
+            if (RecommendationHelper.isPlataformFavorite(idMovie, movieDataRepository))
                 score += 20;
-            score += RecommendationHelper.reviewsScore(idMovie, _context);
+            score += RecommendationHelper.reviewsScore(idMovie, reviewRepository);
 
             return score;
         }
-        private static bool isFromThisYear(int idMovie, MoviesDB _context)
+        private static bool isFromThisYear(int idMovie, MovieDataRepository movieDataRepository)
         {
-            MovieData[] movies = _context.MovieData.Where(val => val.IdMovie == idMovie).ToArray();
-            MovieData movie = MovieControllerHelper.GetMostRecentData(movies, _context).FirstOrDefault();
+            MovieData movie = movieDataRepository.GetByMovieId(idMovie).Result;
+            //MovieData movie = MovieControllerHelper.GetMostRecentData(movies, _context).FirstOrDefault();
 
             return movie.Year == System.DateTime.Now.Year;
         }
-        private static int reviewsScore (int idMovie, MoviesDB _context)
+        private static int reviewsScore (int idMovie, ReviewRepository reviewRepository)
         {
             int score = 0;
-            int reviews = _context.Review.Where(val => val.IdMovie == idMovie).Count();
+            int reviews = reviewRepository.GetbyMovieId(idMovie).Result.ToList().Count();
 
             if (reviews > 0)
                 score += 15;
@@ -88,11 +88,10 @@ namespace Server.Helpers
             return score;
         }
 
-        private static bool isPlataformFavorite(int idMovie, MoviesDB _context)
+        private static bool isPlataformFavorite(int idMovie, MovieDataRepository movieDataRepository)
         {
-            MovieData[] movies = _context.MovieData.Where(val => val.IdMovie == idMovie).ToArray();
-            MovieData movie = MovieControllerHelper.GetMostRecentData(movies, _context).FirstOrDefault();
-
+            MovieData movie = movieDataRepository.GetByMovieId(idMovie).Result;
+            //MovieData movie = MovieControllerHelper.GetMostRecentData(movies, _context).FirstOrDefault();
             return movie.PlatFav;
         }
     }

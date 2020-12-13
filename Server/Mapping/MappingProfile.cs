@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Server.Helpers;
+using Server.Models;
 using Server.Persistence;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Server.Mapping
 {
     public class MappingProfile : Profile
     {
-        public MappingProfile(IImagesDB mongoContext, MoviesDB context)
+        public MappingProfile(IImagesDB mongoContext, GenreRepository genreRepository, LanguageRepository languageRepository, StyleRepository styleRepository, ReviewRepository reviewRepository, MovieDataRepository movieDataRepository)
         {
             string host = Environment.GetEnvironmentVariable("URL");
             #region Domain to Resource
@@ -30,17 +31,17 @@ namespace Server.Mapping
             CreateMap<Models.MovieData, Resources.Movie>()
                 .ForMember(m => m.Name, opt => opt.MapFrom(md => md.Title))
                 .ForMember(m => m.Genres, opt => opt.MapFrom(md => md.MovieDataGenre
-                    .Join(context.Genre, mdg => mdg.IdGenre, g => g.IdGenre, (mdg, g) => g)))
+                    .Join(genreRepository.GetAll().Result, mdg => mdg.IdGenre, g => g.IdGenre, (mdg, g) => g)))
                 .ForMember(m => m.Languages, opt => opt.MapFrom(md => md.MovieDataLanguage
-                    .Join(context.Genre, mdg => mdg.IdLanguage, g => g.IdGenre, (mdg, g) => g)))
+                    .Join(genreRepository.GetAll().Result, mdg => mdg.IdLanguage, g => g.IdGenre, (mdg, g) => g)))
                 .ForMember(m => m.Styles, opt => opt.MapFrom(md => 
                     new Resources.KeyValuePair[1] { 
-                        new Resources.KeyValuePair { Id = md.IdStyle, Name = context.Style
+                        new Resources.KeyValuePair { Id = md.IdStyle, Name = styleRepository.GetAll().Result
                             .Where(s => s.IdStyle == md.IdStyle).FirstOrDefault().Name } }))
                 .ForMember(m => m.Image, opt => opt.MapFrom(md => 
                     new Resources.Image { Id = md.ImageMongoId, Url = $"{host}image/{md.ImageMongoId}" }))
-                .ForMember(m => m.CommunityScore,opt => opt.MapFrom(md => RecommendationHelper.GetMovieCommunityScore(md.IdMovie,context)))
-                .ForMember(m => m.CommunityScore, opt => opt.MapFrom(md => RecommendationHelper.GetMoviePopularity(md.IdMovie, context)));
+                .ForMember(m => m.CommunityScore,opt => opt.MapFrom(md => RecommendationHelper.GetMovieCommunityScore(md.IdMovie, reviewRepository)))
+                .ForMember(m => m.CommunityScore, opt => opt.MapFrom(md => RecommendationHelper.GetMoviePopularity(md.IdMovie, movieDataRepository, reviewRepository)));
             #endregion
 
             #region Resource to Domain
@@ -52,16 +53,16 @@ namespace Server.Mapping
                 {
                     if (genre.Id.Equals(null))
                     {
-                        context.Genre.Add(new Models.Genre(genre.Name));
-                        context.SaveChanges();
+                        genreRepository.Create(new Models.Genre(genre.Name));
+                        genreRepository.CompleteAsync();
                     }
                 }
                 foreach (Resources.KeyValuePair language in movie.Languages)
                 {
                     if (language.Id.Equals(null))
                     {
-                        context.Language.Add(new Models.Language(language.Name));
-                        context.SaveChanges();
+                        languageRepository.Create(new Models.Language(language.Name));
+                        languageRepository.CompleteAsync();
                     }
                 }
             }).AfterMap((movie, movieData) => {

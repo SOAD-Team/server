@@ -19,6 +19,9 @@ namespace Server.Controllers
         private readonly MoviesDB _context;
         private readonly IImagesDB _mongoContext;
         private readonly IMapper _mapper;
+        private readonly ReviewRepository reviewRepository;
+        private readonly MovieDataRepository movieDataRepository;
+        private readonly MovieRepository movieRepository;
 
         public RecommendationController(MoviesDB context, IImagesDB mongoContext, IMapper mapper)
         {
@@ -34,7 +37,7 @@ namespace Server.Controllers
             List<Resources.Recommendation> recommendations = new List<Resources.Recommendation>();
             foreach (Movie movie in movies)
             {
-                Resources.Recommendation temp = RecommendationHelper.GetRecommendationData(value, movie.IdMovie, _context, _mapper);
+                Resources.Recommendation temp = RecommendationHelper.GetRecommendationData(value, movie.IdMovie, movieDataRepository, movieRepository, reviewRepository, _mapper);
                 if (temp != null)
                     foreach(Resources.KeyValuePair genre in temp.Movie.Genres)
                         if(genre.Id == value.Genre.IdGenre)

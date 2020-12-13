@@ -1,5 +1,7 @@
-﻿using Server.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Server.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Server.Persistence
@@ -18,9 +20,10 @@ namespace Server.Persistence
             return value;
         }
 
-        public override Task<Movie> Get(int id)
+        public async override Task<Movie> Get(int id)
         {
-            throw new System.NotImplementedException();
+            var result = await _context.Movie.Where(val => val.IdMovie == id).FirstOrDefaultAsync();
+            return result;
         }
 
         public override Task<IEnumerable<Movie>> GetAll()
