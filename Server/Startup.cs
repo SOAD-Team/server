@@ -48,6 +48,15 @@ namespace Server
 
             services.AddScoped<ImageRepository>();
 
+            services.AddScoped<MovieRepository>();
+
+            services.AddScoped<MovieDataRepository>();
+
+            services.AddScoped<MovieDataGenreRepository>();
+
+            services.AddScoped<MovieDataLanguageRepository>();
+
+
             services.Configure<ImagesDatabaseSettings>(
                 Configuration.GetSection(nameof(ImagesDatabaseSettings)));
 
@@ -59,7 +68,12 @@ namespace Server
 
             services.AddScoped(provider => new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new MappingProfile(provider.GetService<IImagesDB>(), provider.GetService<GenreRepository>(), provider.GetService<LanguageRepository>(), provider.GetService<StyleRepository>(), provider.GetService<ReviewRepository>(), provider.GetService<MovieDataRepository>()));
+                cfg.AddProfile(new MappingProfile(
+                    provider.GetService<GenreRepository>(), 
+                    provider.GetService<LanguageRepository>(), 
+                    provider.GetService<StyleRepository>(), 
+                    provider.GetService<ReviewRepository>(), 
+                    provider.GetService<MovieDataRepository>()));
             }).CreateMapper());
 
             services.AddAutoMapper(typeof(Startup));

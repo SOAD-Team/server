@@ -2,14 +2,13 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Server.Models;
-using Server.Persistence;
 using Server.Persistence.Repositories;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ImageController : ControllerBase
     {

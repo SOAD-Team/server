@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Server.Helpers;
-using Server.Models;
 using Server.Persistence;
 using System;
 using System.Collections.Generic;
@@ -11,7 +9,11 @@ namespace Server.Mapping
 {
     public class MappingProfile : Profile
     {
-        public MappingProfile(IImagesDB mongoContext, GenreRepository genreRepository, LanguageRepository languageRepository, StyleRepository styleRepository, ReviewRepository reviewRepository, MovieDataRepository movieDataRepository)
+        public MappingProfile(GenreRepository genreRepository,
+            LanguageRepository languageRepository,
+            StyleRepository styleRepository,
+            ReviewRepository reviewRepository,
+            MovieDataRepository movieDataRepository)
         {
             string host = Environment.GetEnvironmentVariable("URL");
             #region Domain to Resource
@@ -40,21 +42,22 @@ namespace Server.Mapping
                             .Where(s => s.IdStyle == md.IdStyle).FirstOrDefault().Name } }))
                 .ForMember(m => m.Image, opt => opt.MapFrom(md => 
                     new Resources.Image { Id = md.ImageMongoId, Url = $"{host}image/{md.ImageMongoId}" }))
-                .ForMember(m => m.CommunityScore,opt => opt.MapFrom(md => RecommendationHelper.GetMovieCommunityScore(md.IdMovie, reviewRepository)))
-                .ForMember(m => m.CommunityScore, opt => opt.MapFrom(md => RecommendationHelper.GetMoviePopularity(md.IdMovie, movieDataRepository, reviewRepository)));
+                .ForMember(m => m.CommunityScore,opt => opt.MapFrom(md => ScoreHelper.GetMovieCommunityScore(md.IdMovie, reviewRepository)))
+                .ForMember(m => m.CommunityScore, opt => opt.MapFrom(md => ScoreHelper.GetMoviePopularity(md.IdMovie, movieDataRepository, reviewRepository)));
             #endregion
 
             #region Resource to Domain
             CreateMap<Resources.Movie, Models.Movie>()
                 .ForMember(m => m.IdMovie, opt => opt.MapFrom(m => m.IdMovie))
                 .ForMember(m => m.IdUser, opt => opt.MapFrom(m => m.IdUser));
-            CreateMap<Resources.Movie, Models.MovieData>().BeforeMap((movie, movieData) => {
+            CreateMap<Resources.Movie, Models.MovieData>().BeforeMap((movie, movieData) =>
+            {
                 foreach (Resources.KeyValuePair genre in movie.Genres)
                 {
                     if (genre.Id.Equals(null))
                     {
                         genreRepository.Create(new Models.Genre(genre.Name));
-                        genreRepository.CompleteAsync();
+                        genreRepository.CompleteAsync().Wait();
                     }
                 }
                 foreach (Resources.KeyValuePair language in movie.Languages)
@@ -62,20 +65,18 @@ namespace Server.Mapping
                     if (language.Id.Equals(null))
                     {
                         languageRepository.Create(new Models.Language(language.Name));
-                        languageRepository.CompleteAsync();
+                        languageRepository.CompleteAsync().Wait();
                     }
                 }
-            }).AfterMap((movie, movieData) => {
-                movieData.MovieDataGenre = new List<Models.MovieDataGenre>();
-                movieData.MovieDataLanguage = new List<Models.MovieDataLanguage>();
-                foreach (var genre in movie.Genres)
-                    movieData.MovieDataGenre.Add(new Models.MovieDataGenre(movie.IdMovieData.Value, genre.Id));
-                foreach (var language in movie.Languages)
-                    movieData.MovieDataLanguage.Add(new Models.MovieDataLanguage(movie.IdMovieData.Value, language.Id));
-            });
+            }).ForMember(m => m.ImageMongoId, opt => opt.MapFrom(m => m.Image.Id))
+            .ForMember(m => m.Title, opt=> opt.MapFrom(m=> m.Name))
+            .ForMember(m => m.IdStyle, opt=> opt.MapFrom(m=> m.Styles[0].Id));
+
             CreateMap<Resources.Image, Models.Image>()
-                .ForMember(img => img.ObjectImage, opt => opt.Ignore());
+                .ForMember(img => img.ObjectImage, opt => opt.Ignore())
+                .ForMember(img => img.Id, opt => opt.MapFrom(img => img.Id));
             #endregion
         }
+
     }
 }

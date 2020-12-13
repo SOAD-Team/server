@@ -26,9 +26,10 @@ namespace Server.Persistence
             return result;
         }
 
-        public override Task<IEnumerable<Movie>> GetAll()
+        public async override Task<IEnumerable<Movie>> GetAll()
         {
-            throw new System.NotImplementedException();
+            var result = await _context.Movie.ToListAsync();
+            return result;
         }
     }
 }

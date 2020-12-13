@@ -1,22 +1,24 @@
 ﻿using Server.Models;
-using Server.Structs;
 using System.Linq;
 using Server.Persistence;
 using AutoMapper;
-using System.Collections.Generic;
 
 namespace Server.Helpers
 {
-    public static class RecommendationHelper
+    public static class ScoreHelper
     {
-        public static Resources.Recommendation GetRecommendationData(Resources.UserPoints points, int idMovie, MovieDataRepository movieDataRepository, MovieRepository movieRepository, ReviewRepository reviewRepository, IMapper mapper)
+        public static Resources.Recommendation GetRecommendationData(Resources.UserPoints points,
+            int idMovie,
+            MovieDataRepository movieDataRepository,
+            MovieRepository movieRepository,
+            ReviewRepository reviewRepository,
+            IMapper mapper)
         {
             MovieData movie = movieDataRepository.GetByMovieId(idMovie).Result;
-            //MovieData movie = MovieControllerHelper.GetMostRecentData(movies, _context).FirstOrDefault();
             int userId = movieRepository.Get(idMovie).Result.IdUser;
             if (movie == null)
                 return null;
-            int score = RecommendationHelper.getRecommendationScore(points, movie, movieDataRepository, reviewRepository);
+            int score = ScoreHelper.getRecommendationScore(points, movie, movieDataRepository, reviewRepository);
 
             Resources.Movie data = mapper.Map<Resources.Movie>(movie);
 
@@ -26,9 +28,9 @@ namespace Server.Helpers
         {
             int imdb = movie.Imdb.GetValueOrDefault();
             int ms = movie.MetaScore.GetValueOrDefault();
-            int com = RecommendationHelper.GetMovieCommunityScore(movie.IdMovie, reviewRepository);
+            int com = ScoreHelper.GetMovieCommunityScore(movie.IdMovie, reviewRepository);
             int platFav = 0;
-            int pop = RecommendationHelper.GetMoviePopularity(movie.IdMovie, movieDataRepository, reviewRepository);
+            int pop = ScoreHelper.GetMoviePopularity(movie.IdMovie, movieDataRepository, reviewRepository);
 
             if (movie.PlatFav)
                 platFav = 100;
@@ -56,18 +58,17 @@ namespace Server.Helpers
         {
             int score = 0;
 
-            if (RecommendationHelper.isFromThisYear(idMovie, movieDataRepository))
+            if (ScoreHelper.isFromThisYear(idMovie, movieDataRepository))
                 score += 20;
-            if (RecommendationHelper.isPlataformFavorite(idMovie, movieDataRepository))
+            if (ScoreHelper.isPlataformFavorite(idMovie, movieDataRepository))
                 score += 20;
-            score += RecommendationHelper.reviewsScore(idMovie, reviewRepository);
+            score += ScoreHelper.reviewsScore(idMovie, reviewRepository);
 
             return score;
         }
         private static bool isFromThisYear(int idMovie, MovieDataRepository movieDataRepository)
         {
             MovieData movie = movieDataRepository.GetByMovieId(idMovie).Result;
-            //MovieData movie = MovieControllerHelper.GetMostRecentData(movies, _context).FirstOrDefault();
 
             return movie.Year == System.DateTime.Now.Year;
         }
@@ -91,7 +92,6 @@ namespace Server.Helpers
         private static bool isPlataformFavorite(int idMovie, MovieDataRepository movieDataRepository)
         {
             MovieData movie = movieDataRepository.GetByMovieId(idMovie).Result;
-            //MovieData movie = MovieControllerHelper.GetMostRecentData(movies, _context).FirstOrDefault();
             return movie.PlatFav;
         }
     }

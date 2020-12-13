@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Server.Models;
 using Server.Persistence;
 using System.Threading.Tasks;
@@ -10,12 +9,10 @@ namespace Server.Controllers
     [ApiController]
     public class ReviewController : ControllerBase
     {
-        private readonly IMapper _mapper;
         private readonly ReviewRepository reviewRepository;
 
-        public ReviewController(IMapper mapper, ReviewRepository reviewRepository)
+        public ReviewController(ReviewRepository reviewRepository)
         {
-            this._mapper = mapper;
             this.reviewRepository = reviewRepository;
         }
 

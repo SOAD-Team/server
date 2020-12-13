@@ -1,7 +1,4 @@
-﻿using System.IO;
-using Server.Models;
-
-namespace Server.Resources
+﻿namespace Server.Resources
 {
     public class Image
     {

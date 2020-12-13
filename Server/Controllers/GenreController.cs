@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Server.Persistence;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace Server.Controllers
 {
