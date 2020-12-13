@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Server.Models;
 using Server.Persistence;
+using Server.Persistence.Repositories;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -12,12 +13,12 @@ namespace Server.Controllers
     [ApiController]
     public class ImageController : ControllerBase
     {
-        private readonly IImagesDB _mongoContext;
+        private readonly ImageRepository imageRepository;
         private readonly IMapper _mapper;
 
-        public ImageController(IImagesDB mongoContext, IMapper mapper)
+        public ImageController(ImageRepository imageRepository, IMapper mapper)
         {
-            _mongoContext = mongoContext;
+            this.imageRepository = imageRepository;
             _mapper = mapper;
         }
 
@@ -34,17 +35,18 @@ namespace Server.Controllers
             }
 
             Image data = new Image(fileBytes);
-            data = _mongoContext.Create(data);
+            data = await imageRepository.Create(data);
 
             return Ok(_mapper.Map<Resources.Image>(data));
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetMovieImages(string id)
+        public async Task<IActionResult> GetMovieImages(string id)
         {
-            byte[] images = _mongoContext.Get(id).ObjectImage;
+            var result = await imageRepository.Get(id);
+            byte[] images = result.ObjectImage;
             var file = File(images, "image/jpeg");
-            return Ok(file);
+            return file;
         }
     }
 }

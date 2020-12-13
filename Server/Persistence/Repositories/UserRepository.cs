@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Server.Persistence
 {
-    public class UserRepository : Repository<User>
+    public class UserRepository : Repository<User>, IUserRepository
     {
         public UserRepository(MoviesDB context) : base(context) { }
 

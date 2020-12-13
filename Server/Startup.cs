@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Server.Persistence;
 using AutoMapper;
 using Server.Mapping;
+using Server.Persistence.Repositories;
 
 namespace Server
 {
@@ -44,6 +45,8 @@ namespace Server
             services.AddScoped<LanguageRepository>();
 
             services.AddScoped<StyleRepository>();
+
+            services.AddScoped<ImageRepository>();
 
             services.Configure<ImagesDatabaseSettings>(
                 Configuration.GetSection(nameof(ImagesDatabaseSettings)));

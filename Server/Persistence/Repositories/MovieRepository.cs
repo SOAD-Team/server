@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Server.Persistence
 {
-    public class MovieRepository : Repository<Movie>
+    public class MovieRepository : Repository<Movie>, IMovieRepository
     {
         public MovieRepository(MoviesDB context) : base(context)
         {

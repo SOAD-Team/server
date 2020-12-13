@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Server.Persistence
 {
-    public class ReviewRepository : Repository<Review>
+    public class ReviewRepository : Repository<Review>, IReviewRepository
     {
         public ReviewRepository(MoviesDB context) : base(context) { }
 

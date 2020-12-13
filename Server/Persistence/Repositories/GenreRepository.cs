@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server.Persistence
 {
-    public class GenreRepository : Repository<Genre>
+    public class GenreRepository : Repository<Genre>, IGenreRepository
     {
         public GenreRepository(MoviesDB context) : base(context) { }
 

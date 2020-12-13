@@ -2,6 +2,7 @@
 using Server.Models;
 using MongoDB.Driver;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Server.Persistence
 {
@@ -18,25 +19,25 @@ namespace Server.Persistence
             _Images = database.GetCollection<Image>(settings.ImagesCollectionName);
         }
 
-        public List<Image> Get() =>
-            _Images.Find(Image => true).ToList();
+        public async Task<List<Image>> Get() =>
+            await _Images.Find(Image => true).ToListAsync();
 
-        public Image Get(string id) =>
-            _Images.Find<Image>(Image => Image.Id == id).FirstOrDefault();
+        public async Task<Image> Get(string id) =>
+            await _Images.Find<Image>(Image => Image.Id == id).FirstOrDefaultAsync();
 
-        public Image Create(Image Image)
+        public async Task<Image> Create(Image Image)
         {
-            _Images.InsertOne(Image);
+           await _Images.InsertOneAsync(Image);
             return Image;
         }
 
-        public void Update(string id, Image ImageIn) =>
-            _Images.ReplaceOne(Image => Image.Id == id, ImageIn);
+        public async void Update(string id, Image ImageIn) =>
+            await _Images.ReplaceOneAsync(Image => Image.Id == id, ImageIn);
 
-        public void Remove(Image ImageIn) =>
-            _Images.DeleteOne(Image => Image.Id == ImageIn.Id);
+        public async void Remove(Image ImageIn) =>
+            await _Images.DeleteOneAsync(Image => Image.Id == ImageIn.Id);
 
-        public void Remove(string id) =>
-            _Images.DeleteOne(Image => Image.Id == id);
+        public async void Remove(string id) =>
+            await _Images.DeleteOneAsync(Image => Image.Id == id);
     }
 }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Server.Persistence
 {
-    public class MovieDataRepository : Repository<MovieData>
+    public class MovieDataRepository : Repository<MovieData>, IMovieDataRepository
     {
         public MovieDataRepository(MoviesDB context) : base(context) { }
         public override async Task<MovieData> Create(MovieData data)

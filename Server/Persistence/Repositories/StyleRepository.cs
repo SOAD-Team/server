@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Server.Persistence
 {
-    public class StyleRepository : Repository<Style>
+    public class StyleRepository : Repository<Style>, IStyleRepository
     {
         public StyleRepository(MoviesDB context) : base(context) { }
 

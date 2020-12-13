@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Server.Persistence
 {
-    public class LanguageRepository : Repository<Language>
+    public class LanguageRepository : Repository<Language>, ILanguageRepository
     {
         public LanguageRepository(MoviesDB context) : base(context)
         {
