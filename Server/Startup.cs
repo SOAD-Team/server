@@ -5,7 +5,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Server.Models;
+using Server.Persistence;
+using AutoMapper;
+using Server.Mapping;
+using Server.Persistence.Repositories;
 
 namespace Server
 {
@@ -33,6 +36,27 @@ namespace Server
             services.AddDbContext<MoviesDB>();
             services.AddScoped<MoviesDB>();
 
+            services.AddScoped<UserRepository>();
+
+            services.AddScoped<ReviewRepository>();
+
+            services.AddScoped<GenreRepository>();
+
+            services.AddScoped<LanguageRepository>();
+
+            services.AddScoped<StyleRepository>();
+
+            services.AddScoped<ImageRepository>();
+
+            services.AddScoped<MovieRepository>();
+
+            services.AddScoped<MovieDataRepository>();
+
+            services.AddScoped<MovieDataGenreRepository>();
+
+            services.AddScoped<MovieDataLanguageRepository>();
+
+
             services.Configure<ImagesDatabaseSettings>(
                 Configuration.GetSection(nameof(ImagesDatabaseSettings)));
 
@@ -41,6 +65,18 @@ namespace Server
 
             services.AddSingleton<ImagesDB>();
             services.AddSingleton<IImagesDB>(sp => sp.GetRequiredService<ImagesDB>());
+
+            services.AddScoped(provider => new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new MappingProfile(
+                    provider.GetService<GenreRepository>(), 
+                    provider.GetService<LanguageRepository>(), 
+                    provider.GetService<StyleRepository>(), 
+                    provider.GetService<ReviewRepository>(), 
+                    provider.GetService<MovieDataRepository>()));
+            }).CreateMapper());
+
+            services.AddAutoMapper(typeof(Startup));
 
             services.AddControllers();
 

@@ -8,8 +8,8 @@ namespace Server.Models
     public partial class User
     {
 
-        public DTOs.User MapToPresentationModel(){
-            DTOs.User  temp= new DTOs.User();
+        public Resources.User MapToPresentationModel(){
+            Resources.User  temp= new Resources.User();
             temp.IdUser = this.IdUser;
             temp.Email = this.Email;
             temp.IsActive = this.IsActive;

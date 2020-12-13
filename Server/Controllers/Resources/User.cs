@@ -1,4 +1,4 @@
-﻿namespace Server.DTOs
+﻿namespace Server.Resources
 {
     public class User
     {
@@ -17,8 +17,6 @@
 
             return data;
         }
-
-        
 
         public int IdUser { get; set; }
         public string Email { get; set; }

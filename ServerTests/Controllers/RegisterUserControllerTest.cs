@@ -2,14 +2,14 @@
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using Server.Controllers;
-using Server.Models;
+using Server.Persistence;
 
 namespace ServerTests.Controllers
 {
     [TestFixture]
     class RegisterUserControllerTest
     {
-        private RegisterUserController controller;
+        private UserController controller;
         private MoviesDB context;
 
         [SetUp]
@@ -17,13 +17,13 @@ namespace ServerTests.Controllers
         {
             var options = new DbContextOptionsBuilder<MoviesDB>().UseInMemoryDatabase(databaseName: "Movies Test").Options;
             context = new MoviesDB(options);
-            controller = new RegisterUserController(context);
+            controller = new UserController(context);
         }
 
         [Test()]
         public void RegisterUserTestAsync()
         {
-            var data = Server.DTOs.User.Empty;
+            var data = Server.Resources.User.Empty;
             data.Email = "pruebaemail12@gmail.com";
             var result = controller.RegisterUser(data);
             Assert.AreEqual(result, 1);
@@ -33,7 +33,7 @@ namespace ServerTests.Controllers
         [Test()]
         public void FailRegisterUserTestAsync()
         {
-            var data = Server.DTOs.User.Empty;
+            var data = Server.Resources.User.Empty;
             data.Email = "pruebaemail@gmail.com";
             controller.RegisterUser(data);
 
@@ -44,16 +44,16 @@ namespace ServerTests.Controllers
         [Test()]
         public void LogInTest()
         {
-            var data = Server.DTOs.User.Empty;
+            var data = Server.Resources.User.Empty;
             data.Email = "pruebaemail1@gmail.com";
             data.Password = "123456";
             if (controller.RegisterUser(data) == 1)
             {
-                var user = new Server.DTOs.UserData();
+                var user = new Server.Resources.User();
                 user.Email = data.Email;
                 user.Password = data.Password;
                 var result = controller.LogIn(user);
-                Assert.IsInstanceOf(typeof(Server.DTOs.User), result);
+                Assert.IsInstanceOf(typeof(Server.Resources.User), result);
             }
             else Assert.Fail();
         }
@@ -61,7 +61,7 @@ namespace ServerTests.Controllers
         [Test()]
         public void LogInTestFail()
         {
-            var user = new Server.DTOs.UserData();
+            var user = new Server.Resources.User();
             user.Email = "pruebas7566@gamil.com";
             user.Password = "45668546354";
             var result = controller.LogIn(user);

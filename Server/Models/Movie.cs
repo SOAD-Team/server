@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -32,7 +31,6 @@ namespace Server.Models
         public virtual ICollection<MovieData> MovieData { get; set; }
         [InverseProperty("IdMovieNavigation")]
         public virtual ICollection<Review> Review { get; set; }
-
         public static Movie Empty { get => new Movie(User.Empty.IdUser); }
     }
 }

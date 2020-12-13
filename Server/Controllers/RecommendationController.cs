@@ -3,6 +3,9 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Server.Models;
 using Server.Helpers;
+using Server.Persistence;
+using AutoMapper;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,32 +15,38 @@ namespace Server.Controllers
     [ApiController]
     public class RecommendationController : ControllerBase
     {
-        private readonly MoviesDB _context;
-        private readonly IImagesDB _mongoContext;
+        private readonly IMapper _mapper;
+        private readonly ReviewRepository reviewRepository;
+        private readonly MovieDataRepository movieDataRepository;
+        private readonly MovieRepository movieRepository;
 
-        public RecommendationController(MoviesDB context, IImagesDB mongoContext)
+        public RecommendationController(IMapper mapper, ReviewRepository reviewRepository, MovieDataRepository movieDataRepository, MovieRepository movieRepository)
         {
-            _context = context;
-            _mongoContext = mongoContext;
+            _mapper = mapper;
+            this.reviewRepository = reviewRepository;
+            this.movieDataRepository = movieDataRepository;
+            this.movieRepository = movieRepository;
+
         }
-        [HttpPost]
-        public IEnumerable<DTOs.Recommendation> Post([FromBody] DTOs.UserPoints value)
+
+        [HttpGet]
+        public async Task<IActionResult> Post([FromBody] Resources.UserPoints value)
         {
-            Movie[] movies = _context.Movie.ToArray();
-            List<DTOs.Recommendation> recommendations = new List<DTOs.Recommendation>();
+            List<Movie> movies = (List<Movie>) await movieRepository.GetAll();
+            List<Resources.Recommendation> recommendations = new List<Resources.Recommendation>();
             foreach (Movie movie in movies)
             {
-                DTOs.Recommendation temp = RecommendationHelper.GetRecommendationData(value, movie.IdMovie, _context, _mongoContext);
+                Resources.Recommendation temp = ScoreHelper.GetRecommendationData(value, movie.IdMovie, movieDataRepository, movieRepository, reviewRepository, _mapper);
                 if (temp != null)
-                    foreach(Genre genre in temp.Movie.Genres)
-                        if(genre.IdGenre == value.Genre.IdGenre)
+                    foreach(Resources.KeyValuePair genre in temp.Movie.Genres)
+                        if(genre.Id == value.Genre.IdGenre)
                         {
                             recommendations.Add(temp);
                             break;
                         }
             }
 
-            return RecommendationHelper.FilterRecommendations(recommendations.ToArray());
+            return Ok(recommendations.OrderByDescending(val => val.Score).Take(10).ToArray());
         }
     }
 }

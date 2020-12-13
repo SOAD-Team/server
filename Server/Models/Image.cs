@@ -21,16 +21,6 @@ namespace Server.Models
             this.ObjectImage = objectImage;
         }
 
-        public DTOs.Image MapToPresentationModel()
-        {
-            return new DTOs.Image
-            {
-                Id = this.Id,
-                ObjectImage = null,
-                Url = ""
-            };
-        }
-
         public static Image Empty { get => new Image(new byte[0]); }
     }
 }

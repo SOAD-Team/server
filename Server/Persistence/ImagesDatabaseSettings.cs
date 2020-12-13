@@ -1,10 +1,5 @@
-﻿namespace Server.Models
+﻿namespace Server.Persistence
 {
-    public interface IImagesDatabaseSettings
-    {
-        string ImagesCollectionName { get; set; }
-        string DatabaseName { get; set; }
-    }
     public class ImagesDatabaseSettings : IImagesDatabaseSettings
     {
         public string ImagesCollectionName { get; set; }

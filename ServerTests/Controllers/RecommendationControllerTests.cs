@@ -31,10 +31,10 @@ namespace Server.Controllers.Tests
         [Test(), Order(25)]
         public void PostTest()
         {
-            var userPoints = DTOs.UserPoints.Empty;
+            var userPoints = Resources.UserPoints.Empty;
             var movies = controller.Post(userPoints);
 
-            Assert.IsInstanceOf(typeof(IEnumerable<DTOs.Recommendation>),movies);
+            Assert.IsInstanceOf(typeof(IEnumerable<Resources.Recommendation>),movies);
         }
     }
 }

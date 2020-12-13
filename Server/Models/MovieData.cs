@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using AutoMapper;
+using Server.Persistence;
 
 namespace Server.Models
 {
@@ -43,28 +46,6 @@ namespace Server.Models
         public virtual ICollection<MovieDataGenre> MovieDataGenre { get; set; }
         [InverseProperty("IdMovieDataNavigation")]
         public virtual ICollection<MovieDataLanguage> MovieDataLanguage { get; set; }
-
-        public DTOs.MovieData MapToPresentationModel(int idUser, Genre[] genres, Language[] languages, IImagesDB imagesContext, Style[] styles)
-        {
-
-            return new DTOs.MovieData
-            {
-                IdUser = idUser,
-                IdMovieData = this.IdMovieData,
-                IdMovie = this.IdMovie,
-                RegisterDate = this.RegisterDate,
-                Name = this.Title,
-                Year = this.Year,
-                Genres = genres,
-                Languages = languages,
-                PlatFav = this.PlatFav,
-                Image = imagesContext.Get(this.ImageMongoId).MapToPresentationModel(),
-                Styles = styles,
-                MetaScore = this.MetaScore,
-                Imdb = this.Imdb,
-                Director = this.Director
-            };
-        }
     }
 
     
