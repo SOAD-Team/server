@@ -9,7 +9,9 @@ namespace Server.Mapping
 {
     public class MappingProfile : Profile
     {
-        public MappingProfile(GenreRepository genreRepository,
+        public MappingProfile(
+            MovieRepository movieRepository,
+            GenreRepository genreRepository,
             LanguageRepository languageRepository,
             StyleRepository styleRepository,
             ReviewRepository reviewRepository,
@@ -30,6 +32,38 @@ namespace Server.Mapping
             CreateMap<Models.Image, Resources.Image>()
                 .ForMember(img => img.Url, opt => opt.MapFrom(img => $"{host}/image/{img.Id}"));
 
+            CreateMap<Models.Movie, Resources.Movie>()
+                .ForMember(m => m.IdUser, opt => opt.MapFrom(m => m.IdUser))
+                .ForMember(m => m.IdMovie, opt => opt.MapFrom(m => m.IdMovie))
+                .AfterMap((movieModel, movie) =>
+                {
+                    var data = movieDataRepository.GetByMovieId(movieModel.IdMovie).Result;
+                    movie.IdMovieData = data.IdMovieData;
+                    movie.RegisterDate = data.RegisterDate;
+                    movie.Name = data.Title;
+                    movie.Year = data.Year;
+                    movie.Genres = new Resources.KeyValuePair[data.MovieDataGenre.Count];
+                    for (int i = 0; i < data.MovieDataGenre.Count; i++)
+                    {
+                        Models.Genre genre = genreRepository.Get(data.MovieDataGenre.ToArray()[i].IdGenre).Result;
+                        movie.Genres[i] = new Resources.KeyValuePair {Id = genre.IdGenre, Name = genre.Name};
+                    }
+                    movie.Languages = new Resources.KeyValuePair[data.MovieDataLanguage.Count];
+                    for (int i = 0; i < data.MovieDataLanguage.Count; i++)
+                    {
+                        Models.Language lang = languageRepository.Get(data.MovieDataLanguage.ToArray()[i].IdLanguage).Result;
+                        movie.Languages[i] = new Resources.KeyValuePair { Id = lang.IdLanguage, Name = lang.Name };
+                    }
+                    movie.PlatFav = data.PlatFav;
+                    movie.Image = new Resources.Image {Id = data.ImageMongoId, Url = $"{host}/image/{data.ImageMongoId}" };
+                    movie.Styles = new Resources.KeyValuePair[1] 
+                    { new Resources.KeyValuePair { Id = data.IdStyle, Name = styleRepository.Get(data.IdStyle).Result.Name} };
+                    movie.MetaScore = data.MetaScore;
+                    movie.Imdb = data.Imdb;
+                    movie.Director = data.Director;
+                    movie.Popularity = ScoreHelper.GetMoviePopularity(movie.IdMovie.Value, movieDataRepository, reviewRepository);
+                    movie.CommunityScore = ScoreHelper.GetMovieCommunityScore(movie.IdMovie.Value, reviewRepository);
+                });
             CreateMap<Models.MovieData, Resources.Movie>()
                 .ForMember(m => m.Name, opt => opt.MapFrom(md => md.Title))
                 .ForMember(m => m.Genres, opt => opt.MapFrom(md => md.MovieDataGenre
@@ -43,7 +77,11 @@ namespace Server.Mapping
                 .ForMember(m => m.Image, opt => opt.MapFrom(md => 
                     new Resources.Image { Id = md.ImageMongoId, Url = $"{host}image/{md.ImageMongoId}" }))
                 .ForMember(m => m.CommunityScore,opt => opt.MapFrom(md => ScoreHelper.GetMovieCommunityScore(md.IdMovie, reviewRepository)))
-                .ForMember(m => m.CommunityScore, opt => opt.MapFrom(md => ScoreHelper.GetMoviePopularity(md.IdMovie, movieDataRepository, reviewRepository)));
+                .ForMember(m => m.CommunityScore, opt => opt.MapFrom(md => ScoreHelper.GetMoviePopularity(md.IdMovie, movieDataRepository, reviewRepository)))
+                .AfterMap((movieData, movie) =>
+                {
+                    movie.IdUser = movieRepository.Get(movieData.IdMovie).Result.IdUser;
+                });     
             #endregion
 
             #region Resource to Domain

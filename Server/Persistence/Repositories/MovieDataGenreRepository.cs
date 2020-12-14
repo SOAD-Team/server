@@ -1,4 +1,5 @@
-﻿using Server.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Server.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -22,9 +23,10 @@ namespace Server.Persistence
             throw new NotImplementedException();
         }
 
-        public override Task<IEnumerable<MovieDataGenre>> GetAll()
+        public override async Task<IEnumerable<MovieDataGenre>> GetAll()
         {
-            throw new NotImplementedException();
+            var result = await _context.MovieDataGenre.ToListAsync();
+            return result;
         }
     }
 }

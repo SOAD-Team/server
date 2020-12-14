@@ -69,6 +69,7 @@ namespace Server
             services.AddScoped(provider => new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new MappingProfile(
+                    provider.GetRequiredService<MovieRepository>(),
                     provider.GetService<GenreRepository>(), 
                     provider.GetService<LanguageRepository>(), 
                     provider.GetService<StyleRepository>(), 

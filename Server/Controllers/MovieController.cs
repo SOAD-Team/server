@@ -25,7 +25,7 @@ namespace Server.Controllers
             this.genreRepository = genreRepository;
             this.languageRepository = languageRepository;
         }
-        // Create
+
         [HttpPost]
         public async Task<IActionResult> CreateMovie(Resources.Movie movieData)
         {
@@ -45,7 +45,7 @@ namespace Server.Controllers
             return Ok(_mapper.Map<Resources.Movie>(data));
 
         }
-        // Get All
+
         [HttpGet]
         public async Task<IActionResult> GetAllMovies()
         {
@@ -66,14 +66,13 @@ namespace Server.Controllers
             return Ok(resourceMovies);
         }
 
-        // Get
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMovie(int id)
         {
             MovieData movie = await movieDataRepository.Get(id);
             return Ok(_mapper.Map<Resources.Movie>(movie));
         }
-        // Put
+
         [HttpPut]
         public async Task<IActionResult> UpdateMovie(Resources.Movie movieData)
         {
@@ -84,8 +83,6 @@ namespace Server.Controllers
                 await genreRepository.Create(new MovieDataGenre(data.IdMovieData, genre.Id));
             foreach (var language in movieData.Languages)
                 await languageRepository.Create(new MovieDataLanguage(data.IdMovieData, language.Id));
-            await movieDataRepository.CompleteAsync();
-
             await movieDataRepository.CompleteAsync();
 
             return Ok(_mapper.Map<Resources.Movie>(data));

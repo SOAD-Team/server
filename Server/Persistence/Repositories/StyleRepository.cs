@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Server.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Server.Persistence
@@ -14,9 +15,10 @@ namespace Server.Persistence
             throw new System.NotImplementedException();
         }
 
-        public override Task<Style> Get(int id)
+        public override async Task<Style> Get(int id)
         {
-            throw new System.NotImplementedException();
+            var result = await _context.Style.Where(g => g.IdStyle == id).FirstOrDefaultAsync();
+            return result;
         }
 
         public override async Task<IEnumerable<Style>> GetAll()

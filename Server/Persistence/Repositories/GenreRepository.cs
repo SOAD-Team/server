@@ -2,6 +2,7 @@
 using Server.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Server.Persistence
@@ -15,9 +16,10 @@ namespace Server.Persistence
             throw new NotImplementedException();
         }
 
-        public override Task<Genre> Get(int id)
+        public async override Task<Genre> Get(int id)
         {
-            throw new NotImplementedException();
+            var result = await _context.Genre.Where(g => g.IdGenre == id).FirstOrDefaultAsync();
+            return result;
         }
 
         public override async Task<IEnumerable<Genre>> GetAll()
