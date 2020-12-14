@@ -47,11 +47,5 @@ namespace Server.Controllers
             else
                 return NotFound(user);
         }
-
-        [HttpGet]
-        public string Get()
-        {
-            return "holis";
-        }
     }
 }

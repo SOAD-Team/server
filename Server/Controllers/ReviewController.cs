@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Server.Models;
 using Server.Persistence;
 using System.Threading.Tasks;
@@ -10,10 +11,12 @@ namespace Server.Controllers
     public class ReviewController : ControllerBase
     {
         private readonly ReviewRepository reviewRepository;
+        private readonly IMapper mapper;
 
-        public ReviewController(ReviewRepository reviewRepository)
+        public ReviewController(ReviewRepository reviewRepository, IMapper mapper)
         {
             this.reviewRepository = reviewRepository;
+            this.mapper = mapper;
         }
 
         [HttpGet("{id}")]

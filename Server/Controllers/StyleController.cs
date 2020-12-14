@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Server.Persistence;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Server.Controllers
@@ -9,15 +11,18 @@ namespace Server.Controllers
     public class StyleController : ControllerBase
     {
         private readonly StyleRepository styleRepository;
-        public StyleController(StyleRepository styleRepository)
+        private readonly IMapper mapper;
+        public StyleController(StyleRepository styleRepository, IMapper mapper)
         {
             this.styleRepository = styleRepository;
+            this.mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetStyles()
         {
-            return Ok(await styleRepository.GetAll());
+            var styles = await styleRepository.GetAll();
+            return Ok(mapper.Map<IEnumerable<Resources.KeyValuePair>>(styles));
         }
     }
 }
