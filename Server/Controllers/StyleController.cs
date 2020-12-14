@@ -1,24 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Server.Persistence;
 using System.Threading.Tasks;
 
 namespace Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class StyleController : ControllerBase
     {
-        private readonly MoviesDB _context;
-        public StyleController(MoviesDB context)
+        private readonly StyleRepository styleRepository;
+        public StyleController(StyleRepository styleRepository)
         {
-            _context = context;
+            this.styleRepository = styleRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetStyles()
         {
-            return Ok(await _context.Style.ToListAsync());
+            return Ok(await styleRepository.GetAll());
         }
     }
 }

@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Server.Models;
 
 namespace Server.Persistence 
 { 
     public interface IImagesDB
     {
-        public List<Image> Get();
+        public Task<List<Image>> Get();
 
-        public Image Get(string id);
+        public Task<Image> Get(string id);
 
-        public Image Create(Image Image);
+        public Task<Image> Create(Image Image);
 
         public void Update(string id, Image ImageIn);
 

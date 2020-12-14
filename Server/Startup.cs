@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Server.Persistence;
 using AutoMapper;
 using Server.Mapping;
+using Server.Persistence.Repositories;
 
 namespace Server
 {
@@ -35,6 +36,27 @@ namespace Server
             services.AddDbContext<MoviesDB>();
             services.AddScoped<MoviesDB>();
 
+            services.AddScoped<UserRepository>();
+
+            services.AddScoped<ReviewRepository>();
+
+            services.AddScoped<GenreRepository>();
+
+            services.AddScoped<LanguageRepository>();
+
+            services.AddScoped<StyleRepository>();
+
+            services.AddScoped<ImageRepository>();
+
+            services.AddScoped<MovieRepository>();
+
+            services.AddScoped<MovieDataRepository>();
+
+            services.AddScoped<MovieDataGenreRepository>();
+
+            services.AddScoped<MovieDataLanguageRepository>();
+
+
             services.Configure<ImagesDatabaseSettings>(
                 Configuration.GetSection(nameof(ImagesDatabaseSettings)));
 
@@ -46,7 +68,12 @@ namespace Server
 
             services.AddScoped(provider => new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new MappingProfile(provider.GetService<IImagesDB>(), provider.GetService<MoviesDB>()));
+                cfg.AddProfile(new MappingProfile(
+                    provider.GetService<GenreRepository>(), 
+                    provider.GetService<LanguageRepository>(), 
+                    provider.GetService<StyleRepository>(), 
+                    provider.GetService<ReviewRepository>(), 
+                    provider.GetService<MovieDataRepository>()));
             }).CreateMapper());
 
             services.AddAutoMapper(typeof(Startup));

@@ -1,10 +1,11 @@
-﻿using Server.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Server.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Server.Persistence
 {
-    public class LanguageRepository : Repository<Language>
+    public class LanguageRepository : Repository<Language>, ILanguageRepository
     {
         public LanguageRepository(MoviesDB context) : base(context)
         {
@@ -21,9 +22,10 @@ namespace Server.Persistence
             throw new System.NotImplementedException();
         }
 
-        public override Task<IEnumerable<Language>> GetAll()
+        public override async Task<IEnumerable<Language>> GetAll()
         {
-            throw new System.NotImplementedException();
+            var result = await _context.Language.ToListAsync();
+            return result;
         }
     }
 }

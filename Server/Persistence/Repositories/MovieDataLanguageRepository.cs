@@ -1,12 +1,11 @@
 ﻿using Server.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Server.Persistence
 {
-    public class MovieDataLanguageRepository : Repository<MovieDataLanguage>
+    public class MovieDataLanguageRepository : Repository<MovieDataLanguage>, IMovieDataLanguageRepository
     {
         public MovieDataLanguageRepository(MoviesDB context) : base(context)
         {

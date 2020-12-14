@@ -1,12 +1,11 @@
 ﻿using Server.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Server.Persistence
 {
-    public class MovieDataGenreRepository : Repository<MovieDataGenre>
+    public class MovieDataGenreRepository : Repository<MovieDataGenre>, IMovieDataGenreRepository
     {
         public MovieDataGenreRepository(MoviesDB context) : base(context)
         {
