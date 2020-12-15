@@ -27,7 +27,7 @@ namespace Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateMovie(Resources.Movie movieData)
+        public async Task<IActionResult> Post(Resources.Movie movieData)
         {
             Movie movie = _mapper.Map<Movie>(movieData);
             await movieRepository.Create(movie);
@@ -47,7 +47,7 @@ namespace Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllMovies()
+        public async Task<IActionResult> GetAll()
         {
             var movies = await movieDataRepository.GetAll();
 
@@ -67,14 +67,15 @@ namespace Server.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetMovie(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            MovieData movie = await movieDataRepository.Get(id);
-            return Ok(_mapper.Map<Resources.Movie>(movie));
+            Movie movie = await movieRepository.Get(id);
+            Resources.Movie result = _mapper.Map<Resources.Movie>(movie);
+            return Ok(result);
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateMovie(Resources.Movie movieData)
+        public async Task<IActionResult> Put(Resources.Movie movieData)
         {
             MovieData data = _mapper.Map<MovieData>(movieData);
             data = await movieDataRepository.Create(data);

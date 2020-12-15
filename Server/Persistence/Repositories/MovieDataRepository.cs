@@ -19,7 +19,7 @@ namespace Server.Persistence
 
         public async Task<MovieData> GetByMovieId(int id)
         {
-            var result = await _context.MovieData.ToListAsync();
+            var result = await _context.MovieData.Where(m => m.IdMovie == id).ToListAsync();
             MovieData latest = null;
             foreach (var movieData in result)
             {

@@ -22,7 +22,7 @@ namespace Server.Persistence
 
         public async override Task<Movie> Get(int id)
         {
-            var result = await _context.Movie.Where(val => val.IdMovie == id).FirstOrDefaultAsync();
+            var result = await _context.Movie.Where(val => val.IdMovie == id).FirstOrDefaultAsync(); 
             return result;
         }
 

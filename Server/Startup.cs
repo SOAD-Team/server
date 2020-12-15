@@ -74,7 +74,9 @@ namespace Server
                     provider.GetService<LanguageRepository>(), 
                     provider.GetService<StyleRepository>(), 
                     provider.GetService<ReviewRepository>(), 
-                    provider.GetService<MovieDataRepository>()));
+                    provider.GetService<MovieDataRepository>(),
+                    provider.GetService<MovieDataGenreRepository>(),
+                    provider.GetService<MovieDataLanguageRepository>()));
             }).CreateMapper());
 
             services.AddAutoMapper(typeof(Startup));

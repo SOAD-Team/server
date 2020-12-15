@@ -15,7 +15,9 @@ namespace Server.Mapping
             LanguageRepository languageRepository,
             StyleRepository styleRepository,
             ReviewRepository reviewRepository,
-            MovieDataRepository movieDataRepository)
+            MovieDataRepository movieDataRepository,
+            MovieDataGenreRepository movieDataGenreRepository,
+            MovieDataLanguageRepository movieDataLanguageRepository)
         {
             string host = Environment.GetEnvironmentVariable("URL");
             #region Domain to Resource
@@ -30,7 +32,7 @@ namespace Server.Mapping
                 .ForMember(g => g.Id, opt => opt.MapFrom(gr => gr.IdStyle))
                 .ForMember(g => g.Name, opt => opt.MapFrom(gr => gr.Name));
             CreateMap<Models.Image, Resources.Image>()
-                .ForMember(img => img.Url, opt => opt.MapFrom(img => $"{host}/image/{img.Id}"));
+                .ForMember(img => img.Url, opt => opt.MapFrom(img => $"{host}image/{img.Id}"));
 
             CreateMap<Models.Movie, Resources.Movie>()
                 .ForMember(m => m.IdUser, opt => opt.MapFrom(m => m.IdUser))
@@ -38,24 +40,26 @@ namespace Server.Mapping
                 .AfterMap((movieModel, movie) =>
                 {
                     var data = movieDataRepository.GetByMovieId(movieModel.IdMovie).Result;
+                    var genres = new List<Resources.KeyValuePair>();
+                    var languages = new List<Resources.KeyValuePair>();
+
                     movie.IdMovieData = data.IdMovieData;
                     movie.RegisterDate = data.RegisterDate;
                     movie.Name = data.Title;
                     movie.Year = data.Year;
-                    movie.Genres = new Resources.KeyValuePair[data.MovieDataGenre.Count];
-                    for (int i = 0; i < data.MovieDataGenre.Count; i++)
-                    {
-                        Models.Genre genre = genreRepository.Get(data.MovieDataGenre.ToArray()[i].IdGenre).Result;
-                        movie.Genres[i] = new Resources.KeyValuePair {Id = genre.IdGenre, Name = genre.Name};
-                    }
-                    movie.Languages = new Resources.KeyValuePair[data.MovieDataLanguage.Count];
-                    for (int i = 0; i < data.MovieDataLanguage.Count; i++)
-                    {
-                        Models.Language lang = languageRepository.Get(data.MovieDataLanguage.ToArray()[i].IdLanguage).Result;
-                        movie.Languages[i] = new Resources.KeyValuePair { Id = lang.IdLanguage, Name = lang.Name };
-                    }
+                    movieDataGenreRepository.GetAll().Result.Where(genre => genre.IdMovieData == data.IdMovieData)
+                        .Join(genreRepository.GetAll().Result, mdg => mdg.IdGenre, g => g.IdGenre, (mdg, g) => g)
+                        .ToList().ForEach(genre => {
+                            genres.Add(new Resources.KeyValuePair { Id = genre.IdGenre, Name = genre.Name });
+                        });
+
+                    movieDataLanguageRepository.GetAll().Result.Where(language => language.IdMovieData == data.IdMovieData)
+                        .Join(languageRepository.GetAll().Result, mdl => mdl.IdLanguage, l => l.IdLanguage, (mdg, l) => l)
+                        .ToList().ForEach(language => {
+                            languages.Add(new Resources.KeyValuePair { Id = language.IdLanguage, Name = language.Name });
+                        });
                     movie.PlatFav = data.PlatFav;
-                    movie.Image = new Resources.Image {Id = data.ImageMongoId, Url = $"{host}/image/{data.ImageMongoId}" };
+                    movie.Image = new Resources.Image {Id = data.ImageMongoId, Url = $"{host}image/{data.ImageMongoId}" };
                     movie.Styles = new Resources.KeyValuePair[1] 
                     { new Resources.KeyValuePair { Id = data.IdStyle, Name = styleRepository.Get(data.IdStyle).Result.Name} };
                     movie.MetaScore = data.MetaScore;
@@ -63,13 +67,12 @@ namespace Server.Mapping
                     movie.Director = data.Director;
                     movie.Popularity = ScoreHelper.GetMoviePopularity(movie.IdMovie.Value, movieDataRepository, reviewRepository);
                     movie.CommunityScore = ScoreHelper.GetMovieCommunityScore(movie.IdMovie.Value, reviewRepository);
+
+                    movie.Genres = genres.ToArray();
+                    movie.Languages = languages.ToArray();
                 });
             CreateMap<Models.MovieData, Resources.Movie>()
                 .ForMember(m => m.Name, opt => opt.MapFrom(md => md.Title))
-                .ForMember(m => m.Genres, opt => opt.MapFrom(md => md.MovieDataGenre
-                    .Join(genreRepository.GetAll().Result, mdg => mdg.IdGenre, g => g.IdGenre, (mdg, g) => g)))
-                .ForMember(m => m.Languages, opt => opt.MapFrom(md => md.MovieDataLanguage
-                    .Join(genreRepository.GetAll().Result, mdg => mdg.IdLanguage, g => g.IdGenre, (mdg, g) => g)))
                 .ForMember(m => m.Styles, opt => opt.MapFrom(md => 
                     new Resources.KeyValuePair[1] { 
                         new Resources.KeyValuePair { Id = md.IdStyle, Name = styleRepository.GetAll().Result
@@ -80,7 +83,25 @@ namespace Server.Mapping
                 .ForMember(m => m.CommunityScore, opt => opt.MapFrom(md => ScoreHelper.GetMoviePopularity(md.IdMovie, movieDataRepository, reviewRepository)))
                 .AfterMap((movieData, movie) =>
                 {
+                    var genres = new List<Resources.KeyValuePair>();
+                    var languages = new List<Resources.KeyValuePair>();
+                    
                     movie.IdUser = movieRepository.Get(movieData.IdMovie).Result.IdUser;
+
+                    movieDataGenreRepository.GetAll().Result.Where(genre => genre.IdMovieData == movieData.IdMovieData)
+                        .Join(genreRepository.GetAll().Result, mdg => mdg.IdGenre, g => g.IdGenre, (mdg, g) => g)
+                        .ToList().ForEach(genre => {
+                            genres.Add(new Resources.KeyValuePair { Id = genre.IdGenre, Name = genre.Name });
+                        });
+
+                    movieDataLanguageRepository.GetAll().Result.Where(language => language.IdMovieData == movieData.IdMovieData)
+                        .Join(languageRepository.GetAll().Result, mdl => mdl.IdLanguage, l => l.IdLanguage, (mdg, l) => l)
+                        .ToList().ForEach(language => {
+                            languages.Add(new Resources.KeyValuePair { Id = language.IdLanguage, Name = language.Name });
+                        });
+
+                    movie.Genres = genres.ToArray();
+                    movie.Languages = languages.ToArray();
                 });     
             #endregion
 

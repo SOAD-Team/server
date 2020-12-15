@@ -21,7 +21,7 @@ namespace Server.Controllers
             this.userRepository = userRepository;
         }
 
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> RegisterUser(Resources.User user)
         {
             var user1 = await userRepository.GetByEmail(user.Email);
@@ -35,7 +35,7 @@ namespace Server.Controllers
             return NotFound(user);
         }
 
-        [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> LogIn(Resources.User user)
         {
             User temp = await userRepository.GetByEmail(user.Email);

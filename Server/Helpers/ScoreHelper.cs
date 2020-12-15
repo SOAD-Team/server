@@ -1,7 +1,6 @@
 ﻿using Server.Models;
 using System.Linq;
 using Server.Persistence;
-using AutoMapper;
 
 namespace Server.Helpers
 {

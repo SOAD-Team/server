@@ -30,8 +30,8 @@ namespace Server.Controllers
             this.genreRepository = genreRepository;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Post([FromBody] Resources.UserPoints points)
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] Resources.UserPoints points)
         {
             List<Resources.Recommendation> recommendations = new List<Resources.Recommendation>();
             (await genreRepository.GetAll()).Where(g => g.IdGenre == points.Genre.Id)
