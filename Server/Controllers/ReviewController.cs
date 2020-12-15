@@ -11,28 +11,28 @@ namespace Server.Controllers
     public class ReviewController : ControllerBase
     {
         private readonly ReviewRepository reviewRepository;
-        private readonly IMapper mapper;
+        private readonly IMapper _mapper;
 
         public ReviewController(ReviewRepository reviewRepository, IMapper mapper)
         {
             this.reviewRepository = reviewRepository;
-            this.mapper = mapper;
+            this._mapper = mapper;
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetReview(int id)
         {
             var reviews = await reviewRepository.GetbyMovieId(id);
-            return Ok(reviews);
+            return Ok(_mapper.Map<Resources.Review>(reviews));
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateReview(Review review)
+        public async Task<IActionResult> CreateReview(Resources.Review review)
         {
             Review insert = new Review { IdMovie = review.IdMovie, Score = review.Score, Comment = review.Comment};
             await reviewRepository.Create(insert);
             await reviewRepository.CompleteAsync();
-            return Ok(review);
+            return Ok(_mapper.Map<Resources.Review>(review));
         }
 
     }

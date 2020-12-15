@@ -20,6 +20,7 @@ namespace Server.Mapping
             MovieDataLanguageRepository movieDataLanguageRepository)
         {
             string host = Environment.GetEnvironmentVariable("URL");
+            CreateMap<Models.Review, Resources.Review>();
             #region Domain to Resource
             CreateMap<Models.User, Resources.User>();
             CreateMap<Models.Genre,Resources.KeyValuePair>()
