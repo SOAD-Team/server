@@ -10,14 +10,15 @@ namespace Server.Mapping
     public class MappingProfile : Profile
     {
         public MappingProfile(
-            MovieRepository movieRepository,
-            GenreRepository genreRepository,
-            LanguageRepository languageRepository,
-            StyleRepository styleRepository,
-            ReviewRepository reviewRepository,
-            MovieDataRepository movieDataRepository,
-            MovieDataGenreRepository movieDataGenreRepository,
-            MovieDataLanguageRepository movieDataLanguageRepository)
+            IMovieRepository movieRepository,
+            IGenreRepository genreRepository,
+            ILanguageRepository languageRepository,
+            IStyleRepository styleRepository,
+            IReviewRepository reviewRepository,
+            IMovieDataRepository movieDataRepository,
+            IMovieDataGenreRepository movieDataGenreRepository,
+            IMovieDataLanguageRepository movieDataLanguageRepository,
+            IUnitOfWork unitOfWork)
         {
             string host = Environment.GetEnvironmentVariable("URL");
             CreateMap<Models.Review, Resources.Review>();
@@ -117,7 +118,7 @@ namespace Server.Mapping
                     if (genre.Id.Equals(null))
                     {
                         genreRepository.Create(new Models.Genre(genre.Name));
-                        genreRepository.CompleteAsync().Wait();
+                        unitOfWork.CompleteAsync().Wait();
                     }
                 }
                 foreach (Resources.KeyValuePair language in movie.Languages)
@@ -125,7 +126,7 @@ namespace Server.Mapping
                     if (language.Id.Equals(null))
                     {
                         languageRepository.Create(new Models.Language(language.Name));
-                        languageRepository.CompleteAsync().Wait();
+                        unitOfWork.CompleteAsync().Wait();
                     }
                 }
             }).ForMember(m => m.ImageMongoId, opt => opt.MapFrom(m => m.Image.Id))

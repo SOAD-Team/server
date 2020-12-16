@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Server.Models;
 using Server.Helpers;
 using Server.Persistence;
 using AutoMapper;
@@ -16,12 +15,12 @@ namespace Server.Controllers
     public class RecommendationController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly ReviewRepository reviewRepository;
-        private readonly MovieDataRepository movieDataRepository;
-        private readonly MovieRepository movieRepository;
-        private readonly MovieDataGenreRepository genreRepository;
+        private readonly IReviewRepository reviewRepository;
+        private readonly IMovieDataRepository movieDataRepository;
+        private readonly IMovieRepository movieRepository;
+        private readonly IMovieDataGenreRepository genreRepository;
 
-        public RecommendationController(IMapper mapper, ReviewRepository reviewRepository, MovieDataRepository movieDataRepository, MovieRepository movieRepository, MovieDataGenreRepository genreRepository)
+        public RecommendationController(IMapper mapper, IReviewRepository reviewRepository, IMovieDataRepository movieDataRepository, IMovieRepository movieRepository, IMovieDataGenreRepository genreRepository)
         {
             _mapper = mapper;
             this.reviewRepository = reviewRepository;

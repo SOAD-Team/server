@@ -13,12 +13,14 @@ namespace Server.Controllers
     public class UserController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly UserRepository userRepository;
+        private readonly IUserRepository userRepository;
+        private readonly IUnitOfWork unitOfWork;
 
-        public UserController(IMapper mapper, UserRepository userRepository)
+        public UserController(IMapper mapper, UserRepository userRepository, IUnitOfWork unitOfWork)
         {
             this._mapper = mapper;
             this.userRepository = userRepository;
+            this.unitOfWork = unitOfWork;
         }
 
         [HttpPost]
@@ -29,7 +31,7 @@ namespace Server.Controllers
             {
                 User temp = new User(user.Email, user.Password, user.Name, user.LastName);
                 await userRepository.Create(temp);
-                await userRepository.CompleteAsync();
+                await unitOfWork.CompleteAsync();
                 return Ok(_mapper.Map<Resources.User>(temp));
             }
             return NotFound(user);

@@ -10,10 +10,10 @@ namespace Server.Controllers
     [ApiController]
     public class GenreController : ControllerBase
     {
-        private readonly GenreRepository genreRepository;
+        private readonly IGenreRepository genreRepository;
         private readonly IMapper mapper;
 
-        public GenreController(GenreRepository genreRepository, IMapper mapper)
+        public GenreController(IGenreRepository genreRepository, IMapper mapper)
         {
             this.genreRepository = genreRepository;
             this.mapper = mapper;

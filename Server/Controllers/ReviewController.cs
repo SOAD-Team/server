@@ -10,13 +10,16 @@ namespace Server.Controllers
     [ApiController]
     public class ReviewController : ControllerBase
     {
-        private readonly ReviewRepository reviewRepository;
+        private readonly IReviewRepository reviewRepository;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork unitOfWork;
 
-        public ReviewController(ReviewRepository reviewRepository, IMapper mapper)
+
+        public ReviewController(IReviewRepository reviewRepository, IMapper mapper, IUnitOfWork unitOfWork)
         {
             this.reviewRepository = reviewRepository;
             this._mapper = mapper;
+            this.unitOfWork = unitOfWork;
         }
 
         [HttpGet("{id}")]
@@ -31,7 +34,7 @@ namespace Server.Controllers
         {
             Review insert = new Review { IdMovie = review.IdMovie, Score = review.Score, Comment = review.Comment};
             await reviewRepository.Create(insert);
-            await reviewRepository.CompleteAsync();
+            await unitOfWork.CompleteAsync();
             return Ok(_mapper.Map<Resources.Review>(review));
         }
 

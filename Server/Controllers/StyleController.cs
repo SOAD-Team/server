@@ -10,9 +10,9 @@ namespace Server.Controllers
     [ApiController]
     public class StyleController : ControllerBase
     {
-        private readonly StyleRepository styleRepository;
+        private readonly IStyleRepository styleRepository;
         private readonly IMapper mapper;
-        public StyleController(StyleRepository styleRepository, IMapper mapper)
+        public StyleController(IStyleRepository styleRepository, IMapper mapper)
         {
             this.styleRepository = styleRepository;
             this.mapper = mapper;

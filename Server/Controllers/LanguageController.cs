@@ -10,9 +10,9 @@ namespace Server.Controllers
     [ApiController]
     public class LanguageController : ControllerBase
     {
-        private readonly LanguageRepository languageRepository;
+        private readonly ILanguageRepository languageRepository;
         private readonly IMapper mapper;
-        public LanguageController(LanguageRepository languageRepository, IMapper mapper)
+        public LanguageController(ILanguageRepository languageRepository, IMapper mapper)
         {
             this.languageRepository = languageRepository;
             this.mapper = mapper;

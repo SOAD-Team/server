@@ -23,13 +23,13 @@ namespace Server.Persistence
             MovieData latest = null;
             foreach (var movieData in result)
             {
-                if(latest == null)
+                if (latest == null)
                 {
                     latest = movieData;
                 }
                 else
                 {
-                    if(latest.RegisterDate < movieData.RegisterDate)
+                    if (latest.RegisterDate < movieData.RegisterDate)
                     {
                         latest = movieData;
                     }

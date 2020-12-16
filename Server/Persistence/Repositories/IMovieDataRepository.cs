@@ -9,5 +9,7 @@ namespace Server.Persistence
         Task<MovieData> Create(MovieData data);
         Task<MovieData> Get(int id);
         Task<IEnumerable<MovieData>> GetAll();
+        Task<MovieData> GetByMovieId(int id);
+        Task<IEnumerable<MovieData>> GetByUserId(int id);
     }
 }
