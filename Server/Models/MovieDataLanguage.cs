@@ -21,5 +21,7 @@ namespace Server.Models
         [ForeignKey(nameof(IdMovieData))]
         [InverseProperty(nameof(MovieData.MovieDataLanguage))]
         public virtual MovieData IdMovieDataNavigation { get; set; }
+        public static MovieDataLanguage Empty { get => new MovieDataLanguage(1,1); }
+
     }
 }

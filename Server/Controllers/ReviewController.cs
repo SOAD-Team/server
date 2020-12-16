@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Server.Models;
 using Server.Persistence;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Server.Controllers
@@ -26,7 +27,7 @@ namespace Server.Controllers
         public async Task<IActionResult> GetReview(int id)
         {
             var reviews = await reviewRepository.GetbyMovieId(id);
-            return Ok(_mapper.Map<Resources.Review>(reviews));
+            return Ok(_mapper.Map<IEnumerable<Resources.Review>>(reviews));
         }
 
         [HttpPost]

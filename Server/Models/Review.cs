@@ -15,5 +15,7 @@ namespace Server.Models
         [ForeignKey(nameof(IdMovie))]
         [InverseProperty(nameof(Movie.Review))]
         public virtual Movie IdMovieNavigation { get; set; }
+        public static Review Empty { get => new Review(); }
+
     }
 }

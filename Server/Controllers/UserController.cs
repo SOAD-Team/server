@@ -16,7 +16,7 @@ namespace Server.Controllers
         private readonly IUserRepository userRepository;
         private readonly IUnitOfWork unitOfWork;
 
-        public UserController(IMapper mapper, UserRepository userRepository, IUnitOfWork unitOfWork)
+        public UserController(IMapper mapper, IUserRepository userRepository, IUnitOfWork unitOfWork)
         {
             this._mapper = mapper;
             this.userRepository = userRepository;

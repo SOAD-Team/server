@@ -136,6 +136,8 @@ namespace Server.Mapping
             CreateMap<Resources.Image, Models.Image>()
                 .ForMember(img => img.ObjectImage, opt => opt.Ignore())
                 .ForMember(img => img.Id, opt => opt.MapFrom(img => img.Id));
+
+            CreateMap<Resources.Review, Models.Review>();
             #endregion
         }
 

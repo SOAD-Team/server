@@ -43,7 +43,9 @@ namespace Server.Models
         public virtual ICollection<MovieDataGenre> MovieDataGenre { get; set; }
         [InverseProperty("IdMovieDataNavigation")]
         public virtual ICollection<MovieDataLanguage> MovieDataLanguage { get; set; }
+        public static MovieData Empty { get => new MovieData(); }
+
     }
 
-    
+
 }
