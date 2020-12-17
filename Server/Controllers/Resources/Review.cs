@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Server.Resources
+﻿namespace Server.Resources
 {
     public class Review
     {
@@ -11,5 +6,7 @@ namespace Server.Resources
         public int IdMovie { get; set; }
         public byte Score { get; set; }
         public string Comment { get; set; }
+
+        public static Review Empty { get => new Review(); }
     }
 }

@@ -8,25 +8,26 @@ using Server.Persistence;
 using AutoMapper;
 using Server.Persistence.Repositories;
 using Server.Mapping;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Server.Controllers.Tests
 {
     [TestFixture()]
-    public class TestController
+    public class TestController<T> where T : ControllerBase
     {
-
-        private IMapper mockMapper;
-        private Mock<IMovieRepository> mockMovieRepository;
-        private Mock<IMovieDataRepository> mockMovieDataRepository;
-        private Mock<IGenreRepository> mockGenreRepository;
-        private Mock<IImageRepository> mockImageRepository;
-        private Mock<ILanguageRepository> mockLanguageRepository;
-        private Mock<IMovieDataGenreRepository> mockMovieDataGenreRepository;
-        private Mock<IMovieDataLanguageRepository> mockMovieDataLanguageRepository;
-        private Mock<IReviewRepository> mockReviewRepository;
-        private Mock<IStyleRepository> mockStyleRepository;
-        private Mock<IUserRepository> mockUserRepository;
-        private Mock<IUnitOfWork> mockUnitOfWork;
+        protected T controller;
+        protected IMapper mockMapper;
+        protected Mock<IMovieRepository> mockMovieRepository;
+        protected Mock<IMovieDataRepository> mockMovieDataRepository;
+        protected Mock<IGenreRepository> mockGenreRepository;
+        protected Mock<IImageRepository> mockImageRepository;
+        protected Mock<ILanguageRepository> mockLanguageRepository;
+        protected Mock<IMovieDataGenreRepository> mockMovieDataGenreRepository;
+        protected Mock<IMovieDataLanguageRepository> mockMovieDataLanguageRepository;
+        protected Mock<IReviewRepository> mockReviewRepository;
+        protected Mock<IStyleRepository> mockStyleRepository;
+        protected Mock<IUserRepository> mockUserRepository;
+        protected Mock<IUnitOfWork> mockUnitOfWork;
 
         [SetUp]
         public void Setup()
@@ -58,7 +59,7 @@ namespace Server.Controllers.Tests
             List<Image> emptyImage = new List<Image>();
             emptyImage.Add(Image.Empty);
             mockImageRepository.Setup(_ => _.Create(It.IsAny<Image>())).Returns<Image>(i => Task.FromResult(i));
-            mockImageRepository.Setup(_ => _.Get(It.IsAny<string>())).Returns<Genre>(g => Task.FromResult(Image.Empty));
+            mockImageRepository.Setup(_ => _.Get(It.IsAny<string>())).ReturnsAsync(Image.Empty);
             mockImageRepository.Setup(_ => _.GetAll()).ReturnsAsync(emptyImage);
 
             this.mockLanguageRepository = new Mock<ILanguageRepository>(MockBehavior.Loose);
@@ -85,7 +86,7 @@ namespace Server.Controllers.Tests
             emptyReview.Add(Review.Empty);
             mockReviewRepository.Setup(_ => _.GetbyMovieId(It.IsAny<int>())).ReturnsAsync(emptyReview);
 
-            Mock<IStyleRepository> mockStyleRepository = new Mock<IStyleRepository>(MockBehavior.Loose);
+            this.mockStyleRepository = new Mock<IStyleRepository>(MockBehavior.Loose);
             List<Style> emptyStyle = new List<Style>();
             emptyStyle.Add(Style.Empty);
             mockStyleRepository.Setup(_ => _.Get(It.IsAny<int>())).Returns<Style>(s => Task.FromResult(Style.Empty));
@@ -95,8 +96,8 @@ namespace Server.Controllers.Tests
             List<User> emptyUser = new List<User>();
             emptyUser.Add(User.Empty);
             mockUserRepository.Setup(_ => _.Create(It.IsAny<User>())).Returns<User>(u => Task.FromResult(u));
-            mockUserRepository.Setup(_ => _.Get(It.IsAny<int>())).Returns<User>(s => Task.FromResult(User.Empty));
-            mockUserRepository.Setup(_ => _.GetByEmail(It.IsAny<string>())).Returns<User>(s => Task.FromResult(User.Empty));
+            mockUserRepository.Setup(_ => _.Get(It.IsAny<int>())).Returns<User>(u => Task.FromResult(User.Empty));
+            mockUserRepository.Setup(_ => _.GetByEmail(It.IsAny<string>())).ReturnsAsync(User.Empty);
 
             this.mockUnitOfWork = new Mock<IUnitOfWork>(MockBehavior.Loose);
 

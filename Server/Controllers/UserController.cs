@@ -24,9 +24,9 @@ namespace Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterUser(Resources.User user)
+        public async Task<IActionResult> RegisterUser(User user)
         {
-            var user1 = await userRepository.GetByEmail(user.Email);
+            User user1 = await userRepository.GetByEmail(user.Email);
             if(user1 == null)
             {
                 User temp = new User(user.Email, user.Password, user.Name, user.LastName);
@@ -40,7 +40,7 @@ namespace Server.Controllers
         [HttpPut]
         public async Task<IActionResult> LogIn(Resources.User user)
         {
-            User temp = await userRepository.GetByEmail(user.Email);
+            var temp = await userRepository.GetByEmail(user.Email);
             if (temp != null)
                 if (temp.Password.Equals(user.Password))
                     return Ok(_mapper.Map<Resources.User>(temp));

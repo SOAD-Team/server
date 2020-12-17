@@ -25,6 +25,9 @@ namespace Server.Helpers
 
         public static int GetMovieCommunityScore(int idMovie, IReviewRepository reviewRepository)
         {
+            if (idMovie <= 0)
+                return 0;
+
             int score = 0;
             Review[] reviews = reviewRepository.GetbyMovieId(idMovie).Result.ToArray();
 
@@ -38,6 +41,9 @@ namespace Server.Helpers
         }
         public static int GetMoviePopularity(int idMovie, IMovieDataRepository movieDataRepository, IReviewRepository reviewRepository)
         {
+            if (idMovie <= 0)
+                return 0;
+
             int score = 0;
 
             if (ScoreHelper.isFromThisYear(idMovie, movieDataRepository))
