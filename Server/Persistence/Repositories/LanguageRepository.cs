@@ -13,9 +13,10 @@ namespace Server.Persistence
 
         }
 
-        public override Task<Language> Create(Language value)
+        public async override Task<Language> Create(Language value)
         {
-            throw new System.NotImplementedException();
+            var lang = await _context.Language.AddAsync(value);
+            return lang.Entity;
         }
 
         public override async Task<Language> Get(int id)

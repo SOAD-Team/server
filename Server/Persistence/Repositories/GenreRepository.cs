@@ -11,9 +11,10 @@ namespace Server.Persistence
     {
         public GenreRepository(MoviesDB context) : base(context) { }
 
-        public override Task<Genre> Create(Genre value)
+        public async override Task<Genre> Create(Genre value)
         {
-            throw new NotImplementedException();
+            var genre = await _context.AddAsync(value);
+            return genre.Entity;
         }
 
         public async override Task<Genre> Get(int id)

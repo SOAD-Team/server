@@ -10,9 +10,10 @@ namespace Server.Persistence
     {
         public StyleRepository(MoviesDB context) : base(context) { }
 
-        public override Task<Style> Create(Style value)
+        public async override Task<Style> Create(Style value)
         {
-            throw new System.NotImplementedException();
+            var result = await _context.Style.AddAsync(value);
+            return result.Entity;
         }
 
         public override async Task<Style> Get(int id)
