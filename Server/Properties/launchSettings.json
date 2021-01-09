@@ -20,10 +20,10 @@
     "Server": {
       "commandName": "Project",
       "environmentVariables": {
-        "DB_CONNECTION_STRING": "Server=tcp:my-movie.database.windows.net,1433;Initial Catalog=my-movie-database;Persist Security Info=False;User ID=Abstractize;Password=Leirbag36011999;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
+        "DB_CONNECTION_STRING": "Server=tcp:soa-server-proyecto.database.windows.net,1433;Initial Catalog=my-movie-db;Persist Security Info=False;User ID=fmurillo;Password=Pass1234;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
         "ASPNETCORE_ENVIRONMENT": "Development",
         "URL": "https://localhost:5001/",
-        "MONGODB_CONNECTION_STRING": "mongodb://abstractize:n7NSN9zQYSTZ09B0zDldhozTbgBjS8T8NVsN96Iu0FOaryx4FBZmUlJ2D0lI9YON94N9mRqU2JWu7Z4opSoHbQ==@abstractize.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@abstractize@&retrywrites=false"
+        "MONGODB_CONNECTION_STRING": "mongodb://my-movie-image-db:ZIsrJCjPrKnAVv0CdrDICAgcIBu0axTptx8si6pg0DcGoZTRjf4LggBQXt2xdj6ZHPhvQY453famgNUzI0DThg==@my-movie-image-db.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@my-movie-image-db@&retrywrites=false"
       },
       "applicationUrl": "https://localhost:5001;http://localhost:5000"
     }
