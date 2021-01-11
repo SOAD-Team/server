@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace ServerTests.Persistence
 {
-    class MovieDataLanguageRepositoryTest : RepositoryTests<MovieDataGenre, MovieDataGenreRepository>
+    class MovieDataLanguageRepositoryTest : RepositoryTests<MovieDataLanguage, MovieDataLanguageRepository>
     {
         [SetUp]
         public new void Setup()
         {
             base.Setup();
-            repository = new MovieDataGenreRepository(context);
+            repository = new MovieDataLanguageRepository(context);
         }
 
         [Test(), Order(1)]
         public async Task CreateTest()
         {
-            var value = MovieDataGenre.Empty;
+            var value = MovieDataLanguage.Empty;
             await base.CreateTest(value);
         }
 

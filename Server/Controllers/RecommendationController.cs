@@ -38,8 +38,7 @@ namespace Server.Controllers
                     Resources.Movie data = _mapper.Map<Resources.Movie>(movie);
                     int score = ScoreHelper.GetRecommendationScore(points, data, movieDataRepository, reviewRepository);
                     Resources.Recommendation temp = new Resources.Recommendation { Movie = data, Score = score };
-                    if (temp != null)
-                        recommendations.Add(temp);
+                    recommendations.Add(temp);
                 });
             return Ok(recommendations.OrderByDescending(val => val.Score).Take(10));
         }
