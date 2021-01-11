@@ -36,25 +36,27 @@ namespace Server
             services.AddDbContext<MoviesDB>();
             services.AddScoped<MoviesDB>();
 
-            services.AddScoped<UserRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
-            services.AddScoped<ReviewRepository>();
+            services.AddScoped<IReviewRepository, ReviewRepository>();
 
-            services.AddScoped<GenreRepository>();
+            services.AddScoped<IGenreRepository, GenreRepository>();
 
-            services.AddScoped<LanguageRepository>();
+            services.AddScoped<ILanguageRepository, LanguageRepository>();
 
-            services.AddScoped<StyleRepository>();
+            services.AddScoped<IStyleRepository ,StyleRepository>();
 
-            services.AddScoped<ImageRepository>();
+            services.AddScoped<IImageRepository ,ImageRepository>();
 
-            services.AddScoped<MovieRepository>();
+            services.AddScoped<IMovieRepository ,MovieRepository>();
 
-            services.AddScoped<MovieDataRepository>();
+            services.AddScoped<IMovieDataRepository ,MovieDataRepository>();
 
-            services.AddScoped<MovieDataGenreRepository>();
+            services.AddScoped<IMovieDataGenreRepository ,MovieDataGenreRepository>();
 
-            services.AddScoped<MovieDataLanguageRepository>();
+            services.AddScoped<IMovieDataLanguageRepository ,MovieDataLanguageRepository>();
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
             services.Configure<ImagesDatabaseSettings>(
@@ -69,11 +71,15 @@ namespace Server
             services.AddScoped(provider => new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new MappingProfile(
-                    provider.GetService<GenreRepository>(), 
-                    provider.GetService<LanguageRepository>(), 
-                    provider.GetService<StyleRepository>(), 
-                    provider.GetService<ReviewRepository>(), 
-                    provider.GetService<MovieDataRepository>()));
+                    provider.GetRequiredService<IMovieRepository>(),
+                    provider.GetService<IGenreRepository>(), 
+                    provider.GetService<ILanguageRepository>(), 
+                    provider.GetService<IStyleRepository>(), 
+                    provider.GetService<IReviewRepository>(), 
+                    provider.GetService<IMovieDataRepository>(),
+                    provider.GetService<IMovieDataGenreRepository>(),
+                    provider.GetService<IMovieDataLanguageRepository>(),
+                    provider.GetService<IUnitOfWork>()));
             }).CreateMapper());
 
             services.AddAutoMapper(typeof(Startup));

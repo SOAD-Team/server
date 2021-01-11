@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Server.Models;
 using Server.Helpers;
 using Server.Persistence;
 using AutoMapper;
@@ -16,37 +15,32 @@ namespace Server.Controllers
     public class RecommendationController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly ReviewRepository reviewRepository;
-        private readonly MovieDataRepository movieDataRepository;
-        private readonly MovieRepository movieRepository;
+        private readonly IReviewRepository reviewRepository;
+        private readonly IMovieDataRepository movieDataRepository;
+        private readonly IMovieDataGenreRepository genreRepository;
 
-        public RecommendationController(IMapper mapper, ReviewRepository reviewRepository, MovieDataRepository movieDataRepository, MovieRepository movieRepository)
+        public RecommendationController(IMapper mapper, IReviewRepository reviewRepository, IMovieDataRepository movieDataRepository, IMovieRepository movieRepository, IMovieDataGenreRepository genreRepository)
         {
             _mapper = mapper;
             this.reviewRepository = reviewRepository;
             this.movieDataRepository = movieDataRepository;
-            this.movieRepository = movieRepository;
-
+            this.genreRepository = genreRepository;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Post([FromBody] Resources.UserPoints value)
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] Resources.UserPoints points)
         {
-            List<Movie> movies = (List<Movie>) await movieRepository.GetAll();
             List<Resources.Recommendation> recommendations = new List<Resources.Recommendation>();
-            foreach (Movie movie in movies)
-            {
-                Resources.Recommendation temp = ScoreHelper.GetRecommendationData(value, movie.IdMovie, movieDataRepository, movieRepository, reviewRepository, _mapper);
-                if (temp != null)
-                    foreach(Resources.KeyValuePair genre in temp.Movie.Genres)
-                        if(genre.Id == value.Genre.IdGenre)
-                        {
-                            recommendations.Add(temp);
-                            break;
-                        }
-            }
-
-            return Ok(recommendations.OrderByDescending(val => val.Score).Take(10).ToArray());
+            (await genreRepository.GetAll()).Where(g => g.IdGenre == points.Genre.Id)
+                .Join(movieDataRepository.GetAll().Result, g => g.IdMovieData, md => md.IdMovieData, (g, md) => md)
+                .ToList().ForEach(movie =>
+                {
+                    Resources.Movie data = _mapper.Map<Resources.Movie>(movie);
+                    int score = ScoreHelper.GetRecommendationScore(points, data, movieDataRepository, reviewRepository);
+                    Resources.Recommendation temp = new Resources.Recommendation { Movie = data, Score = score };
+                    recommendations.Add(temp);
+                });
+            return Ok(recommendations.OrderByDescending(val => val.Score).Take(10));
         }
     }
 }

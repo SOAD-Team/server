@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Server.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Server.Persistence
@@ -12,14 +13,16 @@ namespace Server.Persistence
 
         }
 
-        public override Task<Language> Create(Language value)
+        public async override Task<Language> Create(Language value)
         {
-            throw new System.NotImplementedException();
+            var lang = await _context.Language.AddAsync(value);
+            return lang.Entity;
         }
 
-        public override Task<Language> Get(int id)
+        public override async Task<Language> Get(int id)
         {
-            throw new System.NotImplementedException();
+            var result = await _context.Language.Where(g => g.IdLanguage == id).FirstOrDefaultAsync();
+            return result;
         }
 
         public override async Task<IEnumerable<Language>> GetAll()

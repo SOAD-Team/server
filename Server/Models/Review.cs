@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Models
@@ -17,5 +15,7 @@ namespace Server.Models
         [ForeignKey(nameof(IdMovie))]
         [InverseProperty(nameof(Movie.Review))]
         public virtual Movie IdMovieNavigation { get; set; }
+        public static Review Empty { get => new Review(); }
+
     }
 }

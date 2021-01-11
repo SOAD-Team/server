@@ -13,32 +13,34 @@ namespace Server.Controllers
     public class UserController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly UserRepository userRepository;
+        private readonly IUserRepository userRepository;
+        private readonly IUnitOfWork unitOfWork;
 
-        public UserController(IMapper mapper, UserRepository userRepository)
+        public UserController(IMapper mapper, IUserRepository userRepository, IUnitOfWork unitOfWork)
         {
             this._mapper = mapper;
             this.userRepository = userRepository;
+            this.unitOfWork = unitOfWork;
         }
 
-        [HttpPut]
-        public async Task<IActionResult> RegisterUser(Resources.User user)
+        [HttpPost]
+        public async Task<IActionResult> RegisterUser(User user)
         {
-            var user1 = await userRepository.GetByEmail(user.Email);
+            User user1 = await userRepository.GetByEmail(user.Email);
             if(user1 == null)
             {
                 User temp = new User(user.Email, user.Password, user.Name, user.LastName);
                 await userRepository.Create(temp);
-                await userRepository.CompleteAsync();
+                await unitOfWork.CompleteAsync();
                 return Ok(_mapper.Map<Resources.User>(temp));
             }
             return NotFound(user);
         }
 
-        [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> LogIn(Resources.User user)
         {
-            User temp = await userRepository.GetByEmail(user.Email);
+            var temp = await userRepository.GetByEmail(user.Email);
             if (temp != null)
                 if (temp.Password.Equals(user.Password))
                     return Ok(_mapper.Map<Resources.User>(temp));
@@ -46,12 +48,6 @@ namespace Server.Controllers
                     return NotFound(user);
             else
                 return NotFound(user);
-        }
-
-        [HttpGet]
-        public string Get()
-        {
-            return "holis";
         }
     }
 }

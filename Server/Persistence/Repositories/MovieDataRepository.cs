@@ -10,26 +10,26 @@ namespace Server.Persistence
     public class MovieDataRepository : Repository<MovieData>, IMovieDataRepository
     {
         public MovieDataRepository(MoviesDB context) : base(context) { }
-        public override async Task<MovieData> Create(MovieData data)
+        public override async Task<MovieData> Create(MovieData value)
         {
-            data.RegisterDate = DateTime.Now;
-            var result = await _context.MovieData.AddAsync(data);
+            value.RegisterDate = DateTime.Now;
+            var result = await _context.MovieData.AddAsync(value);
             return result.Entity;
         }
 
         public async Task<MovieData> GetByMovieId(int id)
         {
-            var result = await _context.MovieData.ToListAsync();
+            var result = await _context.MovieData.Where(m => m.IdMovie == id).ToListAsync();
             MovieData latest = null;
             foreach (var movieData in result)
             {
-                if(latest == null)
+                if (latest == null)
                 {
                     latest = movieData;
                 }
                 else
                 {
-                    if(latest.RegisterDate < movieData.RegisterDate)
+                    if (latest.RegisterDate < movieData.RegisterDate)
                     {
                         latest = movieData;
                     }
@@ -53,12 +53,17 @@ namespace Server.Persistence
                 .Include(md => md.MovieDataGenre)
                 .Select(val => val).ForEachAsync(data =>
                 {
-                    var existingMovie = movies.Where(m => m.IdMovie == data.IdMovie).FirstOrDefault();
+                    var existingMovie = movies.Find(m => m.IdMovie == data.IdMovie);
                     if (existingMovie == null)
                         movies.Add(data);
                     else
+                    {
                         if (data.RegisterDate > existingMovie.RegisterDate)
-                        movies[movies.IndexOf(existingMovie)] = data;
+                        {
+                            movies[movies.IndexOf(existingMovie)] = data;
+                        }
+                    }
+                        
                 });
 
             return movies;
@@ -75,12 +80,12 @@ namespace Server.Persistence
                 (md, m) => new { md, m }).Where(v => v.m.IdUser == id)
                 .Select(val => val.md).ForEachAsync(data =>
                 {
-                    var existingMovie = movies.Where(m => m.IdMovie == data.IdMovie).FirstOrDefault();
+                    var existingMovie = movies.Find(m => m.IdMovie == data.IdMovie);
                     if (existingMovie == null)
                         movies.Add(data);
                     else
                         if (data.RegisterDate > existingMovie.RegisterDate)
-                        movies[movies.IndexOf(existingMovie)] = data;
+                            movies[movies.IndexOf(existingMovie)] = data;
                 });
 
             return movies;

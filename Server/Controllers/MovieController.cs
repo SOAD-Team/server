@@ -12,42 +12,44 @@ namespace Server.Controllers
     public class MovieController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly MovieRepository movieRepository;
-        private readonly MovieDataRepository movieDataRepository;
-        private readonly MovieDataGenreRepository genreRepository;
-        private readonly MovieDataLanguageRepository languageRepository;
+        private readonly IMovieRepository movieRepository;
+        private readonly IMovieDataRepository movieDataRepository;
+        private readonly IMovieDataGenreRepository genreRepository;
+        private readonly IMovieDataLanguageRepository languageRepository;
+        private readonly IUnitOfWork unitOfWork;
 
-        public MovieController(IMapper mapper, MovieRepository movieRepository, MovieDataRepository movieDataRepository, MovieDataGenreRepository genreRepository ,MovieDataLanguageRepository languageRepository)
+        public MovieController(IMapper mapper, IMovieRepository movieRepository, IMovieDataRepository movieDataRepository, IMovieDataGenreRepository genreRepository , IMovieDataLanguageRepository languageRepository, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
             this.movieRepository = movieRepository;
             this.movieDataRepository = movieDataRepository;
             this.genreRepository = genreRepository;
             this.languageRepository = languageRepository;
+            this.unitOfWork = unitOfWork;
         }
-        // Create
+
         [HttpPost]
-        public async Task<IActionResult> CreateMovie(Resources.Movie movieData)
+        public async Task<IActionResult> Post(Resources.Movie movieData)
         {
             Movie movie = _mapper.Map<Movie>(movieData);
             await movieRepository.Create(movie);
-            await movieRepository.CompleteAsync();
+            await unitOfWork.CompleteAsync();
             movieData.IdMovie = movie.IdMovie;
             MovieData data = _mapper.Map<MovieData>(movieData);
             data = await movieDataRepository.Create(data);
-            await movieDataRepository.CompleteAsync();
+            await unitOfWork.CompleteAsync();
             foreach (var genre in movieData.Genres)
                 await genreRepository.Create(new MovieDataGenre(data.IdMovieData, genre.Id));
             foreach (var language in movieData.Languages)
                 await languageRepository.Create(new MovieDataLanguage(data.IdMovieData, language.Id));
-            await movieDataRepository.CompleteAsync();
+            await unitOfWork.CompleteAsync();
 
             return Ok(_mapper.Map<Resources.Movie>(data));
 
         }
-        // Get All
+
         [HttpGet]
-        public async Task<IActionResult> GetAllMovies()
+        public async Task<IActionResult> GetAll()
         {
             var movies = await movieDataRepository.GetAll();
 
@@ -66,27 +68,25 @@ namespace Server.Controllers
             return Ok(resourceMovies);
         }
 
-        // Get
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetMovie(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            MovieData movie = await movieDataRepository.Get(id);
-            return Ok(_mapper.Map<Resources.Movie>(movie));
+            Movie movie = await movieRepository.Get(id);
+            Resources.Movie result = _mapper.Map<Resources.Movie>(movie);
+            return Ok(result);
         }
-        // Put
+
         [HttpPut]
-        public async Task<IActionResult> UpdateMovie(Resources.Movie movieData)
+        public async Task<IActionResult> Put(Resources.Movie movieData)
         {
             MovieData data = _mapper.Map<MovieData>(movieData);
             data = await movieDataRepository.Create(data);
-            await movieDataRepository.CompleteAsync();
+            await unitOfWork.CompleteAsync();
             foreach (var genre in movieData.Genres)
                 await genreRepository.Create(new MovieDataGenre(data.IdMovieData, genre.Id));
             foreach (var language in movieData.Languages)
                 await languageRepository.Create(new MovieDataLanguage(data.IdMovieData, language.Id));
-            await movieDataRepository.CompleteAsync();
-
-            await movieDataRepository.CompleteAsync();
+            await unitOfWork.CompleteAsync();
 
             return Ok(_mapper.Map<Resources.Movie>(data));
         }

@@ -2,6 +2,7 @@
 using Server.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Server.Persistence
@@ -10,14 +11,16 @@ namespace Server.Persistence
     {
         public GenreRepository(MoviesDB context) : base(context) { }
 
-        public override Task<Genre> Create(Genre value)
+        public async override Task<Genre> Create(Genre value)
         {
-            throw new NotImplementedException();
+            var genre = await _context.AddAsync(value);
+            return genre.Entity;
         }
 
-        public override Task<Genre> Get(int id)
+        public async override Task<Genre> Get(int id)
         {
-            throw new NotImplementedException();
+            var result = await _context.Genre.Where(g => g.IdGenre == id).FirstOrDefaultAsync();
+            return result;
         }
 
         public override async Task<IEnumerable<Genre>> GetAll()

@@ -11,10 +11,6 @@ namespace Server.Persistence
         {
             _context = context;
         }
-        public async Task CompleteAsync()
-        {
-            await _context.SaveChangesAsync();
-        }
 
         public abstract Task<T> Create(T value);
         public abstract Task<T> Get(int id);

@@ -1,48 +1,33 @@
 ﻿using Server.Models;
 using System.Linq;
 using Server.Persistence;
-using AutoMapper;
 
 namespace Server.Helpers
 {
     public static class ScoreHelper
     {
-        public static Resources.Recommendation GetRecommendationData(Resources.UserPoints points,
-            int idMovie,
-            MovieDataRepository movieDataRepository,
-            MovieRepository movieRepository,
-            ReviewRepository reviewRepository,
-            IMapper mapper)
-        {
-            MovieData movie = movieDataRepository.GetByMovieId(idMovie).Result;
-            int userId = movieRepository.Get(idMovie).Result.IdUser;
-            if (movie == null)
-                return null;
-            int score = ScoreHelper.getRecommendationScore(points, movie, movieDataRepository, reviewRepository);
-
-            Resources.Movie data = mapper.Map<Resources.Movie>(movie);
-
-            return new Resources.Recommendation { Movie = data, Score = score };
-        }
-        private static int getRecommendationScore(Resources.UserPoints points, MovieData movie, MovieDataRepository movieDataRepository, ReviewRepository reviewRepository)
+        public static int GetRecommendationScore(Resources.UserPoints points, Resources.Movie movie, IMovieDataRepository movieDataRepository, IReviewRepository reviewRepository)
         {
             int imdb = movie.Imdb.GetValueOrDefault();
             int ms = movie.MetaScore.GetValueOrDefault();
-            int com = ScoreHelper.GetMovieCommunityScore(movie.IdMovie, reviewRepository);
+            int com = ScoreHelper.GetMovieCommunityScore(movie.IdMovie.Value, reviewRepository);
             int platFav = 0;
-            int pop = ScoreHelper.GetMoviePopularity(movie.IdMovie, movieDataRepository, reviewRepository);
+            int pop = ScoreHelper.GetMoviePopularity(movie.IdMovie.Value, movieDataRepository, reviewRepository);
 
             if (movie.PlatFav)
                 platFav = 100;
 
-            int score = (imdb * points.Imdb / 100) * (ms * points.MetaScore / 100) * (com * points.Community / 100) * (platFav * points.PlatFav / 100)
-                * (pop * points.Popularity / 100);
+            int score = (imdb * points.Imdb / 100) + (ms * points.MetaScore / 100) + (com * points.Community / 100) + (platFav * points.PlatFav / 100)
+                + (pop * points.Popularity / 100);
 
             return score;
         }
 
-        public static int GetMovieCommunityScore(int idMovie, ReviewRepository reviewRepository)
+        public static int GetMovieCommunityScore(int idMovie, IReviewRepository reviewRepository)
         {
+            if (idMovie <= 0)
+                return 0;
+
             int score = 0;
             Review[] reviews = reviewRepository.GetbyMovieId(idMovie).Result.ToArray();
 
@@ -54,8 +39,11 @@ namespace Server.Helpers
 
             return score/reviews.Length;
         }
-        public static int GetMoviePopularity(int idMovie, MovieDataRepository movieDataRepository, ReviewRepository reviewRepository)
+        public static int GetMoviePopularity(int idMovie, IMovieDataRepository movieDataRepository, IReviewRepository reviewRepository)
         {
+            if (idMovie <= 0)
+                return 0;
+
             int score = 0;
 
             if (ScoreHelper.isFromThisYear(idMovie, movieDataRepository))
@@ -66,16 +54,16 @@ namespace Server.Helpers
 
             return score;
         }
-        private static bool isFromThisYear(int idMovie, MovieDataRepository movieDataRepository)
+        private static bool isFromThisYear(int idMovie, IMovieDataRepository movieDataRepository)
         {
             MovieData movie = movieDataRepository.GetByMovieId(idMovie).Result;
 
             return movie.Year == System.DateTime.Now.Year;
         }
-        private static int reviewsScore (int idMovie, ReviewRepository reviewRepository)
+        private static int reviewsScore (int idMovie, IReviewRepository reviewRepository)
         {
             int score = 0;
-            int reviews = reviewRepository.GetbyMovieId(idMovie).Result.ToList().Count();
+            int reviews = reviewRepository.GetbyMovieId(idMovie).Result.AsEnumerable().Count();
 
             if (reviews > 0)
                 score += 15;
@@ -89,7 +77,7 @@ namespace Server.Helpers
             return score;
         }
 
-        private static bool isPlataformFavorite(int idMovie, MovieDataRepository movieDataRepository)
+        private static bool isPlataformFavorite(int idMovie, IMovieDataRepository movieDataRepository)
         {
             MovieData movie = movieDataRepository.GetByMovieId(idMovie).Result;
             return movie.PlatFav;

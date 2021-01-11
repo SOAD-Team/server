@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using AutoMapper;
-using Server.Persistence;
 
 namespace Server.Models
 {
@@ -46,7 +43,9 @@ namespace Server.Models
         public virtual ICollection<MovieDataGenre> MovieDataGenre { get; set; }
         [InverseProperty("IdMovieDataNavigation")]
         public virtual ICollection<MovieDataLanguage> MovieDataLanguage { get; set; }
+        public static MovieData Empty { get => new MovieData(); }
+
     }
 
-    
+
 }

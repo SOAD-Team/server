@@ -12,10 +12,10 @@ namespace Server.Controllers
     [ApiController]
     public class ImageController : ControllerBase
     {
-        private readonly ImageRepository imageRepository;
+        private readonly IImageRepository imageRepository;
         private readonly IMapper _mapper;
 
-        public ImageController(ImageRepository imageRepository, IMapper mapper)
+        public ImageController(IImageRepository imageRepository, IMapper mapper)
         {
             this.imageRepository = imageRepository;
             _mapper = mapper;

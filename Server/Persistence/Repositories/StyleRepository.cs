@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Server.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Server.Persistence
@@ -9,14 +10,16 @@ namespace Server.Persistence
     {
         public StyleRepository(MoviesDB context) : base(context) { }
 
-        public override Task<Style> Create(Style value)
+        public async override Task<Style> Create(Style value)
         {
-            throw new System.NotImplementedException();
+            var result = await _context.Style.AddAsync(value);
+            return result.Entity;
         }
 
-        public override Task<Style> Get(int id)
+        public override async Task<Style> Get(int id)
         {
-            throw new System.NotImplementedException();
+            var result = await _context.Style.Where(g => g.IdStyle == id).FirstOrDefaultAsync();
+            return result;
         }
 
         public override async Task<IEnumerable<Style>> GetAll()

@@ -7,7 +7,7 @@
         public int Community{get; set;}
         public int PlatFav{get; set;}
         public int Popularity { get; set; }
-        public Models.Genre Genre { get; set; }
+        public KeyValuePair Genre { get; set; }
         public static UserPoints Empty { get =>
                 new UserPoints
                 {
@@ -16,7 +16,7 @@
                     Community = 0,
                     PlatFav = 0,
                     Popularity = 0,
-                    Genre = Models.Genre.Empty
+                    Genre = KeyValuePair.Empty
                 };
         }
     }
