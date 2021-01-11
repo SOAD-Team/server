@@ -80,7 +80,7 @@ namespace Server.Persistence
                 (md, m) => new { md, m }).Where(v => v.m.IdUser == id)
                 .Select(val => val.md).ForEachAsync(data =>
                 {
-                    var existingMovie = movies.Where(m => m.IdMovie == data.IdMovie).FirstOrDefault();
+                    var existingMovie = movies.Find(m => m.IdMovie == data.IdMovie);
                     if (existingMovie == null)
                         movies.Add(data);
                     else
