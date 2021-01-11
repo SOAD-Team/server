@@ -63,7 +63,7 @@ namespace Server.Helpers
         private static int reviewsScore (int idMovie, IReviewRepository reviewRepository)
         {
             int score = 0;
-            int reviews = reviewRepository.GetbyMovieId(idMovie).Result.ToList().Count();
+            int reviews = reviewRepository.GetbyMovieId(idMovie).Result.AsEnumerable().Count();
 
             if (reviews > 0)
                 score += 15;

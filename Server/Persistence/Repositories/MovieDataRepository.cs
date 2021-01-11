@@ -10,10 +10,10 @@ namespace Server.Persistence
     public class MovieDataRepository : Repository<MovieData>, IMovieDataRepository
     {
         public MovieDataRepository(MoviesDB context) : base(context) { }
-        public override async Task<MovieData> Create(MovieData data)
+        public override async Task<MovieData> Create(MovieData value)
         {
-            data.RegisterDate = DateTime.Now;
-            var result = await _context.MovieData.AddAsync(data);
+            value.RegisterDate = DateTime.Now;
+            var result = await _context.MovieData.AddAsync(value);
             return result.Entity;
         }
 
@@ -57,8 +57,13 @@ namespace Server.Persistence
                     if (existingMovie == null)
                         movies.Add(data);
                     else
+                    {
                         if (data.RegisterDate > existingMovie.RegisterDate)
-                        movies[movies.IndexOf(existingMovie)] = data;
+                        {
+                            movies[movies.IndexOf(existingMovie)] = data;
+                        }
+                    }
+                        
                 });
 
             return movies;

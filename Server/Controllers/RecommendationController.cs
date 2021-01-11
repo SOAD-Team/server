@@ -17,7 +17,6 @@ namespace Server.Controllers
         private readonly IMapper _mapper;
         private readonly IReviewRepository reviewRepository;
         private readonly IMovieDataRepository movieDataRepository;
-        private readonly IMovieRepository movieRepository;
         private readonly IMovieDataGenreRepository genreRepository;
 
         public RecommendationController(IMapper mapper, IReviewRepository reviewRepository, IMovieDataRepository movieDataRepository, IMovieRepository movieRepository, IMovieDataGenreRepository genreRepository)
@@ -25,7 +24,6 @@ namespace Server.Controllers
             _mapper = mapper;
             this.reviewRepository = reviewRepository;
             this.movieDataRepository = movieDataRepository;
-            this.movieRepository = movieRepository;
             this.genreRepository = genreRepository;
         }
 
