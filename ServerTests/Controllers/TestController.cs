@@ -83,7 +83,9 @@ namespace Server.Controllers.Tests
 
             this.mockReviewRepository = new Mock<IReviewRepository>(MockBehavior.Loose);
             List<Review> emptyReview = new List<Review>();
-            emptyReview.Add(Review.Empty);
+            Review empty = Review.Empty;
+            empty.IdMovie = 1234;
+            emptyReview.Add(empty);
             mockReviewRepository.Setup(_ => _.GetbyMovieId(It.IsAny<int>())).ReturnsAsync(emptyReview);
 
             this.mockStyleRepository = new Mock<IStyleRepository>(MockBehavior.Loose);

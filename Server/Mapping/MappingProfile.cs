@@ -78,7 +78,7 @@ namespace Server.Mapping
                 .ForMember(m => m.Styles, opt => opt.MapFrom(md => 
                     new Resources.KeyValuePair[1] { 
                         new Resources.KeyValuePair { Id = md.IdStyle, Name = styleRepository.GetAll().Result
-                            .Where(s => s.IdStyle == md.IdStyle).FirstOrDefault().Name } }))
+                            .FirstOrDefault(s => s.IdStyle == md.IdStyle).Name } }))
                 .ForMember(m => m.Image, opt => opt.MapFrom(md => 
                     new Resources.Image { Id = md.ImageMongoId, Url = $"{host}image/{md.ImageMongoId}" }))
                 .ForMember(m => m.CommunityScore,opt => opt.MapFrom(md => ScoreHelper.GetMovieCommunityScore(md.IdMovie, reviewRepository)))

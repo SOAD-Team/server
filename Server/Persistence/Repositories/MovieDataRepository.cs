@@ -53,7 +53,7 @@ namespace Server.Persistence
                 .Include(md => md.MovieDataGenre)
                 .Select(val => val).ForEachAsync(data =>
                 {
-                    var existingMovie = movies.Where(m => m.IdMovie == data.IdMovie).FirstOrDefault();
+                    var existingMovie = movies.Find(m => m.IdMovie == data.IdMovie);
                     if (existingMovie == null)
                         movies.Add(data);
                     else
@@ -85,7 +85,7 @@ namespace Server.Persistence
                         movies.Add(data);
                     else
                         if (data.RegisterDate > existingMovie.RegisterDate)
-                        movies[movies.IndexOf(existingMovie)] = data;
+                            movies[movies.IndexOf(existingMovie)] = data;
                 });
 
             return movies;
